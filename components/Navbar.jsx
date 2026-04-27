@@ -132,12 +132,6 @@ export default function Navbar() {
             </div>
           ))}
 
-          <Link
-            href="/iletisim"
-            className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
-          >
-            İletişim
-          </Link>
         </nav>
 
         <button
@@ -203,12 +197,6 @@ export default function Navbar() {
               );
             })}
 
-            <Link
-              href="/iletisim"
-              className="block rounded-2xl px-4 py-3 text-base font-semibold text-white hover:bg-white/10"
-            >
-              İletişim
-            </Link>
           </div>
         </div>
       )}
