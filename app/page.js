@@ -29,7 +29,7 @@ export default function Home() {
           </div>
 
           <h1 className="max-w-5xl font-serif text-5xl font-semibold leading-tight tracking-tight md:text-7xl">
-            Cezaevi haklarını, AYM kararlarını ve başvuru yollarını sade biçimde inceleyin.
+            Cezaevlerinde yaşanan hak ihlalleri, ilgili AYM kararları ve başvuru yolları
           </h1>
 
           <p className="mt-8 max-w-3xl text-lg leading-8 text-slate-300 md:text-xl">

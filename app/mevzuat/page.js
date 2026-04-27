@@ -8,20 +8,20 @@ const mevzuatItems = [
   {
     title: "4675 Sayılı İnfaz Hâkimliği Kanunu",
     desc: "Cezaevi idaresinin işlem ve kararlarına karşı yapılacak şikâyetlerde temel başvuru yolunu düzenler.",
-    href: "https://mevzuat.adalet.gov.tr/mevzuat/103541",
+    href: "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4675.pdf",
     tag: "Başvuru Yolu",
   },
   {
     title:
       "Ceza İnfaz Kurumlarının Yönetimi ile Ceza ve Güvenlik Tedbirlerinin İnfazı Hakkında Yönetmelik",
     desc: "Ceza infaz kurumlarının günlük işleyişi, kurum düzeni, hakların kullanımı ve uygulama esaslarını düzenler.",
-    href: "https://mevzuat.adalet.gov.tr/mevzuat/116920",
+    href: "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=2324&MevzuatTur=21&MevzuatTertip=5",
     tag: "Yönetmelik",
   },
   {
     title: "Hükümlü ve Tutukluların Ziyaret Edilmeleri Hakkında Yönetmelik",
     desc: "Açık görüş, kapalı görüş, ziyaretçi kabulü, görüş süreleri ve ziyaret usullerine ilişkin temel düzenlemedir.",
-    href: "#",
+    href: "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=8345&MevzuatTur=7&MevzuatTertip=5",
     tag: "Ziyaret",
   },
   {

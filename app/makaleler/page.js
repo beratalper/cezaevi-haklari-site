@@ -1,6 +1,6 @@
 import posts from "./posts";
 export default function Makaleler() {
-  
+
   return (
     <main className="min-h-screen bg-[#070b14] text-white">
       <section className="relative overflow-hidden px-6 py-20">
@@ -19,6 +19,23 @@ export default function Makaleler() {
             Ceza infaz kurumları, mahpus hakları ve bireysel başvuru süreçleri
             hakkında sade, anlaşılır ve güncel rehber içerikler.
           </p>
+
+          <form action="/kararlar" className="mx-auto mt-12 w-full max-w-3xl">
+            <div className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-white/10 p-3 shadow-2xl backdrop-blur md:flex-row">
+              <input
+                type="text"
+                name="q"
+                placeholder="Karar, konu veya hak ara..."
+                className="min-h-14 flex-1 rounded-2xl bg-white px-5 text-base text-slate-900 outline-none"
+              />
+              <button
+                type="submit"
+                className="rounded-2xl bg-[#c9a96e] px-8 py-4 font-semibold text-[#08111f] transition hover:bg-[#e0bf7a]"
+              >
+                Karar Ara
+              </button>
+            </div>
+          </form>
 
           <div className="mt-14 grid gap-6 md:grid-cols-2">
             {posts.map((post) => (

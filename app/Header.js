@@ -13,10 +13,12 @@ export default function Header() {
         </a>
 
         <nav className="hidden gap-8 text-sm text-slate-300 md:flex">
-          <a className="hover:text-[#d9bd83]" href="/makaleler">Makaleler</a>
-          <a className="hover:text-[#d9bd83]" href="/kararlar">AYM Kararları</a>
-          <a className="hover:text-[#d9bd83]" href="/istatistikler">İstatistikler</a>
+          <a className="hover:text-[#d9bd83]" href="/">Ana Sayfa</a>
+          <a className="hover:text-[#d9bd83]" href="/konular">Haklar</a>
+          <a className="hover:text-[#d9bd83]" href="/mevzuat">Mevzuat</a>
+          <a className="hover:text-[#d9bd83]" href="/kararlar">Kararlar</a>
           <a className="hover:text-[#d9bd83]" href="/dilekceler">Dilekçeler</a>
+          <a className="hover:text-[#d9bd83]" href="/iletisim">İletişim</a>
         </nav>
 
         <button
@@ -30,10 +32,12 @@ export default function Header() {
       {menuOpen && (
         <div className="border-t border-white/10 px-6 py-4 md:hidden">
           <div className="flex flex-col gap-4 text-slate-300">
-            <a href="/makaleler">Makaleler</a>
-            <a href="/kararlar">AYM Kararları</a>
-            <a href="/istatistikler">İstatistikler</a>
+            <a href="/">Ana Sayfa</a>
+            <a href="/konular">Haklar</a>
+            <a href="/mevzuat">Mevzuat</a>
+            <a href="/kararlar">Kararlar</a>
             <a href="/dilekceler">Dilekçeler</a>
+            <a href="/iletisim">İletişim</a>
           </div>
         </div>
       )}

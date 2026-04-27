@@ -133,13 +133,6 @@ export default function Navbar() {
           ))}
 
           <Link
-            href="/blog"
-            className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
-          >
-            Blog
-          </Link>
-
-          <Link
             href="/iletisim"
             className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
           >
@@ -209,13 +202,6 @@ export default function Navbar() {
                 </div>
               );
             })}
-
-            <Link
-              href="/blog"
-              className="block rounded-2xl px-4 py-3 text-base font-semibold text-white hover:bg-white/10"
-            >
-              Blog
-            </Link>
 
             <Link
               href="/iletisim"
