@@ -1,6 +1,6 @@
 import "./globals.css";
 import { Inter, Cormorant_Garamond } from "next/font/google";
-import Header from "./Header";
+import Navbar from "../components/Navbar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -43,7 +43,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="tr">
       <body className={`${inter.variable} ${cormorant.variable} bg-[#070b14] text-white antialiased`}>
-        <Header />
+        <Navbar />
 
         {children}
 
