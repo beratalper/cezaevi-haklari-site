@@ -14,7 +14,12 @@ export default function Header() {
 
         <nav className="hidden gap-8 text-sm text-slate-300 md:flex">
           <a className="hover:text-[#d9bd83]" href="/">Ana Sayfa</a>
-          <a className="hover:text-[#d9bd83]" href="/konular">Haklar</a>
+          <a
+  className="rounded-full bg-[#c9a96e]/15 px-4 py-2 font-semibold text-[#e7c98d] transition hover:bg-[#c9a96e]/25 hover:text-white"
+  href="/konular"
+>
+  AYM Kategorileri
+</a>
           <a className="hover:text-[#d9bd83]" href="/mevzuat">Mevzuat</a>
           <a className="hover:text-[#d9bd83]" href="/kararlar">Kararlar</a>
           <a className="hover:text-[#d9bd83]" href="/dilekceler">Dilekçeler</a>
@@ -33,7 +38,9 @@ export default function Header() {
         <div className="border-t border-white/10 px-6 py-4 md:hidden">
           <div className="flex flex-col gap-4 text-slate-300">
             <a href="/">Ana Sayfa</a>
-            <a href="/konular">Haklar</a>
+            <a href="/konular" className="text-[#e7c98d] font-semibold">
+  AYM Kategorileri
+</a>
             <a href="/mevzuat">Mevzuat</a>
             <a href="/kararlar">Kararlar</a>
             <a href="/dilekceler">Dilekçeler</a>

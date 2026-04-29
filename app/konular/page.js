@@ -1,4 +1,27 @@
+import { cezaeviKategorileri } from "@/data/cezaeviKategorileri";
+import kararlar from "@/data/kararlar.json";
+
 export default function KonularPage() {
+  const temizle = (s) => (s || "").toLocaleLowerCase("tr-TR").trim();
+
+  const kategoriIstatistikleri = cezaeviKategorileri.map((kategori) => {
+    const liste = kararlar.filter((x) =>
+      (x.mudahale_iddiasi_aym || "").includes(kategori.aymBaslik)
+    );
+
+    const ihlal = liste.filter((x) =>
+      temizle(x.sonuc_aym || x.sonuc).includes("ihlal")
+    ).length;
+
+    const oran = liste.length ? ((ihlal / liste.length) * 100).toFixed(1) : "0.0";
+
+    return {
+      ...kategori,
+      toplam: liste.length,
+      ihlal,
+      oran,
+    };
+  });
   const haklar = [
     ["Telefon Hakkı", "/konular/telefon-hakki"],
     ["Görüş Hakkı", "/konular/gorus-hakki"],
@@ -45,6 +68,56 @@ export default function KonularPage() {
                 </div>
               </a>
             ))}
+          </div>
+
+          <div className="mt-24">
+            <h2 className="font-serif text-4xl font-semibold">
+              AYM Karar Kategorileri
+            </h2>
+
+            <p className="mt-4 max-w-3xl text-slate-300">
+              Anayasa Mahkemesi bireysel başvuru kararlarında ceza infaz
+              kurumlarına ilişkin resmi müdahale iddiası kategorileri.
+            </p>
+
+            <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {kategoriIstatistikleri.map((item) => (
+                <a
+                  key={item.id}
+                  href={`/kategori/${item.slug}`}
+                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-[#c9a96e]/50 hover:bg-white/[0.06]"
+                >
+                  <div className="text-xs tracking-widest text-[#c9a96e] mb-2">
+                    #{item.id}
+                  </div>
+
+                  <div className="text-lg font-semibold leading-7">
+                    {item.baslik}
+                  </div>
+
+<div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs">
+  <div className="rounded-xl bg-white/[0.05] p-2">
+    <div className="text-slate-400">Karar</div>
+    <div className="mt-1 font-semibold text-white">{item.toplam}</div>
+  </div>
+
+  <div className="rounded-xl bg-white/[0.05] p-2">
+    <div className="text-slate-400">İhlal</div>
+    <div className="mt-1 font-semibold text-white">{item.ihlal}</div>
+  </div>
+
+  <div className="rounded-xl bg-white/[0.05] p-2">
+    <div className="text-slate-400">Oran</div>
+    <div className="mt-1 font-semibold text-white">%{item.oran}</div>
+  </div>
+</div>
+
+                  <div className="mt-4 text-sm text-[#d9bd83]">
+                    Kararları Gör →
+                  </div>
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </section>

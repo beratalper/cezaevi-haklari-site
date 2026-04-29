@@ -55,8 +55,7 @@ export default function RootLayout({ children }) {
         Cezaevi<span className="text-[#c9a96e]">Hakları</span>
       </div>
       <p className="mt-4 text-sm leading-7 text-slate-400">
-        Cezaevleri, tutuklu ve hükümlü hakları ile AYM kararlarına ilişkin
-        bilgilendirici içerikler.
+        Cezaevlerinde yaşanan hak ihlallerine ilişkin Anayasa Mahkemesi kararlarını sadeleştiren bilgilendirici içerikler.
       </p>
     </div>
 

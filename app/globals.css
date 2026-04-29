@@ -46,3 +46,147 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #c9a96e transparent;
 }
+
+.aym-font {
+  font-family: "Times New Roman", Georgia, serif;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.font-serif {
+  font-family: "Times New Roman", Georgia, serif;
+}
+
+.aym-html {
+  font-family: "Times New Roman", Georgia, serif;
+  line-height: 1.65;
+}
+
+.aym-html p {
+  color: #000;
+  font-size: 18px;
+}
+
+.aym-html .aym-center {
+  margin: 0 0 10px 0;
+  text-align: center;
+  font-weight: 700;
+  line-height: 2;
+}
+
+.aym-html .aym-meta-row {
+  display: grid;
+  grid-template-columns: 130px 24px 1fr;
+  gap: 8px;
+  max-width: 560px;
+  margin: 0 auto 6px auto;
+}
+
+.aym-html .aym-meta-label,
+.aym-html .aym-meta-colon {
+  font-weight: 700;
+}
+
+.aym-html .aym-section,
+.aym-html .aym-para,
+.aym-html .aym-plain,
+.aym-html .aym-letter,
+.aym-html .aym-subitem {
+  display: block;
+  width: 100%;
+  max-width: none;
+  clear: both;
+}
+
+.aym-html .aym-section {
+  margin: 28px 0 12px 0;
+  font-size: 19px;
+  font-weight: 700;
+  text-align: left;
+  color: #000;
+}
+
+.aym-html .aym-section {
+  margin-top: 36px;
+}
+
+.aym-html .aym-para,
+.aym-html .aym-plain {
+  margin: 0 0 10px 0;
+  text-align: justify;
+  line-height: 1.75;
+}
+
+.aym-html .aym-letter {
+  margin: 0 0 10px 0;
+  padding-left: 18px;
+  text-indent: -18px;
+  text-align: justify;
+  line-height: 1.75;
+}
+
+.aym-html .aym-subitem {
+  margin: 0 0 10px 0;
+  padding-left: 28px;
+  text-indent: -18px;
+  text-align: justify;
+  line-height: 1.75;
+}
+
+.aym-html i,
+.aym-html em {
+  font-style: italic;
+}
+
+.aym-html b,
+.aym-html strong {
+  font-weight: 700;
+}
+
+.aym-html .aym-special-center {
+  text-align: center;
+  font-weight: 700;
+  font-size: 18px;
+  margin: 18px 0;
+}
+
+.aym-html .aym-special-center.aym-underlined {
+  text-align: left;
+  text-decoration: underline;
+}
+
+.aym-html .aym-underlined {
+  text-decoration: underline;
+}
+
+.aym-html .aym-signature {
+  display: inline-block;
+  width: 45%;
+  min-width: 220px;
+  margin: 28px 2% 34px 2%;
+  text-align: center;
+  vertical-align: top;
+  font-size: 18px;
+  color: #000;
+}
+
+.aym-html .aym-signature-role {
+  margin-bottom: 10px;
+  font-weight: 400;
+}
+
+.aym-html .aym-signature-name {
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+.aym-html .aym-plain {
+  text-indent: 32px;
+}
+.aym-confidential{
+  text-align:right !important;
+  text-decoration:underline !important;
+  font-weight:700;
+}

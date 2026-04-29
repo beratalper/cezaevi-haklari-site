@@ -1,0 +1,86 @@
+export const cezaeviKategorileri = [
+  {
+    id: 7,
+    baslik: "Çıplak / detaylı arama",
+    aymBaslik: "Çıplak/detaylı arama",
+    slug: "ciplak-detayli-arama",
+  },
+  {
+    id: 8,
+    baslik: "İnfaz kurumunun fiziki koşulları",
+    aymBaslik: "İnfaz Kurumunun fiziki koşulları",
+    slug: "infaz-kurumunun-fiziki-kosullari",
+  },
+  {
+    id: 11,
+    baslik: "Nakil aracının fiziki koşulları",
+    aymBaslik: "Nakil aracının fiziki koşulları",
+    slug: "nakil-aracinin-fiziki-kosullari",
+  },
+  {
+    id: 12,
+    baslik: "Tutulanın sağlık durumunun tutulmayla uyumsuzluğu",
+    aymBaslik: "Tutulanın sağlık durumunun tutulmayla uyumsuzluğu",
+    slug: "saglik-durumunun-tutulmayla-uyumsuzlugu",
+  },
+  {
+    id: 66,
+    baslik: "Ceza infaz kurumu uygulamaları",
+    aymBaslik: "Ceza infaz kurumu uygulamaları",
+    slug: "ceza-infaz-kurumu-uygulamalari",
+  },
+  {
+    id: 67,
+    baslik: "Ceza infaz kurumunda açlık grevi",
+    aymBaslik: "Ceza infaz kurumunda açlık grevi",
+    slug: "ceza-infaz-kurumunda-aclik-grevi",
+  },
+  {
+    id: 68,
+    baslik: "Ceza infaz kurumunda eğitim",
+    aymBaslik: "Ceza infaz kurumunda eğitim",
+    slug: "ceza-infaz-kurumunda-egitim",
+  },
+  {
+    id: 69,
+    baslik: "Ceza infaz kurumunda ifade",
+    aymBaslik: "Ceza infaz kurumunda ifade",
+    slug: "ceza-infaz-kurumunda-ifade",
+  },
+  {
+    id: 70,
+    baslik: "Ceza infaz kurumunda kitap",
+    aymBaslik: "Ceza infaz kurumunda kitap",
+    slug: "ceza-infaz-kurumunda-kitap",
+  },
+  {
+    id: 72,
+    baslik: "Ceza infaz kurumunda süreli yayın",
+    aymBaslik: "Ceza infaz kurumunda süreli yayın",
+    slug: "ceza-infaz-kurumunda-sureli-yayin",
+  },
+  {
+    id: 101,
+    baslik: "Haberleşme - ceza infaz kurumu uygulamaları",
+    aymBaslik: "Haberleşme-ceza infaz kurumu uygulamaları (sakıncalı mektup hariç)",
+    slug: "haberlesme-ceza-infaz-kurumu-uygulamalari",
+  },
+  {
+    id: 102,
+    baslik: "Haberleşme - sakıncalı mektup",
+    aymBaslik: "Haberleşme-Sakıncalı mektup",
+    slug: "haberlesme-sakincali-mektup",
+  },
+{
+  id: 103,
+  baslik: "İnfaz kurumunda güç kullanımı",
+  aymBaslik: "İnfaz kurumunda güç kullanımı",
+  slug: "infaz-kurumunda-guc-kullanimi",
+},
+{
+  id: 104,
+  baslik: "İnfaz, koşullu salıverme",
+  aymBaslik: "İnfaz, koşullu salıverme",
+  slug: "infaz-kosullu-saliverme",
+},
+];
