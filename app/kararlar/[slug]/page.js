@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
-import cezaeviData from "../../data/kararlar.json";
+import cezaeviData from "../../../data/kararlar.json";
 
 function badgeClass(sonuc = "") {
   if (sonuc.includes("İhlal Olmadığı"))
@@ -35,7 +35,7 @@ function konuEtiketi(konu = "") {
 }
 
 function cezaeviKarariMi(item) {
-  const metin = `${item.konu || ""} ${item.baslik || ""} ${
+  const metin = `${item.basvuru_konusu || ""} ${item.karar_adi || ""} ${
     item.hak_ozgurluk_aym || ""
   } ${item.mudahale_iddiasi_aym || ""}`.toLowerCase();
 
@@ -54,7 +54,7 @@ function cezaeviKarariMi(item) {
 }
 
 function konuAdiBul(item) {
-  const konu = `${item.konu || ""}`.toLowerCase();
+  const konu = `${item.basvuru_konusu || ""}`.toLowerCase();
   const cezaevi = cezaeviKarariMi(item);
 
   if (cezaevi) {
@@ -118,7 +118,7 @@ function kabulEdilemezlikSebebi(sonuc = "") {
 }
 
 function ihlalGerekcesi(item) {
-  const konu = `${item.konu || ""}`.toLowerCase();
+  const konu = `${item.basvuru_konusu || ""}`.toLowerCase();
   const cezaevi = cezaeviKarariMi(item);
 
   if (cezaevi) {
@@ -157,7 +157,7 @@ function ihlalGerekcesi(item) {
 }
 
 function ihlalYokGerekcesi(item) {
-  const konu = `${item.konu || ""}`.toLowerCase();
+  const konu = `${item.basvuru_konusu || ""}`.toLowerCase();
   const cezaevi = cezaeviKarariMi(item);
 
   if (cezaevi) {
@@ -184,7 +184,7 @@ function ihlalYokGerekcesi(item) {
 }
 
 function kararOzeti(item) {
-  const konu = `${item.konu || ""}`.toLowerCase();
+  const konu = `${item.basvuru_konusu || ""}`.toLowerCase();
   const sonuc = item.sonuc || "";
   const cezaevi = cezaeviKarariMi(item);
 
@@ -365,7 +365,11 @@ export default async function KararDetay({ params }) {
   const { slug } = await params;
   const no = slug.replace("-", "/");
 
-  let item = cezaeviData.find((x) => x.basvuru_no === no) || null;
+  let item =
+  cezaeviData.find((x) => {
+    const slugFromBasvuruNo = x.basvuru_no?.replace("/", "-");
+    return x.slug === slug || slugFromBasvuruNo === slug || x.basvuru_no === no;
+  }) || null;
 
   const metinDosyasi = await kararMetniGetir(slug);
   const kararHtml = await kararHtmlGetir(slug);
@@ -428,7 +432,7 @@ if (metinDosyasi) {
     );
   }
 
-  const kategori = konuEtiketi(item.konu || "");
+  const kategori = konuEtiketi(item.basvuru_konusu || "");
   const resmiLink =
     item.link ||
     `https://kararlarbilgibankasi.anayasa.gov.tr/BB/${item.basvuru_no}`;
@@ -437,7 +441,7 @@ if (metinDosyasi) {
     .filter(
       (x) =>
         x.basvuru_no !== item.basvuru_no &&
-        konuEtiketi(x.konu || "") === kategori
+        konuEtiketi(x.basvuru_konusu || "") === kategori
     )
     .slice(0, 4);
 
@@ -459,7 +463,7 @@ if (metinDosyasi) {
           </div>
 
           <h1 className="font-serif text-4xl font-semibold leading-tight md:text-6xl">
-            {item.baslik}
+            {item.karar_adi}
           </h1>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -496,7 +500,7 @@ if (metinDosyasi) {
             </div>
 
             <p className="text-lg leading-9 text-slate-300">
-              {item.konu || "Başvuru konusu bilgisi bulunamadı."}
+              {item.basvuru_konusu || "Başvuru konusu bilgisi bulunamadı."}
             </p>
           </div>
 
