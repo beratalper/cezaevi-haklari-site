@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 async function getKarar(slug) {
   const res = await fetch(`http://localhost:3000/api/kararlar/${slug}`, {
     cache: "no-store",
