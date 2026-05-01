@@ -14,14 +14,14 @@ const sections = [
 ];
 
 const examples = [
-  "Darp ve fiziksel şiddet",
-  "Aşırı kalabalık koğuş",
-  "Hijyen eksikliği",
-  "Tedavinin engellenmesi",
-  "Uzun süreli tecrit",
-  "Çıplak arama iddiaları",
-  "Yetersiz beslenme",
-  "Onur kırıcı muamele",
+  { baslik: "Darp ve fiziksel şiddet", href: "/kararlar?arama=kötü%20muamele" },
+  { baslik: "Aşırı kalabalık koğuş", href: "/kararlar?arama=koğuş" },
+  { baslik: "Hijyen eksikliği", href: "/kararlar?arama=hijyen" },
+  { baslik: "Tedavinin engellenmesi", href: "/kararlar?arama=sağlık" },
+  { baslik: "Uzun süreli tecrit", href: "/kararlar?arama=tecrit" },
+  { baslik: "Çıplak arama iddiaları", href: "/kararlar?arama=çıplak%20arama" },
+  { baslik: "Yetersiz beslenme", href: "/kararlar?arama=beslenme" },
+  { baslik: "Onur kırıcı muamele", href: "/kararlar?arama=onur%20kırıcı" },
 ];
 
 export const metadata = {
@@ -74,12 +74,13 @@ export default function AIHSMadde3Page() {
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {examples.map((item) => (
-              <div
-                key={item}
-                className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 text-sm font-semibold text-slate-200"
+              <a
+                key={item.baslik}
+                href={item.href}
+                className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-slate-200 transition hover:border-[#c9a96e]/50 hover:bg-[#c9a96e]/10 hover:text-[#d9bd83]"
               >
-                {item}
-              </div>
+                {item.baslik}
+              </a>
             ))}
           </div>
         </div>

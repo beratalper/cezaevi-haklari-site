@@ -1,7 +1,33 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import cezaeviData from "../data/kararlar.json";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
+async function getKararlar({
+  q = "",
+  limit = 500,
+  offset = 0,
+  kapsam = "tum",
+} = {}) {
+  const params = new URLSearchParams();
+
+  if (q.trim()) params.set("q", q.trim());
+  params.set("limit", String(limit));
+  params.set("offset", String(offset));
+  params.set("kapsam", kapsam);
+
+  const res = await fetch(`/api/kararlar?${params.toString()}`, {
+    cache: "no-store",
+  });
+
+  const json = await res.json();
+
+  if (!json.ok) {
+    throw new Error(json.error || "Kararlar alınamadı");
+  }
+
+  return json.data || [];
+}
 
 const sorunGruplari = [
   {
@@ -55,7 +81,7 @@ const sorunGruplari = [
 function sorunEslesir(item, aktifSorun) {
   if (!aktifSorun) return true;
 
-  const konu = (item.konu || "").toLowerCase();
+  const konu = (item.basvuru_konusu || "").toLowerCase();
   const mudahale = (item.mudahale_iddiasi_aym || "").toLowerCase();
 
   if (aktifSorun === "uzak_sevk") {
@@ -83,16 +109,102 @@ function sorunEslesir(item, aktifSorun) {
   return true;
 }
 
+function normalizeSlug(value = "") {
+  return value
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(".html", "")
+    .replace(/\//g, "-")
+    .replace(/\s+/g, "")
+    .replace(/--+/g, "-");
+}
+
+function aramaEslesir(item, query) {
+  if (!item) return false;
+
+  const q = (query || "").toString().toLowerCase().trim();
+
+  if (!q) return true;
+
+  if (/^\d{4}[\/-]\d+$/.test(q)) {
+    const normalizedQuery = q.replace("/", "-");
+
+    return (
+      normalizeSlug(item.basvuru_no || "") === normalizeSlug(normalizedQuery)
+    );
+  }
+
+  const aranacakMetin = [
+    item.karar_adi,
+    item.basvuru_konusu,
+    item.basvuru_no,
+    item.sonuc,
+    item.hak_ozgurluk_aym,
+    item.mudahale_iddiasi_aym,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  const tirnakliIfadeler = [...q.matchAll(/"([^"]+)"/g)].map((m) =>
+    m[1].trim()
+  );
+
+  if (tirnakliIfadeler.length > 0) {
+    return tirnakliIfadeler.every((ifade) => aranacakMetin.includes(ifade));
+  }
+
+  const kelimeler = q.split(/\s+/).filter(Boolean);
+
+  return kelimeler.every((kelime) => aranacakMetin.includes(kelime));
+}
+
 export default function Kararlar() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [page, setPage] = useState(1);
-  const [query, setQuery] = useState("");
   const [sonucFilter, setSonucFilter] = useState("Tümü");
   const [aktifSorun, setAktifSorun] = useState(null);
 
-  const [aramaKapsami, setAramaKapsami] = useState("cezaevi");
+  const [query, setQuery] = useState(searchParams.get("arama") || "");
+  const [aramaKapsami, setAramaKapsami] = useState(
+    searchParams.get("kapsam") || "cezaevi"
+  );
+
   const [tumData, setTumData] = useState([]);
   const [tumLoaded, setTumLoaded] = useState(false);
   const [tumLoading, setTumLoading] = useState(false);
+
+  const [cezaeviData, setCezaeviData] = useState([]);
+  const [cezaeviLoading, setCezaeviLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadCezaeviKararlar() {
+      try {
+        setCezaeviLoading(true);
+        const data = await getKararlar({ limit: 20000, kapsam: "cezaevi" });
+        setCezaeviData(data);
+      } catch (error) {
+        console.error("Cezaevi kararları yüklenemedi:", error);
+        setCezaeviData([]);
+      } finally {
+        setCezaeviLoading(false);
+      }
+    }
+
+    loadCezaeviKararlar();
+  }, []);
+
+  useEffect(() => {
+    const urlQuery = searchParams.get("arama") || "";
+    const urlKapsam = searchParams.get("kapsam") || "cezaevi";
+
+    setQuery(urlQuery);
+    setAramaKapsami(urlKapsam);
+    setPage(1);
+  }, [searchParams]);
 
   const perPage = 6;
 
@@ -100,8 +212,10 @@ export default function Kararlar() {
     try {
       if (!tumLoaded) {
         setTumLoading(true);
-        const mod = await import("../data/tum-kararlar.json");
-        setTumData(mod.default || []);
+
+        const data = await getKararlar({ limit: 20000 });
+
+        setTumData(data);
         setTumLoaded(true);
       }
 
@@ -113,21 +227,21 @@ export default function Kararlar() {
     }
   }
 
+  function temizle() {
+    setQuery("");
+    setSonucFilter("Tümü");
+    setAktifSorun(null);
+    setPage(1);
+    router.replace("/kararlar");
+  }
+
   const aktifData = aramaKapsami === "tum" ? tumData : cezaeviData;
 
   const filtered = aktifData.filter((item) => {
     const q = query.toLowerCase().trim();
     const sonuc = item.sonuc || "";
 
-    const textMatch = aktifSorun
-      ? true
-      : !q ||
-        item.baslik?.toLowerCase().includes(q) ||
-        item.konu?.toLowerCase().includes(q) ||
-        item.basvuru_no?.toLowerCase().includes(q) ||
-        item.sonuc?.toLowerCase().includes(q) ||
-        item.hak_ozgurluk_aym?.toLowerCase().includes(q) ||
-        item.mudahale_iddiasi_aym?.toLowerCase().includes(q);
+    const textMatch = aktifSorun ? true : aramaEslesir(item, query);
 
     let sonucMatch = true;
 
@@ -193,12 +307,20 @@ export default function Kararlar() {
     return "border-slate-400/30 bg-slate-400/10 text-slate-300";
   }
 
+  if (cezaeviLoading) {
+    return (
+      <main className="min-h-screen bg-[#070b14] p-10 text-white">
+        Kararlar yükleniyor...
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#070b14] text-white">
-      <section className="relative overflow-hidden border-b border-white/10 px-6 py-20">
+      <section className="relative overflow-hidden border-b border-white/10 px-4 py-14 lg:px-6 lg:py-20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#c9a96e22,transparent_35%)]" />
 
-        <div className="relative mx-auto max-w-5xl">
+        <div className="relative mx-auto max-w-7xl">
           <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[#c9a96e]">
             Bireysel Başvuru Veri Tabanı
           </p>
@@ -213,350 +335,391 @@ export default function Kararlar() {
             numarasına göre inceleyin.
           </p>
 
-          <div className="mt-10 rounded-3xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setAktifSorun(null);
-                setPage(1);
-              }}
-              placeholder="Karar adı, başvuru no, müdahale iddiası veya sonuç ara..."
-              className="min-h-14 w-full rounded-2xl bg-white px-5 text-base text-slate-900 outline-none"
-            />
+          <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_270px]">
 
-            <div className="mt-5 flex flex-wrap justify-center gap-4">
-              <button
-                onClick={() => {
-                  setAramaKapsami("cezaevi");
-                  setPage(1);
-                }}
-                className={`cursor-pointer rounded-lg border px-5 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-60 ${
-                  aramaKapsami === "cezaevi"
-                    ? "border-[#c9a96e]/80 bg-[#c9a96e]/20 text-[#f3d99b]"
-                    : "border-white/10 bg-white/5 text-slate-300 hover:border-[#c9a96e]/60 hover:text-[#d9bd83]"
-                }`}
-              >
-                Cezaevi kararlarında ara
-              </button>
+            <div className="min-w-0">
+              <div className="rounded-3xl border border-white/10 bg-white/[0.05] p-4 backdrop-blur">
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => {
+                    const value = e.target.value;
 
-              <button
-                onClick={tumAymdeAra}
-                disabled={tumLoading}
-                className={`cursor-pointer rounded-lg border px-5 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-60 ${
-                  aramaKapsami === "tum"
-                    ? "border-[#c9a96e]/80 bg-[#c9a96e]/20 text-[#f3d99b]"
-                    : "border-[#c9a96e]/25 bg-[#c9a96e]/5 text-[#d9bd83] hover:border-[#c9a96e]/70 hover:bg-[#c9a96e]/10"
-                }`}
-              >
-                {tumLoading
-                  ? "Tüm AYM kararları yükleniyor..."
-                  : `Tüm AYM kararlarında ara${
-                      tumLoaded ? ` (${tumData.length})` : ""
-                    }`}
-              </button>
-            </div>
+                    setQuery(value);
+                    setAktifSorun(null);
+                    setPage(1);
 
-            <div className="mt-6 rounded-3xl border border-white/10 bg-black/20 p-5">
-              <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-                <div>
-                  <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[#c9a96e]">
-                    Sık Aranan Cezaevi Sorunları
+                    const params = new URLSearchParams(window.location.search);
+
+                    if (value.trim()) {
+                      params.set("arama", value);
+                      params.set("kapsam", aramaKapsami);
+                    } else {
+                      params.delete("arama");
+                      params.delete("kapsam");
+                    }
+
+                    const queryString = params.toString();
+                    router.replace(
+                      queryString ? `/kararlar?${queryString}` : "/kararlar"
+                    );
+                  }}
+                  placeholder="Karar adı, başvuru no, müdahale iddiası veya sonuç ara..."
+                  className="min-h-14 w-full rounded-2xl bg-white px-5 text-base text-slate-900 outline-none"
+                />
+                <details className="mt-3 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-slate-400 open:border-[#c9a96e]/30">
+                  <summary className="cursor-pointer select-none text-sm font-semibold text-[#d9bd83]">
+                    Nasıl arama yapmalıyım?
+                  </summary>
+
+                  <div className="mt-4 space-y-5 leading-6">
+
+                    {/* I */}
+                    <div>
+                      <div className="font-semibold text-slate-200">
+                        I. Birden fazla kelime ile arama (varsayılan)
+                      </div>
+                      <p className="mt-1">
+                        Birden fazla kelime yazıldığında, bu kelimelerin birlikte geçtiği kararlar listelenir.
+                      </p>
+                      <p className="mt-1 text-[#d9bd83]">
+                        Örnek: <span className="font-semibold">telefon ziyaret</span>
+                      </p>
+                      <p>
+                        Bu arama, içinde hem{" "}
+                        <span className="text-slate-200">telefon</span>{" "}
+                        <span className="underline decoration-[#c9a96e] underline-offset-2">ve</span>{" "}
+                        <span className="text-slate-200">ziyaret</span> geçen kararları bulur.
+                      </p>
+                    </div>
+
+                    {/* II */}
+                    <div>
+                      <div className="font-semibold text-slate-200">
+                        II. Tam kelime grubu arama
+                      </div>
+                      <p className="mt-1">
+                        Birden fazla kelimeden oluşan ifadeyi aynen aramak için çift tırnak kullanabilirsiniz.
+                      </p>
+                      <p className="mt-1 text-[#d9bd83]">
+                        Örnek: <span className="font-semibold">"çıplak arama"</span>
+                      </p>
+                      <p>
+                        Bu arama, içinde{" "}
+                        <span className="text-slate-200">çıplak arama</span> ifadesi aynen geçen kararları bulur.
+                      </p>
+                    </div>
+
+                    {/* III */}
+                    <div>
+                      <div className="font-semibold text-slate-200">
+                        III. Başvuru numarası ile arama
+                      </div>
+                      <p className="mt-1">
+                        Kararın başvuru numarasını biliyorsanız doğrudan başvuru numarasıyla arama yapabilirsiniz.
+                      </p>
+                      <p className="mt-1 text-[#d9bd83]">
+                        Örnek:{" "}
+                        <span className="font-semibold">2012/69</span>{" "}
+                        <span className="underline decoration-[#c9a96e] underline-offset-2">veya</span>{" "}
+                        <span className="font-semibold">2012-69</span>
+                      </p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        (İki yazım biçimi de aynı sonucu verir.)
+                      </p>
+                    </div>
+
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-400">
-                    Hukuki terim bilmeden, yaşanan soruna göre karar arayın.
+                </details>
+                <div className="mt-5 flex flex-wrap justify-center gap-4">
+                  <button
+                    onClick={() => {
+                      setAramaKapsami("cezaevi");
+                      setPage(1);
+                      router.replace(`/kararlar?arama=${query}&kapsam=cezaevi`);
+                    }}
+                    className={`cursor-pointer rounded-lg border px-5 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition hover:-translate-y-0.5 ${aramaKapsami === "cezaevi"
+                      ? "border-[#c9a96e]/80 bg-[#c9a96e]/20 text-[#f3d99b]"
+                      : "border-white/10 bg-white/5 text-slate-300 hover:border-[#c9a96e]/60 hover:text-[#d9bd83]"
+                      }`}
+                  >
+                    Cezaevi kararlarında ara
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      tumAymdeAra();
+
+                      const params = new URLSearchParams(window.location.search);
+
+                      if (query.trim()) {
+                        params.set("arama", query);
+                      }
+
+                      params.set("kapsam", "tum");
+
+                      router.replace(`/kararlar?${params.toString()}`);
+                    }}
+                    disabled={tumLoading}
+                    className={`cursor-pointer rounded-lg border px-5 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-60 ${aramaKapsami === "tum"
+                      ? "border-[#c9a96e]/80 bg-[#c9a96e]/20 text-[#f3d99b]"
+                      : "border-[#c9a96e]/25 bg-[#c9a96e]/5 text-[#d9bd83] hover:border-[#c9a96e]/70 hover:bg-[#c9a96e]/10"
+                      }`}
+                  >
+                    {tumLoading
+                      ? "Tüm AYM kararları yükleniyor..."
+                      : `Tüm AYM kararlarında ara${tumLoaded ? ` (${tumData.length})` : ""
+                      }`}
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-8 grid gap-4 md:grid-cols-3">
+                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.075] to-white/[0.025] p-6 shadow-2xl shadow-black/20">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                    Bulunan karar
+                  </div>
+                  <div className="mt-3 font-serif text-5xl font-semibold text-[#d9bd83]">
+                    {stats.toplam}
+                  </div>
+                  <div className="mt-3 text-sm text-slate-500">
+                    {aramaKapsami === "tum"
+                      ? "Tüm AYM kararları içinde"
+                      : "Cezaevi kararları içinde"}
+                  </div>
+                </div>
+
+                <div className="relative overflow-hidden rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-emerald-400/[0.10] to-white/[0.025] p-6 shadow-2xl shadow-black/20">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                    İhlal içeren karar
+                  </div>
+                  <div className="mt-3 font-serif text-5xl font-semibold text-emerald-300">
+                    {stats.ihlal}
+                  </div>
+                  <div className="mt-3 text-sm text-slate-500">
+                    Bulunan kararlar içinde ihlal sonucu olanlar
+                  </div>
+                </div>
+
+                <div className="relative overflow-hidden rounded-3xl border border-[#c9a96e]/20 bg-gradient-to-br from-[#c9a96e]/10 to-white/[0.025] p-6 shadow-2xl shadow-black/20">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                    İhlal oranı
+                  </div>
+                  <div className="mt-3 font-serif text-5xl font-semibold text-[#d9bd83]">
+                    %{stats.oran}
+                  </div>
+                  <div className="mt-3 text-sm text-slate-500">
+                    Filtrelenmiş sonuçlara göre hesaplanır
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8">
+                {paginated.length === 0 ? (
+                  <div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-10 text-center shadow-2xl shadow-black/20">
+                    <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-[#c9a96e]/30 bg-[#c9a96e]/10 text-2xl">
+                      🔎
+                    </div>
+
+                    <h3 className="font-serif text-3xl font-semibold text-white">
+                      Sonuç bulunamadı
+                    </h3>
+
+                    <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-slate-400">
+                      Arama kelimesini değiştirin, farklı filtre deneyin veya
+                      tüm filtreleri temizleyerek yeniden arama yapın.
+                    </p>
+
+                    <div className="mt-8 flex flex-wrap justify-center gap-3">
+                      <button
+                        onClick={temizle}
+                        className="rounded-full border border-[#c9a96e]/40 bg-[#c9a96e]/10 px-5 py-3 text-sm font-semibold text-[#f3d99b] transition hover:border-[#c9a96e]/70 hover:bg-[#c9a96e]/20"
+                      >
+                        Filtreleri Temizle
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid gap-6">
+                    {paginated.map((item) => (
+                      <article
+                        key={item.basvuru_no}
+                        className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/[0.075] to-white/[0.025] p-6 shadow-2xl shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-[#c9a96e]/60 hover:shadow-[#c9a96e]/10"
+                      >
+                        <div className="relative">
+                          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+                            <div className="flex flex-wrap gap-2">
+                              {item.hak_ozgurluk_aym && (
+                                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300">
+                                  {item.hak_ozgurluk_aym}
+                                </span>
+                              )}
+
+                              {item.mudahale_iddiasi_aym && (
+                                <span className="rounded-full border border-[#c9a96e]/25 bg-[#c9a96e]/10 px-3 py-1 text-xs font-medium text-[#d9bd83]">
+                                  {item.mudahale_iddiasi_aym}
+                                </span>
+                              )}
+                            </div>
+
+                            <span
+                              className={`rounded-full border px-3 py-1 text-xs font-semibold ${badgeClass(
+                                item.sonuc
+                              )}`}
+                            >
+                              {item.sonuc || "Sonuç belirtilmemiş"}
+                            </span>
+                          </div>
+
+                          <a
+                            href={`/kararlar/${item.basvuru_no.replace(
+                              "/",
+                              "-"
+                            )}`}
+                          >
+                            <h2 className="font-serif text-2xl font-semibold leading-snug text-white transition group-hover:text-[#d9bd83]">
+                              {item.karar_adi}
+                            </h2>
+                          </a>
+
+                          <div className="mt-4 flex flex-wrap gap-3 text-sm text-slate-400">
+                            <div className="rounded-full border border-white/10 bg-black/20 px-3 py-1">
+                              Başvuru No:{" "}
+                              <span className="font-semibold text-slate-200">
+                                {item.basvuru_no}
+                              </span>
+                            </div>
+
+                            {item.karar_tarihi && (
+                              <div className="rounded-full border border-white/10 bg-black/20 px-3 py-1">
+                                Karar Tarihi:{" "}
+                                <span className="font-semibold text-slate-200">
+                                  {item.karar_tarihi}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          {item.basvuru_konusu && (
+                            <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5">
+                              <div className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#d9bd83]">
+                                Başvuru Konusu
+                              </div>
+
+                              <p className="line-clamp-3 text-sm leading-7 text-slate-300">
+                                {item.basvuru_konusu}
+                              </p>
+                            </div>
+                          )}
+
+                          <a
+                            href={`/kararlar/${item.basvuru_no.replace(
+                              "/",
+                              "-"
+                            )}`}
+                            className="mt-6 inline-flex rounded-full border border-[#c9a96e]/30 bg-[#c9a96e]/10 px-5 py-3 text-sm font-semibold text-[#f3d99b] transition hover:border-[#c9a96e]/70 hover:bg-[#c9a96e]/20"
+                          >
+                            Kararı incele →
+                          </a>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-10 flex items-center justify-between rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+                <button
+                  onClick={() => setPage(page - 1)}
+                  disabled={page === 1}
+                  className="rounded-2xl border border-white/10 px-5 py-3 text-sm text-slate-300 disabled:cursor-not-allowed disabled:opacity-40 hover:border-[#c9a96e]/50 hover:text-[#d9bd83]"
+                >
+                  ← Önceki
+                </button>
+
+                <div className="text-sm text-slate-400">
+                  Sayfa {page} / {totalPages}
+                </div>
+
+                <button
+                  onClick={() => setPage(page + 1)}
+                  disabled={page === totalPages}
+                  className="rounded-2xl border border-white/10 px-5 py-3 text-sm text-slate-300 disabled:cursor-not-allowed disabled:opacity-40 hover:border-[#c9a96e]/50 hover:text-[#d9bd83]"
+                >
+                  Sonraki →
+                </button>
+              </div>
+            </div>
+            <aside className="lg:sticky lg:top-24 lg:self-start">
+              <div className="rounded-3xl border border-white/10 bg-black/20 p-4 shadow-2xl shadow-black/20 backdrop-blur">
+                <div className="mb-4">
+                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[#c9a96e]">
+                    Sık Aranan Sorunlar
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-slate-400">
+                    Yaşanan soruna göre hızlı filtreleyin.
                   </p>
                 </div>
 
                 {(query || aktifSorun) && (
                   <button
-                    onClick={() => {
-                      setQuery("");
-                      setAktifSorun(null);
-                      setPage(1);
-                    }}
-                    className="w-fit rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-[#c9a96e]/60 hover:text-[#d9bd83]"
+                    onClick={temizle}
+                    className="mb-4 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-[#c9a96e]/60 hover:text-[#d9bd83]"
                   >
-                    Etiket aramasını temizle
+                    Aramayı temizle
                   </button>
                 )}
-              </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                {sorunGruplari.map((grup) => (
-                  <div
-                    key={grup.baslik}
-                    className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 transition hover:border-[#c9a96e]/40 hover:bg-white/[0.055]"
-                  >
-                    <div className="mb-3">
-                      <h3 className="text-sm font-semibold text-white">
+                <div className="space-y-4">
+                  {sorunGruplari.map((grup) => (
+                    <div
+                      key={grup.baslik}
+                      className="rounded-2xl border border-white/10 bg-white/[0.035] p-3"
+                    >
+                      <h3 className="text-xs font-semibold text-white">
                         {grup.baslik}
                       </h3>
-                      <p className="mt-1 text-xs leading-5 text-slate-500">
-                        {grup.aciklama}
-                      </p>
-                    </div>
 
-                    <div className="flex flex-wrap gap-2">
-                      {grup.items.map(([label, keyword]) => {
-                        const aktifMi =
-                          aktifSorun === keyword ||
-                          query.toLowerCase() === keyword.toLowerCase();
+                      <div className="mt-3 flex flex-wrap gap-2 lg:flex-col">
+                        {grup.items.map(([label, keyword]) => {
+                          const aktifMi =
+                            aktifSorun === keyword ||
+                            query.toLowerCase() === keyword.toLowerCase();
 
-                        return (
-                          <button
-                            key={label}
-                            onClick={() => {
-                              setAramaKapsami("cezaevi");
+                          return (
+                            <button
+                              key={label}
+                              onClick={() => {
+                                setAramaKapsami("cezaevi");
 
-                              if (
-                                keyword === "uzak_sevk" ||
-                                keyword === "nakil_araci"
-                              ) {
-                                setAktifSorun(keyword);
-                                setQuery(label);
-                              } else {
-                                setAktifSorun(null);
-                                setQuery(keyword);
-                              }
+                                if (
+                                  keyword === "uzak_sevk" ||
+                                  keyword === "nakil_araci"
+                                ) {
+                                  setAktifSorun(keyword);
+                                  setQuery(label);
+                                } else {
+                                  setAktifSorun(null);
+                                  setQuery(keyword);
+                                }
 
-                              setPage(1);
-                            }}
-                            className={`rounded-full border px-3 py-2 text-xs font-medium transition hover:-translate-y-0.5 ${
-                              aktifMi
+                                setPage(1);
+                              }}
+                              className={`rounded-xl border px-3 py-2 text-left text-xs font-medium transition hover:-translate-y-0.5 ${aktifMi
                                 ? "border-[#c9a96e]/70 bg-[#c9a96e]/15 text-[#f3d99b]"
                                 : "border-white/10 bg-white/5 text-slate-300 hover:border-[#c9a96e]/60 hover:text-[#d9bd83]"
-                            }`}
-                          >
-                            {label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-3">
-              {[
-                "Tümü",
-                "İhlal",
-                "İhlal Olmadığı",
-                "Kabul Edilemezlik",
-                "Düşme",
-              ].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => {
-                    setSonucFilter(item);
-                    setPage(1);
-                  }}
-                  className={`cursor-pointer rounded-2xl border px-5 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition hover:-translate-y-0.5 ${
-                    sonucFilter === item
-                      ? "border-[#c9a96e]/60 bg-[#c9a96e]/10 text-[#d9bd83]"
-                      : "border-[#c9a96e]/25 bg-[#c9a96e]/5 text-[#d9bd83] hover:border-[#c9a96e]/70 hover:bg-[#c9a96e]/10"
-                  }`}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.075] to-white/[0.025] p-6 shadow-2xl shadow-black/20">
-              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[#c9a96e]/10 blur-3xl" />
-
-              <div className="relative">
-                <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                  Bulunan karar
-                </div>
-
-                <div className="mt-3 font-serif text-5xl font-semibold text-[#d9bd83]">
-                  {stats.toplam}
-                </div>
-
-                <div className="mt-3 text-sm text-slate-500">
-                  {aramaKapsami === "tum"
-                    ? "Tüm AYM kararları içinde"
-                    : "Cezaevi kararları içinde"}
-                </div>
-              </div>
-            </div>
-
-            <div className="relative overflow-hidden rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-emerald-400/[0.10] to-white/[0.025] p-6 shadow-2xl shadow-black/20">
-              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-emerald-400/10 blur-3xl" />
-
-              <div className="relative">
-                <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                  İhlal içeren karar
-                </div>
-
-                <div className="mt-3 font-serif text-5xl font-semibold text-emerald-300">
-                  {stats.ihlal}
-                </div>
-
-                <div className="mt-3 text-sm text-slate-500">
-                  Bulunan kararlar içinde ihlal sonucu olanlar
-                </div>
-              </div>
-            </div>
-
-            <div className="relative overflow-hidden rounded-3xl border border-[#c9a96e]/20 bg-gradient-to-br from-[#c9a96e]/10 to-white/[0.025] p-6 shadow-2xl shadow-black/20">
-              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[#c9a96e]/10 blur-3xl" />
-
-              <div className="relative">
-                <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                  İhlal oranı
-                </div>
-
-                <div className="mt-3 font-serif text-5xl font-semibold text-[#d9bd83]">
-                  %{stats.oran}
-                </div>
-
-                <div className="mt-3 text-sm text-slate-500">
-                  Filtrelenmiş sonuçlara göre hesaplanır
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            {paginated.length === 0 ? (
-              <div className="rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-10 text-center shadow-2xl shadow-black/20">
-                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-[#c9a96e]/30 bg-[#c9a96e]/10 text-2xl">
-                  🔎
-                </div>
-
-                <h3 className="font-serif text-3xl font-semibold text-white">
-                  Sonuç bulunamadı
-                </h3>
-
-                <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-slate-400">
-                  Arama kelimesini değiştirin, farklı filtre deneyin veya tüm
-                  filtreleri temizleyerek yeniden arama yapın.
-                </p>
-
-                <div className="mt-8 flex flex-wrap justify-center gap-3">
-                  <button
-                    onClick={() => {
-                      setQuery("");
-                      setSonucFilter("Tümü");
-                      setAktifSorun(null);
-                      setPage(1);
-                    }}
-                    className="rounded-full border border-[#c9a96e]/40 bg-[#c9a96e]/10 px-5 py-3 text-sm font-semibold text-[#f3d99b] transition hover:border-[#c9a96e]/70 hover:bg-[#c9a96e]/20"
-                  >
-                    Filtreleri Temizle
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="grid gap-6">
-                {paginated.map((item) => (
-                  <article
-                    key={item.basvuru_no}
-                    className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/[0.075] to-white/[0.025] p-6 shadow-2xl shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-[#c9a96e]/60 hover:shadow-[#c9a96e]/10"
-                  >
-                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#c9a96e]/60 to-transparent opacity-0 transition group-hover:opacity-100" />
-                    <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-[#c9a96e]/10 blur-3xl transition group-hover:bg-[#c9a96e]/20" />
-
-                    <div className="relative">
-                      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                        <div className="flex flex-wrap gap-2">
-                          {item.hak_ozgurluk_aym && (
-                            <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300">
-                              {item.hak_ozgurluk_aym}
-                            </span>
-                          )}
-
-                          {item.mudahale_iddiasi_aym && (
-                            <span className="rounded-full border border-[#c9a96e]/25 bg-[#c9a96e]/10 px-3 py-1 text-xs font-medium text-[#d9bd83]">
-                              {item.mudahale_iddiasi_aym}
-                            </span>
-                          )}
-                        </div>
-
-                        <span
-                          className={`rounded-full border px-3 py-1 text-xs font-semibold ${badgeClass(
-                            item.sonuc
-                          )}`}
-                        >
-                          {item.sonuc || "Sonuç belirtilmemiş"}
-                        </span>
+                                }`}
+                            >
+                              {label}
+                            </button>
+                          );
+                        })}
                       </div>
-
-                      <a href={`/kararlar/${item.basvuru_no.replace("/", "-")}`}>
-                        <h2 className="font-serif text-2xl font-semibold leading-snug text-white transition group-hover:text-[#d9bd83]">
-                          {item.baslik}
-                        </h2>
-                      </a>
-
-                      <div className="mt-4 flex flex-wrap gap-3 text-sm text-slate-400">
-                        <div className="rounded-full border border-white/10 bg-black/20 px-3 py-1">
-                          Başvuru No:{" "}
-                          <span className="font-semibold text-slate-200">
-                            {item.basvuru_no}
-                          </span>
-                        </div>
-
-                        {item.karar_tarihi && (
-                          <div className="rounded-full border border-white/10 bg-black/20 px-3 py-1">
-                            Karar Tarihi:{" "}
-                            <span className="font-semibold text-slate-200">
-                              {item.karar_tarihi}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {item.konu && (
-                        <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5">
-                          <div className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#d9bd83]">
-                            Başvuru Konusu
-                          </div>
-
-                          <p className="line-clamp-3 text-sm leading-7 text-slate-300">
-                            {item.konu}
-                          </p>
-                        </div>
-                      )}
-
-                      <a
-                        href={`/kararlar/${item.basvuru_no.replace("/", "-")}`}
-                        className="mt-6 inline-flex rounded-full border border-[#c9a96e]/30 bg-[#c9a96e]/10 px-5 py-3 text-sm font-semibold text-[#f3d99b] transition hover:border-[#c9a96e]/70 hover:bg-[#c9a96e]/20"
-                      >
-                        Kararı incele →
-                      </a>
                     </div>
-                  </article>
-                ))}
+                  ))}
+                </div>
               </div>
-            )}
-          </div>
-
-          <div className="mt-10 flex items-center justify-between rounded-3xl border border-white/10 bg-white/[0.04] p-4">
-            <button
-              onClick={() => setPage(page - 1)}
-              disabled={page === 1}
-              className="rounded-2xl border border-white/10 px-5 py-3 text-sm text-slate-300 disabled:cursor-not-allowed disabled:opacity-40 hover:border-[#c9a96e]/50 hover:text-[#d9bd83]"
-            >
-              ← Önceki
-            </button>
-
-            <div className="text-sm text-slate-400">
-              Sayfa {page} / {totalPages}
-            </div>
-
-            <button
-              onClick={() => setPage(page + 1)}
-              disabled={page === totalPages}
-              className="rounded-2xl border border-white/10 px-5 py-3 text-sm text-slate-300 disabled:cursor-not-allowed disabled:opacity-40 hover:border-[#c9a96e]/50 hover:text-[#d9bd83]"
-            >
-              Sonraki →
-            </button>
+            </aside>
           </div>
         </div>
       </section>
