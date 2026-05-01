@@ -47,7 +47,7 @@ export default function Home() {
           <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-xl">
             <div className="grid gap-5 sm:grid-cols-2">
               {[
-                ["16000+", "Yayınlanmış Bireysel Başvuru Kararlarının Tamamı"],
+                ["16000+", "Yayınlanmış Bireysel Başvuru Kararı"],
                 ["1000+", "Cezaevlerinde Yaşanan Hak İhlalleriyle İlgili Bireysel Başvuru Kararı"],
                 ["10", " Ana Kategori"],
                 ["21", "Alt Başlık"],
