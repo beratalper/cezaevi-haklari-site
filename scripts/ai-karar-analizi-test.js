@@ -13,6 +13,30 @@ const db = new Database("C:/Projects/cezaevi-haklari-site/db/aym_kararlar.db");
 const MODEL = "gpt-4.1-mini";
 const PROMPT_VERSION = "v5-ultra-net-2026-05-01";
 
+const updateOk = db.prepare(`
+  UPDATE kararlar
+  SET
+    ai_basvuru_konusu = @ai_basvuru_konusu,
+    ai_karar_ozeti = @ai_karar_ozeti,
+    ai_neden_onemli = @ai_neden_onemli,
+    ai_benzer_basvuruda_dikkat = @ai_benzer_basvuruda_dikkat,
+    ai_analiz_model = @ai_analiz_model,
+    ai_prompt_versiyon = @ai_prompt_versiyon,
+    ai_analiz_at = datetime('now'),
+    ai_analiz_durumu = 'tamamlandi',
+    ai_analiz_hata = NULL
+  WHERE id = @id
+`);
+
+const updateError = db.prepare(`
+  UPDATE kararlar
+  SET
+    ai_analiz_durumu = 'hata',
+    ai_analiz_hata = @hata,
+    ai_analiz_at = datetime('now')
+  WHERE id = @id
+`);
+
 function temizMetinAl(metin = "") {
     const lower = metin.toLocaleLowerCase("tr-TR");
 
@@ -173,78 +197,63 @@ ${temizMetin}
 }
 
 async function main() {
-    const kararlar = db
-        .prepare(
-            `
-    SELECT id, basvuru_no, karar_tarihi, metin
-    FROM kararlar
-    WHERE cezaevi_mi = 1
-      AND metin IS NOT NULL
-      AND (
-        ai_prompt_versiyon IS NULL
-        OR ai_prompt_versiyon != 'v5-ultra-net-2026-05-01'
-      )
-    ORDER BY karar_tarihi DESC
-    LIMIT 200
-    `
-        )
-        .all();
+    while (true) {
+        const kararlar = db
+            .prepare(
+                `
+        SELECT id, basvuru_no, karar_tarihi, metin
+        FROM kararlar
+        WHERE cezaevi_mi = 1
+          AND metin IS NOT NULL
+          AND (
+            ai_prompt_versiyon IS NULL
+            OR ai_prompt_versiyon != 'v5-ultra-net-2026-05-01'
+          )
+        ORDER BY karar_tarihi DESC
+        LIMIT 200
+        `
+            )
+            .all();
 
-    console.log(`İşlenecek karar sayısı: ${kararlar.length}`);
-
-    const updateOk = db.prepare(`
-    UPDATE kararlar
-    SET
-      ai_basvuru_konusu = @ai_basvuru_konusu,
-      ai_karar_ozeti = @ai_karar_ozeti,
-      ai_neden_onemli = @ai_neden_onemli,
-      ai_benzer_basvuruda_dikkat = @ai_benzer_basvuruda_dikkat,
-      ai_analiz_model = @ai_analiz_model,
-      ai_prompt_versiyon = @ai_prompt_versiyon,
-      ai_analiz_at = datetime('now'),
-      ai_analiz_durumu = 'tamamlandi',
-      ai_analiz_hata = NULL
-    WHERE id = @id
-  `);
-
-    const updateError = db.prepare(`
-    UPDATE kararlar
-    SET
-      ai_analiz_durumu = 'hata',
-      ai_analiz_hata = @hata,
-      ai_analiz_at = datetime('now')
-    WHERE id = @id
-  `);
-
-    for (const karar of kararlar) {
-        console.log(`İşleniyor: ${karar.basvuru_no}`);
-
-        try {
-            const analiz = await analizUret(karar);
-
-            updateOk.run({
-                id: karar.id,
-                ai_basvuru_konusu: analiz.ai_basvuru_konusu || "",
-                ai_karar_ozeti: analiz.ai_karar_ozeti || "",
-                ai_neden_onemli: analiz.ai_neden_onemli || "",
-                ai_benzer_basvuruda_dikkat:
-                    analiz.ai_benzer_basvuruda_dikkat || "",
-                ai_analiz_model: MODEL,
-                ai_prompt_versiyon: PROMPT_VERSION,
-            });
-
-            console.log(`Tamamlandı: ${karar.basvuru_no}`);
-        } catch (error) {
-            console.error(`Hata: ${karar.basvuru_no}`, error.message);
-
-            updateError.run({
-                id: karar.id,
-                hata: error.message.slice(0, 1000),
-            });
+        if (kararlar.length === 0) {
+            console.log("🎉 Tüm kararlar işlendi!");
+            break;
         }
+
+        console.log(`İşlenecek batch: ${kararlar.length}`);
+
+        for (const karar of kararlar) {
+            console.log(`İşleniyor: ${karar.basvuru_no}`);
+
+            try {
+                const analiz = await analizUret(karar);
+
+                updateOk.run({
+                    id: karar.id,
+                    ai_basvuru_konusu: analiz.ai_basvuru_konusu || "",
+                    ai_karar_ozeti: analiz.ai_karar_ozeti || "",
+                    ai_neden_onemli: analiz.ai_neden_onemli || "",
+                    ai_benzer_basvuruda_dikkat:
+                        analiz.ai_benzer_basvuruda_dikkat || "",
+                    ai_analiz_model: MODEL,
+                    ai_prompt_versiyon: PROMPT_VERSION,
+                });
+
+                console.log(`✅ ${karar.basvuru_no}`);
+            } catch (error) {
+                console.error(`❌ ${karar.basvuru_no}`, error.message);
+
+                updateError.run({
+                    id: karar.id,
+                    hata: error.message.slice(0, 1000),
+                });
+            }
+        }
+
+        console.log("⏳ Yeni batch’e geçiliyor...\n");
     }
 
-    console.log("Test işlem tamamlandı.");
+    console.log("🚀 Hepsi tamamlandı!");
 }
 
 main();
