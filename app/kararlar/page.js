@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 async function getKararlar({
@@ -160,7 +160,7 @@ function aramaEslesir(item, query) {
   return kelimeler.every((kelime) => aranacakMetin.includes(kelime));
 }
 
-export default function Kararlar() {
+function KararlarContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -724,5 +724,18 @@ export default function Kararlar() {
         </div>
       </section>
     </main>
+  );
+}
+export default function KararlarPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-[#070b14] p-10 text-white">
+          Kararlar yükleniyor...
+        </main>
+      }
+    >
+      <KararlarContent />
+    </Suspense>
   );
 }
