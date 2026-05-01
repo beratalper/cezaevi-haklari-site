@@ -612,15 +612,15 @@ function KararlarContent() {
                             </div>
                           )}
 
-                          <a
-                            href={`/kararlar/${item.basvuru_no.replace(
-                              "/",
-                              "-"
-                            )}`}
-                            className="mt-6 inline-flex rounded-full border border-[#c9a96e]/30 bg-[#c9a96e]/10 px-5 py-3 text-sm font-semibold text-[#f3d99b] transition hover:border-[#c9a96e]/70 hover:bg-[#c9a96e]/20"
-                          >
-                            Kararı incele →
-                          </a>
+                          <div className="mt-6 flex justify-end">
+                            <a
+                              href={`/kararlar/${item.basvuru_no.replace("/", "-")}`}
+                              className="inline-flex items-center gap-2 rounded-lg border border-[#c9a96e]/70 bg-[#c9a96e]/10 px-5 py-2.5 text-sm font-semibold text-[#f3d99b] shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-[#c9a96e]/20"
+                            >
+                              Kararı incele
+                              <span>→</span>
+                            </a>
+                          </div>
                         </div>
                       </article>
                     ))}

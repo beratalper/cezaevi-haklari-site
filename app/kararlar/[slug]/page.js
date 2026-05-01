@@ -2,7 +2,10 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 async function getKarar(slug) {
-  const res = await fetch(`http://localhost:3000/api/kararlar/${slug}`, {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+  const res = await fetch(`${baseUrl}/api/kararlar/${slug}`, {
     cache: "no-store",
   });
 
@@ -13,6 +16,20 @@ async function getKarar(slug) {
   return json.data;
 }
 
+function BilgilendirmeAlani() {
+  return (
+    <div className="mt-8 mb-10">
+      <div className="w-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 flex justify-center">
+        <img
+          src="/logo.png"
+          alt="Cezaevi Hakları"
+          className="max-h-40 w-auto opacity-80"
+        />
+      </div>
+    </div>
+  );
+}
+
 function kararRehberMetni(item) {
   const sonuc = (item.sonuc || "").toLowerCase();
   const basvuruKonusu = item.basvuru_konusu || "";
@@ -20,8 +37,10 @@ function kararRehberMetni(item) {
   const sonucAym = item.sonuc_aym || "";
 
   let kararSonucu = "Anayasa Mahkemesi başvuruyu değerlendirmiştir.";
-  let gerekce = "Kararın gerekçesi, olayın özelliklerine ve başvurucunun sunduğu bilgi ve belgelere göre şekillenmiştir.";
-  let dikkat = "Benzer başvurularda olayın tarihi, yapılan idari işlem, buna karşı kullanılan başvuru yolları ve eldeki belgeler açıkça ortaya konulmalıdır.";
+  let gerekce =
+    "Kararın gerekçesi, olayın özelliklerine ve başvurucunun sunduğu bilgi ve belgelere göre şekillenmiştir.";
+  let dikkat =
+    "Benzer başvurularda olayın tarihi, yapılan idari işlem, buna karşı kullanılan başvuru yolları ve eldeki belgeler açıkça ortaya konulmalıdır.";
 
   if (sonuc.includes("kabul edilemez")) {
     kararSonucu =
@@ -71,8 +90,7 @@ function kararRehberMetni(item) {
     dikkat =
       "Vatandaş benzer başvurularda yalnızca uygulamadan memnun olmadığını değil, uygulamanın neden ölçüsüz veya hukuka aykırı olduğunu somutlaştırmalıdır.";
   } else if (sonuc.includes("düşme")) {
-    kararSonucu =
-      "Anayasa Mahkemesi bu başvuruda düşme kararı vermiştir.";
+    kararSonucu = "Anayasa Mahkemesi bu başvuruda düşme kararı vermiştir.";
 
     gerekce =
       "Düşme kararları genellikle başvurunun incelenmesini gerektiren sebebin ortadan kalkması veya başvurunun takipsiz bırakılması gibi nedenlerle verilir.";
@@ -110,13 +128,21 @@ export default async function KararDetay({ params }) {
         ← Kararlara dön
       </a>
 
-      <h1 className="text-center text-4xl font-semibold leading-tight md:text-5xl">{item.karar_adi}</h1>
+      <div className="mb-6 flex justify-center">
+        <img
+          src="/logo.png"
+          alt="Cezaevi Hakları"
+          className="max-h-20 w-auto opacity-80"
+        />
+      </div>
+
+      <h1 className="text-center text-4xl font-semibold leading-tight md:text-5xl">
+        {item.karar_adi}
+      </h1>
 
       <div className="mt-6 flex flex-wrap justify-center gap-3 text-sm text-slate-400">
-
         <div className="rounded-full border border-[#c9a96e]/30 bg-[#c9a96e]/10 px-3 py-1 text-[#d9bd83]">
-          Başvuru No:{" "}
-          <span className="text-white">{item.basvuru_no}</span>
+          Başvuru No: <span className="text-white">{item.basvuru_no}</span>
         </div>
 
         {item.karar_tarihi && (
@@ -129,8 +155,6 @@ export default async function KararDetay({ params }) {
 
       <div className="mt-12 flex justify-center">
         <div className="w-full max-w-4xl space-y-6">
-
-          {/* Neden Önemli */}
           <div className="rounded-2xl border border-white/10 bg-[#0d1320] p-6">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
               Bu karar neden önemli?
@@ -138,28 +162,37 @@ export default async function KararDetay({ params }) {
 
             <div className="mt-4 space-y-4 text-sm leading-7 text-slate-300">
               <p>
-                <span className="font-semibold text-slate-100">AYM önüne gelen konu: </span>
+                <span className="font-semibold text-slate-100">
+                  AYM önüne gelen konu:{" "}
+                </span>
                 {rehber.konu || "Başvuru konusu bilgisi bulunamadı."}
               </p>
 
               <p>
-                <span className="font-semibold text-slate-100">Mahkemenin kararı: </span>
+                <span className="font-semibold text-slate-100">
+                  Mahkemenin kararı:{" "}
+                </span>
                 {rehber.kararSonucu}
               </p>
 
               <p>
-                <span className="font-semibold text-slate-100">Gerekçe bakımından: </span>
+                <span className="font-semibold text-slate-100">
+                  Gerekçe bakımından:{" "}
+                </span>
                 {rehber.gerekce}
               </p>
 
               <p>
-                <span className="font-semibold text-slate-100">Vatandaş neye dikkat etmeli? </span>
+                <span className="font-semibold text-slate-100">
+                  Vatandaş neye dikkat etmeli?{" "}
+                </span>
                 {rehber.dikkat}
               </p>
             </div>
           </div>
 
-          {/* Başvuru Konusu */}
+          <BilgilendirmeAlani />
+
           <div className="rounded-2xl border border-white/10 bg-[#0d1320] p-6">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
               Başvuru konusu
@@ -170,36 +203,37 @@ export default async function KararDetay({ params }) {
             </p>
           </div>
 
-          {/* Karar Özeti */}
           <div className="rounded-2xl border border-white/10 bg-[#0d1320] p-6">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
               Karar özeti
             </h3>
 
             <p className="mt-4 text-sm leading-7 text-slate-300">
-              Başvurucu, ceza infaz kurumunda uygulanan bir işlem nedeniyle bireysel başvuruda bulunmuştur.
-              Anayasa Mahkemesi, başvuruyu esasına girmeden kabul edilemez bulmuştur.
+              Başvurucu, ceza infaz kurumunda uygulanan bir işlem nedeniyle
+              bireysel başvuruda bulunmuştur. Anayasa Mahkemesi, başvuruyu
+              esasına girmeden kabul edilemez bulmuştur.
             </p>
 
             <p className="mt-4 text-sm leading-7 text-slate-300">
-              Mahkeme, iddiaların hak ihlali sonucuna götürecek ölçüde somutlaştırılmadığı kanaatine varmıştır.
+              Mahkeme, iddiaların hak ihlali sonucuna götürecek ölçüde
+              somutlaştırılmadığı kanaatine varmıştır.
             </p>
           </div>
 
-          {/* Dikkat Edilmesi Gerekenler */}
           <div className="rounded-2xl border border-white/10 bg-[#0d1320] p-6">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
               Benzer başvurularda nelere dikkat edilmeli?
             </h3>
 
             <p className="mt-4 text-sm leading-7 text-slate-300">
-              Bu tür başvurularda süreler özellikle takip edilmelidir.
-              Anayasa Mahkemesine gitmeden önce ilgili başvuru yolları kullanılmalı,
-              verilen kararlar saklanmalı ve iddialar yalnızca genel şikâyet olarak değil,
-              belge ve somut olaylarla desteklenerek sunulmalıdır.
+              Bu tür başvurularda süreler özellikle takip edilmelidir. Anayasa
+              Mahkemesine gitmeden önce ilgili başvuru yolları kullanılmalı,
+              verilen kararlar saklanmalı ve iddialar yalnızca genel şikâyet
+              olarak değil, belge ve somut olaylarla desteklenerek sunulmalıdır.
             </p>
           </div>
 
+          <BilgilendirmeAlani />
         </div>
       </div>
     </main>

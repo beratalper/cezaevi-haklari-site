@@ -46,6 +46,8 @@ export default function RootLayout({ children }) {
       <head>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7518046066826938"
           crossorigin="anonymous"></script>
+        <link rel="icon" href="/favicon.png" />
+        
         <Script
           async
           strategy="afterInteractive"
