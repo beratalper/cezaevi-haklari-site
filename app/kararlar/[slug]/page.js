@@ -2,25 +2,23 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 async function getKarar(slug) {
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}` ||
-    "http://localhost:3000";
+  const siteUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   try {
     const res = await fetch(`${siteUrl}/api/kararlar/${slug}`, {
       cache: "no-store",
     });
 
-    if (!res.ok) {
-      console.error("Karar API HTTP hata:", res.status);
-      return null;
-    }
-
     const json = await res.json();
 
     if (!json.ok) {
-      console.error("Karar API cevap hata:", json.error);
+      console.error("Karar bulunamadı:", {
+        slug,
+        siteUrl,
+        hata: json.error,
+      });
       return null;
     }
 
