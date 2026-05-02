@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
-import { getDb } from "../../lib/db";
+import { Pool } from "pg";
 
 export const dynamic = "force-dynamic";
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
 
 export async function GET(request) {
   try {
@@ -12,78 +17,62 @@ export async function GET(request) {
     const limit = Math.min(Number(searchParams.get("limit") || 50), 20000);
     const offset = Number(searchParams.get("offset") || 0);
 
-    const cezaeviWhere = kapsam === "cezaevi" ? "cezaevi_mi = 1" : "1=1";
+    const where = [];
+    const values = [];
 
-    const db = getDb();
+    if (kapsam === "cezaevi") {
+      where.push(`cezaevi_mi = true`);
+    }
 
-    const baseQuery = `
+    if (q) {
+      values.push(`%${q}%`);
+      where.push(`
+        (
+          basvuru_no ILIKE $${values.length}
+          OR karar_adi ILIKE $${values.length}
+          OR basvuru_konusu ILIKE $${values.length}
+          OR sonuc ILIKE $${values.length}
+          OR mudahale_iddiasi_aym ILIKE $${values.length}
+          OR metin ILIKE $${values.length}
+        )
+      `);
+    }
+
+    values.push(limit);
+    const limitParam = values.length;
+
+    values.push(offset);
+    const offsetParam = values.length;
+
+    const result = await pool.query(
+      `
       SELECT
         id,
         basvuru_no,
-        url,
         karar_adi,
         karar_tarihi,
         sonuc,
-        hak,
         basvuru_konusu,
-        metin_uzunlugu,
-        kalite,
-        created_at,
-        hak_ozgurluk_aym,
+        metin,
         mudahale_iddiasi_aym,
         sonuc_aym,
-        giderim_aym,
+        ust_kategori,
+        alt_kategori,
+        slug,
         cezaevi_mi
       FROM kararlar
-    `;
-
-    let rows;
-
-    if (q) {
-      rows = db
-        .prepare(`
-          ${baseQuery}
-          WHERE
-            ${cezaeviWhere}
-            AND (
-              basvuru_no LIKE ?
-              OR karar_adi LIKE ?
-              OR basvuru_konusu LIKE ?
-              OR sonuc LIKE ?
-              OR hak_ozgurluk_aym LIKE ?
-              OR mudahale_iddiasi_aym LIKE ?
-              OR metin LIKE ?
-            )
-          ORDER BY karar_tarihi DESC
-          LIMIT ? OFFSET ?
-        `)
-        .all(
-          `%${q}%`,
-          `%${q}%`,
-          `%${q}%`,
-          `%${q}%`,
-          `%${q}%`,
-          `%${q}%`,
-          `%${q}%`,
-          limit,
-          offset
-        );
-    } else {
-      rows = db
-        .prepare(`
-          ${baseQuery}
-          WHERE ${cezaeviWhere}
-          ORDER BY karar_tarihi DESC
-          LIMIT ? OFFSET ?
-        `)
-        .all(limit, offset);
-    }
+      ${where.length ? `WHERE ${where.join(" AND ")}` : ""}
+      ORDER BY id DESC
+      LIMIT $${limitParam} OFFSET $${offsetParam}
+      `,
+      values
+    );
 
     return NextResponse.json({
       ok: true,
       kapsam,
-      count: rows.length,
-      data: rows,
+      count: result.rows.length,
+      data: result.rows,
     });
   } catch (error) {
     return NextResponse.json({
