@@ -2,18 +2,33 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 async function getKarar(slug) {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}` ||
+    "http://localhost:3000";
 
-  const res = await fetch(`${baseUrl}/api/kararlar/${slug}`, {
-    cache: "no-store",
-  });
+  try {
+    const res = await fetch(`${siteUrl}/api/kararlar/${slug}`, {
+      cache: "no-store",
+    });
 
-  const json = await res.json();
+    if (!res.ok) {
+      console.error("Karar API HTTP hata:", res.status);
+      return null;
+    }
 
-  if (!json.ok) return null;
+    const json = await res.json();
 
-  return json.data;
+    if (!json.ok) {
+      console.error("Karar API cevap hata:", json.error);
+      return null;
+    }
+
+    return json.data;
+  } catch (error) {
+    console.error("Karar detay fetch hatası:", error);
+    return null;
+  }
 }
 
 function BilgilendirmeAlani() {
