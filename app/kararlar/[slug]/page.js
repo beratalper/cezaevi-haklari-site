@@ -1,23 +1,25 @@
+import { headers } from "next/headers";
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 async function getKarar(slug) {
-  const siteUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
   try {
-    const res = await fetch(`${siteUrl}/api/kararlar/${slug}`, {
+    const headerList = await headers();
+    const host = headerList.get("host");
+    const protocol = host?.includes("localhost") ? "http" : "https";
+
+    const res = await fetch(`${protocol}://${host}/api/kararlar/${slug}`, {
       cache: "no-store",
     });
 
     const json = await res.json();
 
     if (!json.ok) {
-      console.error("Karar bulunamadı:", {
+      console.error("Karar API hata:", {
         slug,
-        siteUrl,
-        hata: json.error,
+        host,
+        error: json.error,
       });
       return null;
     }
