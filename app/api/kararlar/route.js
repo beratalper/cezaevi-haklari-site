@@ -33,7 +33,6 @@ export async function GET(request) {
           OR basvuru_konusu ILIKE $${values.length}
           OR sonuc ILIKE $${values.length}
           OR mudahale_iddiasi_aym ILIKE $${values.length}
-          OR metin ILIKE $${values.length}
         )
       `);
     }
@@ -53,7 +52,6 @@ export async function GET(request) {
         karar_tarihi,
         sonuc,
         basvuru_konusu,
-        metin,
         mudahale_iddiasi_aym,
         sonuc_aym,
         ust_kategori,
