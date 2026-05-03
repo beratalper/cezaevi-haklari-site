@@ -1,15 +1,22 @@
-import Database from "better-sqlite3";
+require("dotenv").config({ path: ".env.local" });
+const { Pool } = require("pg");
 
-const db = new Database("./db/aym_kararlar.db", { readonly: true });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
 
-const tables = db.prepare(`
-  SELECT name FROM sqlite_master WHERE type='table'
-`).all();
+async function run() {
+  const res = await pool.query(`
+    SELECT id, basvuru_no, karar_adi
+    FROM kararlar
+    WHERE karar_adi ~ '[a-zçğıöşü]'
+    ORDER BY id ASC
+    LIMIT 100;
+  `);
 
-console.log("TABLOLAR:", tables);
-
-for (const t of tables) {
-  console.log("\nTABLO:", t.name);
-  const cols = db.prepare(`PRAGMA table_info(${t.name})`).all();
-  console.log(cols.map(c => c.name));
+  console.table(res.rows);
+  await pool.end();
 }
+
+run();

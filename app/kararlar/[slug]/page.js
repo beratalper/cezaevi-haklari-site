@@ -45,83 +45,6 @@ function BilgilendirmeAlani() {
   );
 }
 
-function kararRehberMetni(item) {
-  const sonuc = (item.sonuc || "").toLowerCase();
-  const basvuruKonusu = item.basvuru_konusu || "";
-  const mudahale = item.mudahale_iddiasi_aym || "";
-  const sonucAym = item.sonuc_aym || "";
-
-  let kararSonucu = "Anayasa Mahkemesi başvuruyu değerlendirmiştir.";
-  let gerekce =
-    "Kararın gerekçesi, olayın özelliklerine ve başvurucunun sunduğu bilgi ve belgelere göre şekillenmiştir.";
-  let dikkat =
-    "Benzer başvurularda olayın tarihi, yapılan idari işlem, buna karşı kullanılan başvuru yolları ve eldeki belgeler açıkça ortaya konulmalıdır.";
-
-  if (sonuc.includes("kabul edilemez")) {
-    kararSonucu =
-      "Anayasa Mahkemesi bu başvuruda esasa girerek hak ihlali incelemesi yapmamış; başvuruyu kabul edilemez bulmuştur.";
-
-    if (
-      sonucAym.toLowerCase().includes("başvuru yolları") ||
-      mudahale.toLowerCase().includes("başvuru yolları")
-    ) {
-      gerekce =
-        "Bu sonucun temel nedeni, başvurucunun Anayasa Mahkemesine gelmeden önce kullanması gereken etkili başvuru yollarını tüketmemiş olmasıdır.";
-      dikkat =
-        "Vatandaş benzer durumda önce infaz hâkimliği, ağır ceza mahkemesi veya ilgili idari/yargısal yolları zamanında kullanmalı; bu süreç tamamlanmadan bireysel başvuru yapmamalıdır.";
-    } else if (
-      sonucAym.toLowerCase().includes("süre") ||
-      mudahale.toLowerCase().includes("süre")
-    ) {
-      gerekce =
-        "Bu sonucun temel nedeni, bireysel başvurunun süresinde yapılmamış olmasıdır.";
-      dikkat =
-        "Vatandaş tebliğ veya öğrenme tarihini dikkatle takip etmeli; bireysel başvuru süresini kaçırmamalıdır.";
-    } else if (
-      sonucAym.toLowerCase().includes("açıkça dayanaktan yoksun") ||
-      sonucAym.toLowerCase().includes("dayanaktan")
-    ) {
-      gerekce =
-        "Mahkeme, ileri sürülen iddiaların hak ihlali sonucuna ulaşmak için yeterli dayanak içermediği kanaatine varmıştır.";
-      dikkat =
-        "Vatandaş yalnızca genel şikâyet ileri sürmekle yetinmemeli; hangi işlem nedeniyle hangi hakkının nasıl etkilendiğini somut olay ve belgelerle açıklamalıdır.";
-    }
-  } else if (sonuc.includes("ihlal") && !sonuc.includes("ihlal olmadığı")) {
-    kararSonucu =
-      "Anayasa Mahkemesi bu başvuruda başvurucunun iddiasını hak ihlali yönünden haklı bulmuştur.";
-
-    gerekce =
-      "Mahkeme, başvuru konusu işlem veya uygulamanın anayasal güvencelerle bağdaşmadığı sonucuna ulaşmıştır.";
-
-    dikkat =
-      "Vatandaş benzer durumda işlem tarihini, idarenin gerekçesini, yaptığı itirazları ve uğradığı somut etkiyi belgelemelidir.";
-  } else if (sonuc.includes("ihlal olmadığı")) {
-    kararSonucu =
-      "Anayasa Mahkemesi bu başvuruda hak ihlali olmadığı sonucuna varmıştır.";
-
-    gerekce =
-      "Mahkeme, olayın koşullarını ve idarenin gerekçesini birlikte değerlendirerek müdahalenin anayasal sınırlar içinde kaldığını kabul etmiştir.";
-
-    dikkat =
-      "Vatandaş benzer başvurularda yalnızca uygulamadan memnun olmadığını değil, uygulamanın neden ölçüsüz veya hukuka aykırı olduğunu somutlaştırmalıdır.";
-  } else if (sonuc.includes("düşme")) {
-    kararSonucu = "Anayasa Mahkemesi bu başvuruda düşme kararı vermiştir.";
-
-    gerekce =
-      "Düşme kararları genellikle başvurunun incelenmesini gerektiren sebebin ortadan kalkması veya başvurunun takipsiz bırakılması gibi nedenlerle verilir.";
-
-    dikkat =
-      "Vatandaş başvuru sürecini takip etmeli, Mahkemeden gelen yazılara süresinde cevap vermeli ve başvurusunu güncel tutmalıdır.";
-  }
-
-  return {
-    konu: basvuruKonusu,
-    kararSonucu,
-    gerekce,
-    dikkat,
-  };
-}
-
 export default async function KararDetay({ params }) {
   const { slug } = await params;
 
@@ -134,8 +57,6 @@ export default async function KararDetay({ params }) {
       </main>
     );
   }
-
-  const rehber = kararRehberMetni(item);
 
   return (
     <main className="min-h-screen bg-[#070b14] p-10 text-white">
@@ -170,43 +91,6 @@ export default async function KararDetay({ params }) {
 
       <div className="mt-12 flex justify-center">
         <div className="w-full max-w-4xl space-y-6">
-          <div className="rounded-2xl border border-white/10 bg-[#0d1320] p-6">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
-              Bu karar neden önemli?
-            </h3>
-
-            <div className="mt-4 space-y-4 text-sm leading-7 text-slate-300">
-              <p>
-                <span className="font-semibold text-slate-100">
-                  AYM önüne gelen konu:{" "}
-                </span>
-                {rehber.konu || "Başvuru konusu bilgisi bulunamadı."}
-              </p>
-
-              <p>
-                <span className="font-semibold text-slate-100">
-                  Mahkemenin kararı:{" "}
-                </span>
-                {rehber.kararSonucu}
-              </p>
-
-              <p>
-                <span className="font-semibold text-slate-100">
-                  Gerekçe bakımından:{" "}
-                </span>
-                {rehber.gerekce}
-              </p>
-
-              <p>
-                <span className="font-semibold text-slate-100">
-                  Vatandaş neye dikkat etmeli?{" "}
-                </span>
-                {rehber.dikkat}
-              </p>
-            </div>
-          </div>
-
-          <BilgilendirmeAlani />
 
           <div className="rounded-2xl border border-white/10 bg-[#0d1320] p-6">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
@@ -214,7 +98,7 @@ export default async function KararDetay({ params }) {
             </h3>
 
             <p className="mt-4 text-sm leading-7 text-slate-300">
-              {item.basvuru_konusu || "Bilgi bulunamadı"}
+              {item.ai_basvuru_konusu || item.basvuru_konusu || "Bilgi bulunamadı"}
             </p>
           </div>
 
@@ -224,14 +108,19 @@ export default async function KararDetay({ params }) {
             </h3>
 
             <p className="mt-4 text-sm leading-7 text-slate-300">
-              Başvurucu, ceza infaz kurumunda uygulanan bir işlem nedeniyle
-              bireysel başvuruda bulunmuştur. Anayasa Mahkemesi, başvuruyu
-              esasına girmeden kabul edilemez bulmuştur.
+              {item.ai_karar_ozeti || "Bilgi bulunamadı"}
             </p>
+          </div>
+
+          <BilgilendirmeAlani />
+
+          <div className="rounded-2xl border border-white/10 bg-[#0d1320] p-6">
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
+              Bu karar neden önemli?
+            </h3>
 
             <p className="mt-4 text-sm leading-7 text-slate-300">
-              Mahkeme, iddiaların hak ihlali sonucuna götürecek ölçüde
-              somutlaştırılmadığı kanaatine varmıştır.
+              {item.ai_neden_onemli || "Bilgi bulunamadı"}
             </p>
           </div>
 
@@ -241,12 +130,22 @@ export default async function KararDetay({ params }) {
             </h3>
 
             <p className="mt-4 text-sm leading-7 text-slate-300">
-              Bu tür başvurularda süreler özellikle takip edilmelidir. Anayasa
-              Mahkemesine gitmeden önce ilgili başvuru yolları kullanılmalı,
-              verilen kararlar saklanmalı ve iddialar yalnızca genel şikâyet
-              olarak değil, belge ve somut olaylarla desteklenerek sunulmalıdır.
+              {item.ai_benzer_basvuruda_dikkat || "Bilgi bulunamadı"}
             </p>
           </div>
+
+          {item?.basvuru_no && (
+            <div className="mt-6 flex justify-end">
+              <a
+                href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${item.basvuru_no}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg border border-[#c9a96e]/70 bg-[#c9a96e]/10 px-5 py-2.5 text-sm font-semibold text-[#f3d99b] transition hover:-translate-y-0.5 hover:bg-[#c9a96e]/20"
+              >
+                Kararın tam metni →
+              </a>
+            </div>
+          )}
 
           <BilgilendirmeAlani />
         </div>

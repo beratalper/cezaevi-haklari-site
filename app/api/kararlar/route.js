@@ -1,12 +1,7 @@
 import { NextResponse } from "next/server";
-import { Pool } from "pg";
+import { supabase } from "../../lib/supabase";
 
 export const dynamic = "force-dynamic";
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-});
 
 export async function GET(request) {
   try {
@@ -17,35 +12,9 @@ export async function GET(request) {
     const limit = Math.min(Number(searchParams.get("limit") || 50), 20000);
     const offset = Number(searchParams.get("offset") || 0);
 
-    const where = [];
-    const values = [];
-
-    if (kapsam === "cezaevi") {
-      where.push(`cezaevi_mi = true`);
-    }
-
-    if (q) {
-      values.push(`%${q}%`);
-      where.push(`
-        (
-          basvuru_no ILIKE $${values.length}
-          OR karar_adi ILIKE $${values.length}
-          OR basvuru_konusu ILIKE $${values.length}
-          OR sonuc ILIKE $${values.length}
-          OR mudahale_iddiasi_aym ILIKE $${values.length}
-        )
-      `);
-    }
-
-    values.push(limit);
-    const limitParam = values.length;
-
-    values.push(offset);
-    const offsetParam = values.length;
-
-    const result = await pool.query(
-      `
-      SELECT
+    let query = supabase
+      .from("kararlar")
+      .select(`
         id,
         basvuru_no,
         karar_adi,
@@ -57,25 +26,53 @@ export async function GET(request) {
         ust_kategori,
         alt_kategori,
         slug,
-        cezaevi_mi
-      FROM kararlar
-      ${where.length ? `WHERE ${where.join(" AND ")}` : ""}
-      ORDER BY id DESC
-      LIMIT $${limitParam} OFFSET $${offsetParam}
-      `,
-      values
-    );
+        cezaevi_mi,
+        ai_basvuru_konusu,
+        ai_karar_ozeti,
+        ai_neden_onemli,
+        ai_benzer_basvuruda_dikkat,
+        ai_analiz_model,
+        ai_prompt_versiyon,
+        ai_analiz_at,
+        ai_analiz_durumu
+      `)
+      .order("id", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (kapsam === "cezaevi") {
+      query = query.eq("cezaevi_mi", true);
+    }
+
+    if (q) {
+      const safeQ = q.replaceAll("%", "").replaceAll(",", " ");
+      query = query.or(
+        `basvuru_no.ilike.%${safeQ}%,karar_adi.ilike.%${safeQ}%,basvuru_konusu.ilike.%${safeQ}%,sonuc.ilike.%${safeQ}%,mudahale_iddiasi_aym.ilike.%${safeQ}%`
+      );
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Supabase kararlar hata:", error);
+
+      return NextResponse.json({
+        ok: false,
+        error: error.message || error.details || JSON.stringify(error),
+      });
+    }
 
     return NextResponse.json({
       ok: true,
       kapsam,
-      count: result.rows.length,
-      data: result.rows,
+      count: data?.length || 0,
+      data: data || [],
     });
   } catch (error) {
+    console.error("Kararlar API gerçek hata:", error);
+
     return NextResponse.json({
       ok: false,
-      error: error.message,
+      error: error?.message || JSON.stringify(error),
     });
   }
 }

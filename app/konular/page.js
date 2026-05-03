@@ -1,37 +1,54 @@
-import { cezaeviKategorileri } from "@/data/cezaeviKategorileri";
-import kararlar from "@/data/kararlar.json";
+import Link from "next/link";
+import { Pool } from "pg";
 
-export default function KonularPage() {
-  const temizle = (s) => (s || "").toLocaleLowerCase("tr-TR").trim();
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
 
-  const kategoriIstatistikleri = cezaeviKategorileri.map((kategori) => {
-    const liste = kararlar.filter((x) =>
-      (x.mudahale_iddiasi_aym || "").includes(kategori.aymBaslik)
-    );
+function slugify(value = "") {
+  return value
+    .toLowerCase()
+    .replaceAll("ğ", "g")
+    .replaceAll("ü", "u")
+    .replaceAll("ş", "s")
+    .replaceAll("ı", "i")
+    .replaceAll("ö", "o")
+    .replaceAll("ç", "c")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
-    const ihlal = liste.filter((x) =>
-      temizle(x.sonuc_aym || x.sonuc).includes("ihlal")
-    ).length;
+export default async function KonularPage() {
+  
+  const result = await pool.query(`
+    SELECT
+      ust_kategori,
+      COUNT(*) AS toplam,
+      COUNT(*) FILTER (
+        WHERE sonuc ILIKE '%İhlal%'
+          AND sonuc NOT ILIKE '%İhlal Olmadığı%'
+      ) AS ihlal
+    FROM kararlar
+    WHERE cezaevi_mi = true
+      AND ust_kategori IS NOT NULL
+    GROUP BY ust_kategori
+    ORDER BY toplam DESC;
+  `);
 
-    const oran = liste.length ? ((ihlal / liste.length) * 100).toFixed(1) : "0.0";
+  const kategoriler = result.rows.map((item) => {
+    const toplam = Number(item.toplam || 0);
+    const ihlal = Number(item.ihlal || 0);
+    const oran = toplam ? ((ihlal / toplam) * 100).toFixed(1) : "0.0";
 
     return {
-      ...kategori,
-      toplam: liste.length,
+      baslik: item.ust_kategori,
+      slug: slugify(item.ust_kategori),
+      toplam,
       ihlal,
       oran,
     };
   });
-  const haklar = [
-    ["Telefon Hakkı", "/konular/telefon-hakki"],
-    ["Görüş Hakkı", "/konular/gorus-hakki"],
-    ["Mektup ve Haberleşme", "/konular/mektup-hakki"],
-    ["Sağlık Hakkı", "/konular/saglik-hakki"],
-    ["Disiplin Cezaları", "/konular/disiplin-cezalari"],
-    ["Nakil Talebi", "/konular/nakil-hakki"],
-    ["Açık Cezaevi", "/konular/acik-cezaevi"],
-    ["İnfaz Hâkimliği", "/konular/infaz-hakimligi"],
-  ];
 
   return (
     <main className="min-h-screen bg-[#070b14] text-white">
@@ -44,80 +61,56 @@ export default function KonularPage() {
           </p>
 
           <h1 className="font-serif text-5xl font-semibold tracking-tight md:text-7xl">
-            Haklar
+            Konular
           </h1>
 
           <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
-            Ceza infaz kurumlarında tutuklu ve hükümlülerin en çok karşılaştığı
-            hak başlıklarını inceleyin.
+            Ceza infaz kurumlarında yaşanan hak ihlallerine ilişkin Anayasa
+            Mahkemesi bireysel başvuru kararlarını konu başlıklarına göre
+            inceleyin.
           </p>
 
-          <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {haklar.map(([title, href]) => (
-              <a
-                key={title}
-                href={href}
-                className="group rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition hover:-translate-y-1 hover:border-[#c9a96e]/50 hover:bg-white/[0.07]"
+          <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {kategoriler.map((item) => (
+              <Link
+                key={item.baslik}
+                href={`/konular/${item.slug}`}
+                className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:-translate-y-1 hover:border-[#c9a96e]/50 hover:bg-white/[0.06]"
               >
-                <div className="mb-6 h-1 w-12 rounded-full bg-[#c9a96e]" />
-                <h2 className="font-serif text-2xl font-semibold group-hover:text-[#d9bd83]">
-                  {title}
+                <div className="mb-5 h-1 w-12 rounded-full bg-[#c9a96e]" />
+
+                <h2 className="font-serif text-2xl font-semibold leading-8 group-hover:text-[#d9bd83]">
+                  {item.baslik}
                 </h2>
-                <div className="mt-6 text-sm font-semibold text-[#d9bd83]">
-                  İncele →
+
+                <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs">
+                  <div className="rounded-xl bg-white/[0.05] p-2">
+                    <div className="text-slate-400">Karar</div>
+                    <div className="mt-1 font-semibold text-white">
+                      {item.toplam}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl bg-white/[0.05] p-2">
+                    <div className="text-slate-400">İhlal</div>
+                    <div className="mt-1 font-semibold text-white">
+                      {item.ihlal}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl bg-white/[0.05] p-2">
+                    <div className="text-slate-400">Oran</div>
+                    <div className="mt-1 font-semibold text-white">
+                      %{item.oran}
+                    </div>
+                  </div>
                 </div>
-              </a>
+
+                <div className="mt-5 text-sm font-semibold text-[#d9bd83]">
+                  Kararları Gör →
+                </div>
+              </Link>
             ))}
-          </div>
-
-          <div className="mt-24">
-            <h2 className="font-serif text-4xl font-semibold">
-              AYM Karar Kategorileri
-            </h2>
-
-            <p className="mt-4 max-w-3xl text-slate-300">
-              Anayasa Mahkemesi bireysel başvuru kararlarında ceza infaz
-              kurumlarına ilişkin resmi müdahale iddiası kategorileri.
-            </p>
-
-            <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {kategoriIstatistikleri.map((item) => (
-                <a
-                  key={item.id}
-                  href={`/kategori/${item.slug}`}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-[#c9a96e]/50 hover:bg-white/[0.06]"
-                >
-                  <div className="text-xs tracking-widest text-[#c9a96e] mb-2">
-                    #{item.id}
-                  </div>
-
-                  <div className="text-lg font-semibold leading-7">
-                    {item.baslik}
-                  </div>
-
-<div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs">
-  <div className="rounded-xl bg-white/[0.05] p-2">
-    <div className="text-slate-400">Karar</div>
-    <div className="mt-1 font-semibold text-white">{item.toplam}</div>
-  </div>
-
-  <div className="rounded-xl bg-white/[0.05] p-2">
-    <div className="text-slate-400">İhlal</div>
-    <div className="mt-1 font-semibold text-white">{item.ihlal}</div>
-  </div>
-
-  <div className="rounded-xl bg-white/[0.05] p-2">
-    <div className="text-slate-400">Oran</div>
-    <div className="mt-1 font-semibold text-white">%{item.oran}</div>
-  </div>
-</div>
-
-                  <div className="mt-4 text-sm text-[#d9bd83]">
-                    Kararları Gör →
-                  </div>
-                </a>
-              ))}
-            </div>
           </div>
         </div>
       </section>

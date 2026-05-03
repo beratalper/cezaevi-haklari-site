@@ -18,7 +18,7 @@ export default function IletisimPage() {
           <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6">
             <p className="text-slate-400">E-posta</p>
             <p className="break-words overflow-hidden mt-2 text-lg font-semibold text-[#d9bd83]">
-              iletisim.cezaevihaklari@cezaevihaklari.com
+              iletisim.cezaevihaklari@gmail.com
             </p>
           </div>
 

@@ -15,20 +15,25 @@ export async function GET(request, { params }) {
     const result = await pool.query(
       `
       SELECT
-        id,
-        basvuru_no,
-        karar_adi,
-        karar_tarihi,
-        sonuc,
-        basvuru_konusu,
-        metin,
-        mudahale_iddiasi_aym,
-        sonuc_aym,
-        ust_kategori,
-        alt_kategori,
-        slug
-      FROM kararlar
-      WHERE slug = $1
+  id,
+  basvuru_no,
+  karar_adi,
+  karar_tarihi,
+  sonuc,
+  basvuru_konusu,
+  mudahale_iddiasi_aym,
+  sonuc_aym,
+  ust_kategori,
+  alt_kategori,
+  slug,
+  cezaevi_mi,
+  ai_basvuru_konusu,
+  ai_karar_ozeti,
+  ai_neden_onemli,
+  ai_benzer_basvuruda_dikkat,
+  ai_prompt_versiyon
+FROM kararlar
+WHERE slug = $1
          OR REPLACE(basvuru_no, '/', '-') = $1
       LIMIT 1
       `,

@@ -29,6 +29,21 @@ async function getKararlar({
   return json.data || [];
 }
 
+const kategoriler = [
+  "Telefon, mektup ve haberleşme",
+  "Kötü muamele / işkence",
+  "Ziyaret ve aile hayatı",
+  "Disiplin cezaları",
+  "Yayın, kitap, ifade özgürlüğü",
+  "Avukat görüşü ve savunma",
+  "Tahliye, infaz hesabı, koşullu salıverilme",
+  "Sağlık ve tedavi",
+  "Yaşam hakkı / ölüm / intihar",
+  "Diğer cezaevi hakları",
+  "Arama, mahremiyet ve özel hayat",
+  "Nakil, sevk, infaz koşulları",
+];
+
 const sorunGruplari = [
   {
     baslik: "Haberleşme ve Yayın",
@@ -167,6 +182,7 @@ function KararlarContent() {
   const [page, setPage] = useState(1);
   const [sonucFilter, setSonucFilter] = useState("Tümü");
   const [aktifSorun, setAktifSorun] = useState(null);
+  const [aktifKategori, setAktifKategori] = useState(null);
 
   const [query, setQuery] = useState(searchParams.get("arama") || "");
   const [aramaKapsami, setAramaKapsami] = useState(
@@ -231,6 +247,7 @@ function KararlarContent() {
     setQuery("");
     setSonucFilter("Tümü");
     setAktifSorun(null);
+    setAktifKategori(null); // 🔥 EKLE
     setPage(1);
     router.replace("/kararlar");
   }
@@ -240,6 +257,10 @@ function KararlarContent() {
   const filtered = aktifData.filter((item) => {
     const q = query.toLowerCase().trim();
     const sonuc = item.sonuc || "";
+
+    const kategoriMatch = aktifKategori
+      ? item.ust_kategori === aktifKategori
+      : true;
 
     const textMatch = aktifSorun ? true : aramaEslesir(item, query);
 
@@ -264,7 +285,7 @@ function KararlarContent() {
       sonucMatch = sonuc.includes("Düşme");
     }
 
-    return textMatch && sonucMatch && sorunEslesir(item, aktifSorun);
+    return textMatch && sonucMatch && sorunEslesir(item, aktifSorun) && kategoriMatch;
   });
 
   const stats = useMemo(() => {
@@ -654,7 +675,7 @@ function KararlarContent() {
               <div className="rounded-3xl border border-white/10 bg-black/20 p-4 shadow-2xl shadow-black/20 backdrop-blur">
                 <div className="mb-4">
                   <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[#c9a96e]">
-                    Sık Aranan Sorunlar
+                    Kategoriler
                   </div>
                   <p className="mt-2 text-xs leading-5 text-slate-400">
                     Yaşanan soruna göre hızlı filtreleyin.
@@ -671,52 +692,28 @@ function KararlarContent() {
                 )}
 
                 <div className="space-y-4">
-                  {sorunGruplari.map((grup) => (
-                    <div
-                      key={grup.baslik}
-                      className="rounded-2xl border border-white/10 bg-white/[0.035] p-3"
-                    >
-                      <h3 className="text-xs font-semibold text-white">
-                        {grup.baslik}
-                      </h3>
+                  <div className="space-y-2">
+                    {kategoriler.map((kat) => {
+                      const aktifMi = aktifKategori === kat;
 
-                      <div className="mt-3 flex flex-wrap gap-2 lg:flex-col">
-                        {grup.items.map(([label, keyword]) => {
-                          const aktifMi =
-                            aktifSorun === keyword ||
-                            query.toLowerCase() === keyword.toLowerCase();
-
-                          return (
-                            <button
-                              key={label}
-                              onClick={() => {
-                                setAramaKapsami("cezaevi");
-
-                                if (
-                                  keyword === "uzak_sevk" ||
-                                  keyword === "nakil_araci"
-                                ) {
-                                  setAktifSorun(keyword);
-                                  setQuery(label);
-                                } else {
-                                  setAktifSorun(null);
-                                  setQuery(keyword);
-                                }
-
-                                setPage(1);
-                              }}
-                              className={`rounded-xl border px-3 py-2 text-left text-xs font-medium transition hover:-translate-y-0.5 ${aktifMi
-                                ? "border-[#c9a96e]/70 bg-[#c9a96e]/15 text-[#f3d99b]"
-                                : "border-white/10 bg-white/5 text-slate-300 hover:border-[#c9a96e]/60 hover:text-[#d9bd83]"
-                                }`}
-                            >
-                              {label}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
+                      return (
+                        <button
+                          key={kat}
+                          onClick={() => {
+                            setAktifKategori(kat);
+                            setQuery("");
+                            setPage(1);
+                          }}
+                          className={`w-full rounded-xl border px-3 py-2 text-left text-xs font-medium ${aktifMi
+                            ? "border-[#c9a96e]/70 bg-[#c9a96e]/15 text-[#f3d99b]"
+                            : "border-white/10 bg-white/5 text-slate-300 hover:border-[#c9a96e]/60"
+                            }`}
+                        >
+                          {kat}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </aside>
