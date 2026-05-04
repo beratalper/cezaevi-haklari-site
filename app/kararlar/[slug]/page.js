@@ -149,24 +149,24 @@ Teşekkürler.
             </p>
           </div>
 
-          <div className="mt-6 flex items-center justify-between gap-6">
+          <div className="mt-6 flex flex-col items-end gap-3">
 
-            {/* SOL TARAF */}
-            <div>
-
+            {/* Yanlış sınıflandırma */}
+            <div className="w-full max-w-xs">
               <ReportClassificationButton item={item} />
-              <p className="text-sm text-slate-400">
-                Bu kararın yanlış sınıflandırıldığını düşünüyorsanız bize bildirin.
+
+              <p className="mt-1 text-xs text-slate-400 text-right">
+                Kararın yanlış sınıflandırıldığını düşünüyorsanız bildirin.
               </p>
             </div>
 
-            {/* SAĞ TARAF */}
+            {/* Kararın tam metni */}
             {item?.basvuru_no && (
               <a
                 href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${item.basvuru_no}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg border border-[#c9a96e]/70 bg-[#c9a96e]/10 px-5 py-2.5 text-sm font-semibold text-[#f3d99b] transition hover:-translate-y-0.5 hover:bg-[#c9a96e]/20"
+                className="w-full max-w-xs inline-flex items-center justify-center gap-2 rounded-lg border border-[#c9a96e]/70 bg-[#c9a96e]/10 px-5 py-2.5 text-sm font-semibold text-[#f3d99b] transition hover:-translate-y-0.5 hover:bg-[#c9a96e]/20"
               >
                 Kararın tam metni →
               </a>
