@@ -194,7 +194,18 @@ function KararlarContent() {
   const [tumLoading, setTumLoading] = useState(false);
 
   const [cezaeviData, setCezaeviData] = useState([]);
-  const [cezaeviLoading, setCezaeviLoading] = useState(true);
+  const [cezaeviLoading, setCezaeviLoading] = useState(true);  
+  const [debouncedQ, setDebouncedQ] = useState("");
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQ(query);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [query]);
 
   useEffect(() => {
     async function loadCezaeviKararlar() {
@@ -288,13 +299,26 @@ function KararlarContent() {
     return textMatch && sonucMatch && sorunEslesir(item, aktifSorun) && kategoriMatch;
   });
 
+  function kararSonucu(item) {
+    return (
+      item.sonuc_aym ||
+      item.sonuc ||
+      item.karar_sonucu ||
+      ""
+    ).toString();
+  }
+
   const stats = useMemo(() => {
     const toplam = filtered.length;
-    const ihlal = filtered.filter(
-      (item) =>
-        (item.sonuc || "").includes("İhlal") &&
-        !(item.sonuc || "").includes("İhlal Olmadığı")
-    ).length;
+
+    const ihlal = filtered.filter((item) => {
+      const sonuc = kararSonucu(item);
+
+      return (
+        sonuc.includes("İhlal") &&
+        !sonuc.includes("İhlal Olmadığı")
+      );
+    }).length;
 
     const oran = toplam ? Math.round((ihlal / toplam) * 100) : 0;
 
@@ -342,19 +366,7 @@ function KararlarContent() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#c9a96e22,transparent_35%)]" />
 
         <div className="relative mx-auto max-w-7xl">
-          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[#c9a96e]">
-            Bireysel Başvuru Veri Tabanı
-          </p>
 
-          <h1 className="font-serif text-5xl font-semibold tracking-tight md:text-7xl">
-            AYM Kararları
-          </h1>
-
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
-            Ceza infaz kurumlarına ilişkin seçilmiş Anayasa Mahkemesi bireysel
-            başvuru kararlarını müdahale iddiası, karar sonucu ve başvuru
-            numarasına göre inceleyin.
-          </p>
 
           <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_270px]">
 
@@ -585,10 +597,10 @@ function KararlarContent() {
 
                             <span
                               className={`rounded-full border px-3 py-1 text-xs font-semibold ${badgeClass(
-                                item.sonuc
+                                kararSonucu(item)
                               )}`}
                             >
-                              {item.sonuc || "Sonuç belirtilmemiş"}
+                              {kararSonucu(item) || "Sonuç belirtilmemiş"}
                             </span>
                           </div>
 
