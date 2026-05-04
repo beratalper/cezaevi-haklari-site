@@ -1,5 +1,23 @@
 [
   {
+    "id": 16867,
+    "basvuru_no": "2023/8346",
+    "slug": "2023-8346",
+    "url": "https://kararlarbilgibankasi.anayasa.gov.tr/BB/2023/8346",
+    "karar_adi": "ERDOĞAN ERDEM BAŞVURUSU",
+    "karar_tarihi": "9/4/2026",
+    "sonuc": "KABUL EDİLEMEZ",
+    "hak": "ADIL YARGILANMA HAKKI",
+    "basvuru_konusu": "Başvuru, infaz hâkimliğine yapılan başvurunun esasının incelenmemesi nedeniyle adil yargılanma hakkının ihlal edildiği iddiasına ilişkindir.",
+    "metin_uzunlugu": 13096,
+    "kalite": "OK",
+    "hak_ozgurluk_aym": null,
+    "mudahale_iddiasi_aym": null,
+    "sonuc_aym": null,
+    "giderim_aym": null,
+    "cezaeviTipi": "dar"
+  },
+  {
     "id": 16860,
     "basvuru_no": "2022/74582",
     "slug": "2022-74582",
