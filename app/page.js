@@ -1,30 +1,56 @@
 import Link from "next/link";
-import data from "./data/kararlar.json";
+import { Pool } from "pg";
+export const dynamic = "force-dynamic";
 
-function parseDate(dateStr) {
-  if (!dateStr) return new Date(0);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
 
-  const [day, month, year] = dateStr.split("/");
-  return new Date(Number(year), Number(month) - 1, Number(day));
+function slugify(value = "") {
+  return value
+    .toLowerCase()
+    .replaceAll("ğ", "g")
+    .replaceAll("ü", "u")
+    .replaceAll("ş", "s")
+    .replaceAll("ı", "i")
+    .replaceAll("ö", "o")
+    .replaceAll("ç", "c")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
-export default function Home() {
-  const cards = [
-    ["Haberleşme Hakkı", "Mektup, telefon ve haberleşme hakkına ilişkin kararlar.", "/haklar"],
-    ["Aile Hayatı ve Ziyaret Hakkı", "Aile hayatı, açık görüş ve ziyaret hakkı kararları.", "/haklar"],
-    ["İfade Özgürlüğü, Yayın ve Bilgiye Erişim", "Kitap, gazete, süreli yayın ve bilgiye erişim kararları.", "/haklar"],
-    ["Sağlık Hakkı", "Tedavi, hastane sevki ve sağlık hakkı kararları.", "/haklar"],
-    ["Cezaevi Koşulları", "Barınma, hijyen ve fiziksel koşullara ilişkin kararlar.", "/haklar"],
-    ["Kötü Muamele ve Güç Kullanımı", "Güç kullanımı, arama ve kötü muamele iddiaları.", "/haklar"],
-    ["Disiplin Cezaları ve İnfaz Uygulamaları", "Disiplin cezaları ve infaz rejimi kararları.", "/haklar"],
-    ["Nakil ve Sevk İşlemleri", "Cezaevi nakli ve sevk koşullarına ilişkin kararlar.", "/haklar"],
-  ];
+export default async function Home() {
+  const result = await pool.query(`
+  SELECT DISTINCT ust_kategori
+  FROM kararlar
+  WHERE cezaevi_mi = true
+    AND ust_kategori IS NOT NULL
+  ORDER BY ust_kategori
+`);
 
-  const guncelKararlar = data
-    .filter((item) => item.karar_tarihi && item.baslik)
-    .sort((a, b) => parseDate(b.karar_tarihi) - parseDate(a.karar_tarihi))
-    .filter((item) => item.ustKategori && item.altKategori)
-    .slice(0, 6);
+  const cards = result.rows.map((row) => ({
+    title: row.ust_kategori,
+    href: `/konular/${slugify(row.ust_kategori)}`,
+  }));
+
+  const guncelRes = await pool.query(`
+  SELECT
+    basvuru_no,
+    karar_adi AS baslik,
+    karar_tarihi,
+    basvuru_konusu AS konu,
+    ust_kategori AS "ustKategori",
+    alt_kategori AS "altKategori"
+  FROM kararlar
+  WHERE cezaevi_mi = true
+    AND karar_adi IS NOT NULL
+    AND karar_tarihi ~ '^([0-9]{1,2})/([0-9]{1,2})/(201[0-9]|202[0-6])$'
+  ORDER BY to_date(karar_tarihi::text, 'DD/MM/YYYY') DESC NULLS LAST
+  LIMIT 6
+`);
+
+  const guncelKararlar = guncelRes.rows;
 
   return (
     <main className="min-h-screen bg-[#070b14] text-white">
@@ -34,13 +60,13 @@ export default function Home() {
         <div className="relative mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2">
           <div>
             <h1 className="text-5xl font-semibold leading-tight md:text-7xl">
-              Cezaevi hak ihlallerine ilişkin{" "}
+              Cezaevlerinde yaşanan hak ihlallerine ilişkin{" "}
               <span className="text-[#d9bd83]">AYM karar arşivi</span>
             </h1>
 
             <p className="mt-10 max-w-2xl text-lg leading-8 text-slate-300">
-              Ceza infaz kurumlarına ilişkin bireysel başvuru kararlarını konu,
-              sonuç, başvuru numarası ve hak kategorisine göre inceleyin.
+              Ceza infaz kurumlarında yaşanan hak ihlalleriyle ilgili Anayasa Mahkemesi tarafından verilen
+              bireysel başvuru kararlarını konu, özet, önem ve benzer başvurularda dikkat edilmesi gereken noktalar açısından inceleyin.
             </p>
           </div>
 
@@ -65,8 +91,8 @@ export default function Home() {
             </div>
 
             <div className="mt-8 rounded-2xl border border-[#c9a96e]/20 bg-[#c9a96e]/10 p-5 text-sm leading-7 text-slate-300">
-              Güncel içtihat veri tabanı ile cezaevlerinde yaşanan hak
-              ihlallerine ilişkin kararlar sade, hızlı ve anlaşılır konu
+              Güncel içtihat veri tabanı ile hem tüm bireysel başvuru kararları
+              hem de özellikle cezaevlerinde yaşanan hak ihlallerine dair kararlar sade, hızlı ve anlaşılır konu
               başlıklarıyla sunulur.
             </div>
           </div>
@@ -95,9 +121,11 @@ export default function Home() {
                     {item.ustKategori || "Cezaevi Hakları"}
                   </span>
 
-                  <span className="rounded-full border border-white/10 px-3 py-1 text-white/60">
-                    {item.altKategori || "İlgili Karar"}
-                  </span>
+                  {item.altKategori && item.altKategori !== item.ustKategori && (
+                    <span className="rounded-full border border-white/10 px-3 py-1 text-white/60">
+                      {item.altKategori}
+                    </span>
+                  )}
                 </div>
 
                 <h3 className="text-2xl font-bold leading-snug text-white group-hover:text-amber-300">
@@ -129,19 +157,19 @@ export default function Home() {
         </div>
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {cards.map(([title, text, href]) => (
+          {cards.map((item) => (
             <Link
-              key={title}
-              href={href}
+              key={item.title}
+              href={item.href}
               className="group rounded-3xl border border-white/10 bg-white/[0.03] p-6 transition hover:-translate-y-1 hover:border-[#c9a96e]/50 hover:bg-white/[0.06]"
             >
               <div className="mb-5 h-1 w-12 rounded-full bg-[#c9a96e]" />
 
               <h3 className="text-xl font-semibold group-hover:text-[#d9bd83]">
-                {title}
+                {item.title}
               </h3>
 
-              <p className="mt-3 text-sm leading-7 text-slate-400">{text}</p>
+              <p className="mt-3 text-sm leading-7 text-slate-400">{item.text}</p>
             </Link>
           ))}
         </div>

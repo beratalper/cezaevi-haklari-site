@@ -1,3 +1,4 @@
+import ReportClassificationButton from "../../../components/ReportClassificationButton";
 import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
@@ -57,6 +58,20 @@ export default async function KararDetay({ params }) {
       </main>
     );
   }
+
+  const mailBody = encodeURIComponent(`
+Merhaba,
+
+Bu kararın cezaevi hak ihlali kapsamında olmadığını düşünüyorum.
+
+Karar: ${item.karar_adi}
+Başvuru No: ${item.basvuru_no}
+Sayfa: https://cezaevihaklari.com/kararlar/${item.basvuru_no.replace("/", "-")}
+
+Teşekkürler.
+`);
+
+  const subject = encodeURIComponent("Yanlış kategori bildirimi");
 
   return (
     <main className="min-h-screen bg-[#070b14] p-10 text-white">
@@ -134,8 +149,19 @@ export default async function KararDetay({ params }) {
             </p>
           </div>
 
-          {item?.basvuru_no && (
-            <div className="mt-6 flex justify-end">
+          <div className="mt-6 flex items-center justify-between gap-6">
+
+            {/* SOL TARAF */}
+            <div>
+
+              <ReportClassificationButton item={item} />
+              <p className="text-sm text-slate-400">
+                Bu kararın yanlış sınıflandırıldığını düşünüyorsanız bize bildirin.
+              </p>
+            </div>
+
+            {/* SAĞ TARAF */}
+            {item?.basvuru_no && (
               <a
                 href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${item.basvuru_no}`}
                 target="_blank"
@@ -144,8 +170,8 @@ export default async function KararDetay({ params }) {
               >
                 Kararın tam metni →
               </a>
-            </div>
-          )}
+            )}
+          </div>
 
           <BilgilendirmeAlani />
         </div>
