@@ -50,16 +50,16 @@ export default function ReportClassificationButton({ item }) {
 
       {/* POPUP */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="w-full max-w-md rounded-2xl bg-[#0b0f1a] p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
             
             {!success ? (
               <>
-                <h2 className="text-lg font-semibold text-white">
+                <h2 className="text-lg font-semibold text-gray-900">
                   Bildirim gönder
                 </h2>
 
-                <p className="mt-2 text-sm text-slate-400">
+                <p className="mt-2 text-sm text-gray-600">
                   Bu kararın cezaevi hak ihlali kapsamında olmadığını düşünüyorsanız bize bildirebilirsiniz.
                 </p>
 
@@ -67,14 +67,14 @@ export default function ReportClassificationButton({ item }) {
                   placeholder="Eklemek istediğiniz not (opsiyonel)"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="mt-4 w-full rounded-lg border border-white/10 bg-black/30 p-3 text-sm text-white outline-none"
+                  className="mt-4 w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 outline-none focus:border-[#c9a96e] focus:ring-1 focus:ring-[#c9a96e]"
                   rows={4}
                 />
 
                 <div className="mt-6 flex justify-end gap-3">
                   <button
                     onClick={() => setOpen(false)}
-                    className="text-sm text-slate-400 hover:text-white"
+                    className="text-sm text-gray-500 hover:text-gray-800"
                   >
                     İptal
                   </button>
@@ -82,7 +82,7 @@ export default function ReportClassificationButton({ item }) {
                   <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-50"
+                    className="rounded-lg bg-[#c9a96e] px-4 py-2 text-sm font-semibold text-black hover:bg-[#d9bd83]"
                   >
                     {loading ? "Gönderiliyor..." : "Gönder"}
                   </button>
@@ -94,7 +94,7 @@ export default function ReportClassificationButton({ item }) {
                   Teşekkürler 🙏
                 </h2>
 
-                <p className="mt-2 text-sm text-slate-400">
+                <p className="mt-2 text-sm text-gray-600">
                   Bildiriminiz alındı.
                 </p>
 
