@@ -34,7 +34,7 @@ ${message || "-"}
 `;
 
         const resendResult = await resend.emails.send({
-            from: "Cezaevi Hakları <bildirim@cezaevihaklari.com>",
+            from: "Cezaevi Hakları <onboarding@resend.dev>",
             to: ["bakosterit@gmail.com"],
             subject: "Yanlış kategori bildirimi",
             text,
