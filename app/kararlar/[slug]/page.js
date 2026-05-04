@@ -46,6 +46,49 @@ function BilgilendirmeAlani() {
   );
 }
 
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const item = await getKarar(slug);
+
+  if (!item) {
+    return {
+      title: "Karar bulunamadı | Cezaevi Hakları",
+      description: "Aranan Anayasa Mahkemesi kararı bulunamadı.",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  const basvuruNoSlug = item.basvuru_no?.replace("/", "-");
+
+  const title = `${item.karar_adi} | AYM Kararı`;
+
+  const description =
+    item.ai_karar_ozeti ||
+    item.ai_basvuru_konusu ||
+    item.basvuru_konusu ||
+    `${item.karar_adi} başvurusu hakkında Anayasa Mahkemesi kararı.`;
+
+  return {
+    title,
+    description: description.slice(0, 160),
+
+    alternates: {
+      canonical: `https://cezaevihaklari.com/kararlar/${basvuruNoSlug}`,
+    },
+
+    openGraph: {
+      title,
+      description: description.slice(0, 160),
+      url: `https://cezaevihaklari.com/kararlar/${basvuruNoSlug}`,
+      siteName: "Cezaevi Hakları",
+      type: "article",
+    },
+  };
+}
+
 export default async function KararDetay({ params }) {
   const { slug } = await params;
 
@@ -113,7 +156,7 @@ Teşekkürler.
             </h3>
 
             <p className="mt-4 text-sm leading-7 text-slate-300">
-              {item.ai_basvuru_konusu || item.basvuru_konusu || "Bilgi bulunamadı"}
+              {item.basvuru_konusu || item.ai_basvuru_konusu || "Bilgi bulunamadı"}
             </p>
           </div>
 

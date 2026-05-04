@@ -52,6 +52,16 @@ export default async function Home() {
 
   const guncelKararlar = guncelRes.rows;
 
+  const seoRes = await pool.query(`
+  SELECT basvuru_no, karar_adi AS baslik
+  FROM kararlar
+  WHERE cezaevi_mi = true
+  ORDER BY id DESC
+  LIMIT 200
+`);
+
+  const seoKararlar = seoRes.rows;
+
   return (
     <main className="min-h-screen bg-[#070b14] text-white">
       <section className="relative overflow-hidden border-b border-white/10 px-6 py-28">
@@ -187,6 +197,18 @@ export default async function Home() {
           </p>
         </div>
       </section>
+
+      <div style={{ display: "none" }}>
+        {seoKararlar.map((item) => (
+          <a
+            key={item.basvuru_no}
+            href={`/kararlar/${item.basvuru_no.replace("/", "-")}`}
+          >
+            {item.baslik}
+          </a>
+        ))}
+      </div>
+
     </main>
   );
 }
