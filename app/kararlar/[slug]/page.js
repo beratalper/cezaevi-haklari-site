@@ -131,7 +131,7 @@ Teşekkürler.
       </div>
 
       <h1 className="text-center text-4xl font-semibold">
-        {item.karar_adi} ({item.basvuru_no})
+        {item.karar_adi}
       </h1>
 
       <div className="mt-6 flex flex-wrap justify-center gap-3 text-sm text-slate-400">
