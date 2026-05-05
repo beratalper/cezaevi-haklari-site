@@ -36,18 +36,23 @@ export default async function Home() {
 
   const guncelRes = await pool.query(`
   SELECT
-    basvuru_no,
-    karar_adi AS baslik,
-    karar_tarihi,
-    basvuru_konusu AS konu,
-    ust_kategori AS "ustKategori",
-    alt_kategori AS "altKategori"
-  FROM kararlar
-  WHERE cezaevi_mi = true
-    AND karar_adi IS NOT NULL
-    AND karar_tarihi ~ '^([0-9]{1,2})/([0-9]{1,2})/(201[0-9]|202[0-6])$'
-  ORDER BY to_date(karar_tarihi::text, 'DD/MM/YYYY') DESC NULLS LAST
-  LIMIT 6
+  basvuru_no,
+  karar_adi AS baslik,
+  karar_tarihi,
+  basvuru_konusu AS konu,
+  ust_kategori AS "ustKategori",
+  alt_kategori AS "altKategori"
+FROM kararlar
+WHERE cezaevi_mi = true
+  AND karar_adi IS NOT NULL
+ORDER BY 
+  CASE 
+    WHEN karar_tarihi ~ '^[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}$'
+    THEN to_date(karar_tarihi, 'DD/MM/YYYY')
+    ELSE NULL
+  END DESC NULLS LAST,
+  id DESC
+LIMIT 6
 `);
 
   const guncelKararlar = guncelRes.rows;

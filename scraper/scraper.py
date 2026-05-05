@@ -86,6 +86,7 @@ def cut_decision_text(raw_text):
     start_markers = [
         "TÜRKİYE CUMHURİYETİ ANAYASA MAHKEMESİ",
         "REPUBLIC OF TURKEY CONSTITUTIONAL COURT",
+        "ANAYASA MAHKEMES",
     ]
 
     starts = []
@@ -93,11 +94,12 @@ def cut_decision_text(raw_text):
         pos = text.find(marker)
         if pos != -1:
             starts.append(pos)
+    # en alttaki marker'? kullanaca??z
 
     if not starts:
         return ""
 
-    text = text[min(starts):]
+    text = text[max(starts):]
 
     end_markers = [
         "I. KARAR KİMLİK BİLGİLERİ",
