@@ -38,6 +38,7 @@ export default async function Home() {
   SELECT
   basvuru_no,
   karar_adi AS baslik,
+  COALESCE(bilgi_formu_karar_tarihi, karar_tarihi) AS karar_tarihi,
   karar_tarihi,
   basvuru_konusu AS konu,
   ust_kategori AS "ustKategori",
@@ -47,8 +48,8 @@ WHERE cezaevi_mi = true
   AND karar_adi IS NOT NULL
 ORDER BY 
   CASE 
-    WHEN karar_tarihi ~ '^[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}$'
-    THEN to_date(karar_tarihi, 'DD/MM/YYYY')
+    WHEN COALESCE(bilgi_formu_karar_tarihi, karar_tarihi) ~ '^[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}$'
+    THEN to_date(COALESCE(bilgi_formu_karar_tarihi, karar_tarihi), 'DD/MM/YYYY')
     ELSE NULL
   END DESC NULLS LAST,
   id DESC

@@ -329,6 +329,7 @@ def save_decision(url, basvuru_no, text, bilgi_formu_text):
         "basvuru_no": basvuru_no,
         "karar_adi": extract_title(text),
         "karar_tarihi": extract_decision_date(text),
+        "bilgi_formu_karar_tarihi": extract_decision_date(bilgi_formu_text),
         "sonuc": sonuc,
         "mudahale_iddiasi_aym": hak,
         "basvuru_konusu": basvuru_konusu,
