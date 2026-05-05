@@ -32,6 +32,27 @@ async function getKarar(slug) {
   }
 }
 
+async function getBenzerKararlar(slug) {
+  try {
+    const headerList = await headers();
+    const host = headerList.get("host");
+    const protocol = host?.includes("localhost") ? "http" : "https";
+
+    const res = await fetch(`${protocol}://${host}/api/kararlar/${slug}/benzer`, {
+      cache: "no-store",
+    });
+
+    const json = await res.json();
+
+    if (!json.ok) return [];
+
+    return json.data || [];
+  } catch (error) {
+    console.error("Benzer kararlar fetch hatası:", error);
+    return [];
+  }
+}
+
 function BilgilendirmeAlani() {
   return (
     <div className="mt-8 mb-10">
@@ -46,9 +67,94 @@ function BilgilendirmeAlani() {
   );
 }
 
+function BenzerKararlar({ item, kararlar }) {
+  if (!kararlar || kararlar.length === 0) return null;
+
+  const kategoriBasligi =
+    item.alt_kategori && item.alt_kategori !== item.ust_kategori
+      ? `${item.ust_kategori} / ${item.alt_kategori}`
+      : item.alt_kategori || item.ust_kategori;
+
+  const baslik = kategoriBasligi
+    ? `${kategoriBasligi} ile ilgili diğer kararlar`
+    : "Benzer kararlar";
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#0d1320] p-6">
+      <h3 className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
+        {baslik}
+      </h3>
+
+      <div className="mt-4 space-y-3">
+        {kararlar.map((karar) => (
+          <a
+            key={karar.id}
+            href={`/kararlar/${karar.slug || karar.basvuru_no.replace("/", "-")}`}
+            className="block rounded-xl border border-white/10 bg-white/[0.03] p-4 transition hover:border-[#c9a96e]/50 hover:bg-white/[0.06]"
+          >
+            <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+              <div className="text-sm font-medium text-slate-100">
+                {karar.karar_adi}
+              </div>
+
+              <div className="flex shrink-0 flex-wrap gap-2 text-xs text-slate-400 md:justify-end">
+                <span>Başvuru No: {karar.basvuru_no}</span>
+
+                {karar.karar_tarihi && (
+                  <span>Karar Tarihi: {karar.karar_tarihi}</span>
+                )}
+              </div>
+            </div>
+
+            {karar.basvuru_konusu && (
+              <p className="mt-3 text-sm leading-6 text-slate-400">
+                {karar.basvuru_konusu}
+              </p>
+            )}
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function IcLinklemeAlani({ item }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#0d1320] p-6">
+      <h3 className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
+        Benzer kararlar ve ilgili konular
+      </h3>
+
+      <div className="mt-4 flex flex-wrap gap-3">
+        <a
+          href="/kararlar?etiket=kotu-muamele"
+          className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-slate-300 transition hover:border-[#c9a96e]/50 hover:text-[#f3d99b]"
+        >
+          Kötü muamele kararları
+        </a>
+
+        <a
+          href="/kararlar?etiket=saglik-hakki"
+          className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-slate-300 transition hover:border-[#c9a96e]/50 hover:text-[#f3d99b]"
+        >
+          Sağlık hakkı kararları
+        </a>
+
+        <a
+          href="/kararlar?etiket=cezaevi"
+          className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-slate-300 transition hover:border-[#c9a96e]/50 hover:text-[#f3d99b]"
+        >
+          Cezaevi kararları
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const item = await getKarar(slug);
+  const benzerKararlar = await getBenzerKararlar(slug);
 
   if (!item) {
     return {
@@ -93,6 +199,7 @@ export default async function KararDetay({ params }) {
   const { slug } = await params;
 
   const item = await getKarar(slug);
+  const benzerKararlar = await getBenzerKararlar(slug);
 
   if (!item) {
     return (
@@ -217,6 +324,7 @@ Teşekkürler.
           </div>
 
           <BilgilendirmeAlani />
+          <BenzerKararlar item={item} kararlar={benzerKararlar} />
         </div>
       </div>
     </main>
