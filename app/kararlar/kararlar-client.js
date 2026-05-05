@@ -282,7 +282,6 @@ function KararlarContent() {
   const aktifData = aramaKapsami === "tum" ? tumData : cezaeviData;
 
   const filtered = aktifData.filter((item) => {
-    const q = query.toLowerCase().trim();
     const sonuc = item.sonuc || "";
 
     const kategoriMatch = aktifKategori
@@ -315,6 +314,33 @@ function KararlarContent() {
     return textMatch && sonucMatch && sorunEslesir(item, aktifSorun) && kategoriMatch;
   });
 
+  const sirali = [...filtered].sort((a, b) => {
+    const getDate = (item) => {
+      const raw = item.bilgi_formu_karar_tarihi || item.karar_tarihi;
+
+      if (!raw) return null;
+
+      const parts = raw.split("/");
+      if (parts.length !== 3) return null;
+
+      const [d, m, y] = parts.map(Number);
+
+      if (!d || !m || !y) return null;
+      if (y < 2012 || y > new Date().getFullYear()) return null;
+
+      return new Date(y, m - 1, d);
+    };
+
+    const dateA = getDate(a);
+    const dateB = getDate(b);
+
+    if (dateA && dateB) return dateB - dateA;
+    if (dateA) return -1;
+    if (dateB) return 1;
+
+    return 0;
+  });
+
   function kararSonucu(item) {
     return (
       item.sonuc_aym ||
@@ -342,7 +368,7 @@ function KararlarContent() {
   }, [filtered]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-  const paginated = filtered.slice((page - 1) * perPage, page * perPage);
+  const paginated = sirali.slice((page - 1) * perPage, page * perPage);
 
   function badgeClass(sonuc = "") {
     if (sonuc.includes("İhlal Olmadığı"))
