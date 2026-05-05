@@ -1,0 +1,15 @@
+
+Sayfa aralığı: 1-10
+Yeni bulunan link: 0
+Kaydedilen karar: 0
+Atlanan/zaten var: 0
+Hata/boş: 0
+
+DB:
+C:\Projects\cezaevi-haklari-site\db\aym_kararlar.db
+
+TXT:
+C:\Projects\cezaevi-haklari-site\clean_text
+
+Link listesi:
+C:\Projects\cezaevi-haklari-site\reports\v4_guncel_yeni_linkler.txt

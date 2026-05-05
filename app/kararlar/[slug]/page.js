@@ -67,8 +67,8 @@ export async function generateMetadata({ params }) {
 
   const description =
     item.ai_karar_ozeti ||
-    item.ai_basvuru_konusu ||
     item.basvuru_konusu ||
+    item.ai_basvuru_konusu ||
     `${item.karar_adi} başvurusu hakkında Anayasa Mahkemesi kararı.`;
 
   return {
@@ -76,13 +76,13 @@ export async function generateMetadata({ params }) {
     description: description.slice(0, 160),
 
     alternates: {
-      canonical: `https://cezaevihaklari.com/kararlar/${basvuruNoSlug}`,
+      canonical: `https://cezaevihaklari.com/kararlar/${slug}`,
     },
 
     openGraph: {
       title,
       description: description.slice(0, 160),
-      url: `https://cezaevihaklari.com/kararlar/${basvuruNoSlug}`,
+      url: `https://cezaevihaklari.com/kararlar/${slug}`,
       siteName: "Cezaevi Hakları",
       type: "article",
     },
@@ -130,8 +130,8 @@ Teşekkürler.
         />
       </div>
 
-      <h1 className="text-center text-4xl font-semibold leading-tight md:text-5xl">
-        {item.karar_adi}
+      <h1 className="text-center text-4xl font-semibold">
+        {item.karar_adi} ({item.basvuru_no})
       </h1>
 
       <div className="mt-6 flex flex-wrap justify-center gap-3 text-sm text-slate-400">
