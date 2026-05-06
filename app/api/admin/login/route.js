@@ -5,6 +5,7 @@ export async function POST(req) {
     const formData = await req.formData();
 
     const password = formData.get("password");
+    const next = formData.get("next") || "/admin";
 
     if (
       !password ||
@@ -16,7 +17,7 @@ export async function POST(req) {
     }
 
     const response = NextResponse.redirect(
-      new URL("/admin", req.url)
+      new URL(next, req.url)
     );
 
     response.cookies.set("admin_auth", password, {

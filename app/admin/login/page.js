@@ -1,6 +1,9 @@
 export const dynamic = "force-dynamic";
 
-export default function AdminLoginPage() {
+export default async function AdminLoginPage({ searchParams }) {
+  const sp = await searchParams;
+  const next = sp?.next || "/admin";
+
   return (
     <main className="min-h-screen bg-[#070b14] p-10 text-white">
       <div className="mx-auto max-w-md rounded-2xl border border-white/10 bg-[#0d1320] p-6">
@@ -13,6 +16,8 @@ export default function AdminLoginPage() {
           method="POST"
           className="mt-8 space-y-5"
         >
+          <input type="hidden" name="next" value={next} />
+
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-300">
               Şifre
