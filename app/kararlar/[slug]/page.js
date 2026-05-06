@@ -200,9 +200,9 @@ export default async function KararDetay({ params, searchParams }) {
   const sp = await searchParams;
   const adminSecret = sp?.secret;
   const adminYetkili =
-  Boolean(process.env.ADMIN_SECRET) &&
-  Boolean(secret) &&
-  secret === process.env.ADMIN_SECRET;
+    Boolean(process.env.ADMIN_SECRET) &&
+    Boolean(adminSecret) &&
+    adminSecret === process.env.ADMIN_SECRET;
 
   const item = await getKarar(slug);
   const benzerKararlar = await getBenzerKararlar(slug);
