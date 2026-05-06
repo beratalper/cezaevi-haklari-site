@@ -297,16 +297,7 @@ function KararlarContent() {
     } else if (sonucFilter === "İhlal Olmadığı") {
       sonucMatch = sonuc.includes("İhlal Olmadığı");
     } else if (sonucFilter === "Kabul Edilemezlik") {
-      sonucMatch =
-        sonuc.includes("Açıkça Dayanaktan Yoksunluk") ||
-        sonuc.includes("Başvuru Yollarının Tüketilmemesi") ||
-        sonuc.includes("Süre Aşımı") ||
-        sonuc.includes("Kişi Bakımından Yetkisizlik") ||
-        sonuc.includes("Konu Bakımından Yetkisizlik") ||
-        sonuc.includes("Zaman Bakımından Yetkisizlik") ||
-        sonuc.includes("Anayasal ve Kişisel Önemin Olmaması") ||
-        sonuc.includes("Başvurunun Reddi") ||
-        sonuc.includes("İdari Redde İtirazın Reddi");
+      sonucMatch = kabulEdilemezlikSonucuMu(sonuc);
     } else if (sonucFilter === "Düşme") {
       sonucMatch = sonuc.includes("Düşme");
     }
@@ -350,6 +341,25 @@ function KararlarContent() {
     ).toString();
   }
 
+  function kabulEdilemezlikSonucuMu(sonuc = "") {
+    return (
+      sonuc.includes("Açıkça Dayanaktan Yoksunluk") ||
+      sonuc.includes("Anayasal ve Kişisel Önemin Olmaması") ||
+      sonuc.includes("Başvuru Yollarının Tüketilmemesi") ||
+      sonuc.includes("Başvurunun Reddi") ||
+      sonuc.includes("Düşme") ||
+      sonuc.includes("İdari Redde İtirazın Reddi") ||
+      sonuc.includes("İncelenmesine Yer Olmadığı") ||
+      sonuc.includes("İşlemden Kaldırılma") ||
+      sonuc.includes("Kişi Bakımından Yetkisizlik") ||
+      sonuc.includes("Konu Bakımından Yetkisizlik") ||
+      sonuc.includes("Mahkemenin Yetkisizliği") ||
+      sonuc.includes("Süre Aşımı") ||
+      sonuc.includes("Yer Bakımından Yetkisizlik") ||
+      sonuc.includes("Zaman Bakımından Yetkisizlik")
+    );
+  }
+
   const stats = useMemo(() => {
     const toplam = filtered.length;
 
@@ -362,9 +372,33 @@ function KararlarContent() {
       );
     }).length;
 
-    const oran = toplam ? Math.round((ihlal / toplam) * 100) : 0;
+    const ihlalOlmadigi = filtered.filter((item) => {
+      const sonuc = kararSonucu(item);
 
-    return { toplam, ihlal, oran };
+      return sonuc.includes("İhlal Olmadığı");
+    }).length;
+
+    const kabulEdilemezlik = filtered.filter((item) => {
+      const sonuc = kararSonucu(item);
+
+      return kabulEdilemezlikSonucuMu(sonuc);
+    }).length;
+
+    const yuzde = (value) =>
+      toplam ? ((value / toplam) * 100).toFixed(1) : "0.0";
+
+    return {
+      toplam,
+
+      ihlal,
+      ihlalOrani: yuzde(ihlal),
+
+      ihlalOlmadigi,
+      ihlalOlmadigiOrani: yuzde(ihlalOlmadigi),
+
+      kabulEdilemezlik,
+      kabulEdilemezlikOrani: yuzde(kabulEdilemezlik),
+    };
   }, [filtered]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
@@ -549,42 +583,42 @@ function KararlarContent() {
                 </div>
               </div>
 
-              <div className="mt-8 grid gap-4 md:grid-cols-3">
-                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.075] to-white/[0.025] p-6 shadow-2xl shadow-black/20">
-                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                    Bulunan karar
+              <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.075] to-white/[0.025] p-4 text-center shadow-xl shadow-black/20">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+                    TOPLAM
                   </div>
-                  <div className="mt-3 font-serif text-5xl font-semibold text-[#d9bd83]">
+                  <div className="mt-2 font-serif text-5xl font-semibold text-[#d9bd83]">
                     {stats.toplam}
                   </div>
-                  <div className="mt-3 text-sm text-slate-500">
-                    {aramaKapsami === "tum"
-                      ? "Tüm AYM kararları içinde"
-                      : "Cezaevi kararları içinde"}
+                </div>
+
+                <div className="relative overflow-hidden rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-400/[0.10] to-white/[0.025] p-4 text-center shadow-xl shadow-black/20">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+                    İHLAL KARARI / ORANI
+                  </div>
+                  <div className="mt-2 font-serif text-3xl font-semibold text-emerald-300">
+                    {stats.ihlal} <span className="text-xl">%{stats.ihlalOrani}</span>
                   </div>
                 </div>
 
-                <div className="relative overflow-hidden rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-emerald-400/[0.10] to-white/[0.025] p-6 shadow-2xl shadow-black/20">
-                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                    İhlal içeren karar
+                <div className="relative overflow-hidden rounded-2xl border border-blue-400/20 bg-gradient-to-br from-blue-400/[0.10] to-white/[0.025] p-4 text-center shadow-xl shadow-black/20">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+                    İHLAL OLMADIĞINA DAİR KARAR / ORANI
                   </div>
-                  <div className="mt-3 font-serif text-5xl font-semibold text-emerald-300">
-                    {stats.ihlal}
-                  </div>
-                  <div className="mt-3 text-sm text-slate-500">
-                    Bulunan kararlar içinde ihlal sonucu olanlar
+                  <div className="mt-2 font-serif text-3xl font-semibold text-blue-300">
+                    {stats.ihlalOlmadigi}{" "}
+                    <span className="text-xl">%{stats.ihlalOlmadigiOrani}</span>
                   </div>
                 </div>
 
-                <div className="relative overflow-hidden rounded-3xl border border-[#c9a96e]/20 bg-gradient-to-br from-[#c9a96e]/10 to-white/[0.025] p-6 shadow-2xl shadow-black/20">
-                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                    İhlal oranı
+                <div className="relative overflow-hidden rounded-2xl border border-slate-400/20 bg-gradient-to-br from-slate-400/[0.10] to-white/[0.025] p-4 text-center shadow-xl shadow-black/20">
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+                    KABUL EDİLEMEZLİK VD / ORANI
                   </div>
-                  <div className="mt-3 font-serif text-5xl font-semibold text-[#d9bd83]">
-                    %{stats.oran}
-                  </div>
-                  <div className="mt-3 text-sm text-slate-500">
-                    Filtrelenmiş sonuçlara göre hesaplanır
+                  <div className="mt-2 font-serif text-3xl font-semibold text-slate-300">
+                    {stats.kabulEdilemezlik}{" "}
+                    <span className="text-xl">%{stats.kabulEdilemezlikOrani}</span>
                   </div>
                 </div>
               </div>

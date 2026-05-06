@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Pool } from "pg";
+import InfoModal from "../components/InfoModal";
 export const dynamic = "force-dynamic";
 
 const pool = new Pool({
@@ -72,6 +73,8 @@ LIMIT 6
 
   return (
     <main className="min-h-screen bg-[#070b14] text-white">
+      <InfoModal />
+      
       <section className="relative overflow-hidden border-b border-white/10 px-6 py-28">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#c9a96e22,transparent_35%),radial-gradient(circle_at_bottom_left,#1e3a8a33,transparent_40%)]" />
 
@@ -217,6 +220,7 @@ LIMIT 6
         ))}
       </div>
 
+      <InfoModal />
     </main>
   );
 }

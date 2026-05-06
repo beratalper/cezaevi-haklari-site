@@ -1,7 +1,7 @@
 
 Sayfa aralığı: 1-10
-Yeni bulunan link: 0
-Kaydedilen karar: 0
+Yeni bulunan link: 18
+Kaydedilen karar: 18
 Atlanan/zaten var: 0
 Hata/boş: 0
 
