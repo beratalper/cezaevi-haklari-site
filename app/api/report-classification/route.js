@@ -22,12 +22,22 @@ export async function POST(req) {
             );
         }
 
+        const slug = basvuruNo.replace("/", "-");
+
+        const adminUrl =
+            `https://cezaevihaklari.com/admin/siniflandirma/${slug}?secret=${process.env.ADMIN_SECRET}`;
+
         const text = `
 Yanlış kategori bildirimi
 
 Karar: ${kararAdi}
 Başvuru No: ${basvuruNo}
-Sayfa: ${pageUrl}
+
+Karar sayfası:
+${pageUrl}
+
+Admin düzenleme sayfası:
+${adminUrl}
 
 Kullanıcı notu:
 ${message || "-"}

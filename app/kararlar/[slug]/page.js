@@ -195,8 +195,11 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function KararDetay({ params }) {
+export default async function KararDetay({ params, searchParams }) {
   const { slug } = await params;
+  const sp = await searchParams;
+  const adminSecret = sp?.secret;
+  const adminYetkili = adminSecret === process.env.ADMIN_SECRET;
 
   const item = await getKarar(slug);
   const benzerKararlar = await getBenzerKararlar(slug);
@@ -304,6 +307,14 @@ Teşekkürler.
             {/* Yanlış sınıflandırma */}
             <div className="w-full max-w-xs">
               <ReportClassificationButton item={item} />
+              {adminYetkili && (
+                <a
+                  href={`/admin/siniflandirma/${item.basvuru_no.replace("/", "-")}?secret=${process.env.ADMIN_SECRET}`}
+                  className="mt-2 block rounded-lg border border-amber-300/40 bg-amber-300/10 px-4 py-2 text-center text-xs font-semibold text-amber-300 transition hover:bg-amber-300/20"
+                >
+                  Sınıflandırmayı düzelt
+                </a>
+              )}
 
               <p className="mt-1 text-xs text-slate-400 text-right">
                 Kararın yanlış sınıflandırıldığını düşünüyorsanız bildirin.

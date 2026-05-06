@@ -79,7 +79,7 @@ export default async function KonularPage() {
               >
                 <div className="mb-5 h-1 w-12 rounded-full bg-[#c9a96e]" />
 
-                <h2 className="font-serif text-2xl font-semibold leading-8 group-hover:text-[#d9bd83]">
+                <h2 className="font-serif text-2xl font-semibold leading-8 text-amber-300">
                   {item.baslik}
                 </h2>
 
@@ -106,7 +106,7 @@ export default async function KonularPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 text-sm font-semibold text-[#d9bd83]">
+                <div className="mt-5 text-right text-sm font-semibold text-amber-300">
                   Kararları Gör →
                 </div>
               </Link>

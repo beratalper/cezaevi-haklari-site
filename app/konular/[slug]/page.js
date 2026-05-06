@@ -153,9 +153,6 @@ export default async function KonuPage({ params, searchParams }) {
         </Link>
 
         <div className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.05] p-8 shadow-2xl shadow-black/20">
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#c9a96e]">
-            Cezaevi Hakları Kategorisi
-          </p>
 
           <h1 className="mt-4 font-serif text-4xl font-semibold md:text-6xl">
             {kategori}
@@ -163,13 +160,9 @@ export default async function KonuPage({ params, searchParams }) {
 
           <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300">
             Bu başlık altında Anayasa Mahkemesi bireysel başvuru kararları
-            içinden ceza infaz kurumlarında yaşanan hak ihlallerine ilişkin
-            kararlar listelenmektedir.
+            içinden seçilmiş, ceza infaz kurumlarında yaşanan {kategori} konu başlığına dahil olan
+            hak ihlallerine ilişkin kararlar listelenmektedir.
           </p>
-
-          <div className="mt-6 inline-flex rounded-full border border-[#c9a96e]/30 bg-[#c9a96e]/10 px-4 py-2 text-sm font-semibold text-[#f3d99b]">
-            {kararlar.length} karar
-          </div>
         </div>
 
         <div className="mt-10 grid gap-6">

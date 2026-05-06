@@ -23,17 +23,33 @@ function slugify(value = "") {
 
 export default async function Home() {
   const result = await pool.query(`
-  SELECT DISTINCT ust_kategori
+  SELECT
+    ust_kategori,
+    COUNT(*) AS toplam,
+    COUNT(*) FILTER (
+      WHERE COALESCE(NULLIF(sonuc_aym, ''), sonuc) ILIKE '%İhlal%'
+        AND COALESCE(NULLIF(sonuc_aym, ''), sonuc) NOT ILIKE '%İhlal Olmadığı%'
+    ) AS ihlal
   FROM kararlar
   WHERE cezaevi_mi = true
     AND ust_kategori IS NOT NULL
-  ORDER BY ust_kategori
+  GROUP BY ust_kategori
+  ORDER BY toplam DESC;
 `);
 
-  const cards = result.rows.map((row) => ({
-    title: row.ust_kategori,
-    href: `/konular/${slugify(row.ust_kategori)}`,
-  }));
+  const cards = result.rows.map((row) => {
+    const toplam = Number(row.toplam || 0);
+    const ihlal = Number(row.ihlal || 0);
+    const oran = toplam ? ((ihlal / toplam) * 100).toFixed(1) : "0.0";
+
+    return {
+      title: row.ust_kategori,
+      href: `/konular/${slugify(row.ust_kategori)}`,
+      toplam,
+      ihlal,
+      oran,
+    };
+  });
 
   const guncelRes = await pool.query(`
   SELECT
@@ -74,7 +90,7 @@ LIMIT 6
   return (
     <main className="min-h-screen bg-[#070b14] text-white">
       <InfoModal />
-      
+
       <section className="relative overflow-hidden border-b border-white/10 px-6 py-28">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#c9a96e22,transparent_35%),radial-gradient(circle_at_bottom_left,#1e3a8a33,transparent_40%)]" />
 
@@ -177,20 +193,45 @@ LIMIT 6
           </h2>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {cards.map((item) => (
             <Link
               key={item.title}
               href={item.href}
-              className="group rounded-3xl border border-white/10 bg-white/[0.03] p-6 transition hover:-translate-y-1 hover:border-[#c9a96e]/50 hover:bg-white/[0.06]"
+              className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:-translate-y-1 hover:border-[#c9a96e]/50 hover:bg-white/[0.06]"
             >
               <div className="mb-5 h-1 w-12 rounded-full bg-[#c9a96e]" />
 
-              <h3 className="text-xl font-semibold group-hover:text-[#d9bd83]">
+              <h3 className="font-serif text-2xl font-semibold leading-8 text-amber-300">
                 {item.title}
               </h3>
 
-              <p className="mt-3 text-sm leading-7 text-slate-400">{item.text}</p>
+              <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs">
+                <div className="rounded-xl bg-white/[0.05] p-2">
+                  <div className="text-slate-400">Karar</div>
+                  <div className="mt-1 font-semibold text-white">
+                    {item.toplam}
+                  </div>
+                </div>
+
+                <div className="rounded-xl bg-white/[0.05] p-2">
+                  <div className="text-slate-400">İhlal</div>
+                  <div className="mt-1 font-semibold text-white">
+                    {item.ihlal}
+                  </div>
+                </div>
+
+                <div className="rounded-xl bg-white/[0.05] p-2">
+                  <div className="text-slate-400">Oran</div>
+                  <div className="mt-1 font-semibold text-white">
+                    %{item.oran}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 text-right text-sm font-semibold text-amber-300">
+                Kararları Gör →
+              </div>
             </Link>
           ))}
         </div>

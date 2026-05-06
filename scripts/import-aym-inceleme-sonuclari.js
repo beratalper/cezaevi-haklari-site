@@ -8,7 +8,7 @@ const supabase = createClient(
     process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-const LIMIT = 1000;
+const LIMIT = 2000;
 
 function clean(text = "") {
     return text.replace(/\s+/g, " ").trim();
