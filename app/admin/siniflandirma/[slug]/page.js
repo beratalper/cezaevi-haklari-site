@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
@@ -11,18 +12,26 @@ export default async function AdminSiniflandirmaPage({
     params,
     searchParams,
 }) {
-    const { slug } = await params;
-    const sp = await searchParams;
 
-    const secret = sp?.secret;
+    const cookieStore = await cookies();
 
-    if (secret !== process.env.ADMIN_SECRET) {
+    const adminAuth =
+        cookieStore.get("admin_auth")?.value;
+
+    const yetkili =
+        Boolean(process.env.ADMIN_SECRET) &&
+        Boolean(adminAuth) &&
+        adminAuth === process.env.ADMIN_SECRET;
+
+    if (!yetkili) {
         return (
             <main className="min-h-screen bg-[#070b14] p-10 text-white">
                 Yetkisiz erişim
             </main>
         );
     }
+    
+    const { slug } = await params;
 
     const basvuruNo = slug.replace("-", "/");
 

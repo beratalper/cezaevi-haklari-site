@@ -25,7 +25,7 @@ export async function POST(req) {
         const slug = basvuruNo.replace("/", "-");
 
         const adminUrl =
-            `https://cezaevihaklari.com/admin/siniflandirma/${slug}?secret=${encodeURIComponent(process.env.ADMIN_SECRET || "")}`;
+            `https://cezaevihaklari.com/admin/siniflandirma/${slug}`;
 
         const text = `
 Yanlış kategori bildirimi
