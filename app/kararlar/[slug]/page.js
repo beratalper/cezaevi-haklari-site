@@ -309,7 +309,7 @@ Teşekkürler.
               <ReportClassificationButton item={item} />
               {adminYetkili && (
                 <a
-                  href={`/admin/siniflandirma/${item.basvuru_no.replace("/", "-")}?secret=${process.env.ADMIN_SECRET}`}
+                  href={`/admin/siniflandirma/${item.basvuru_no.replace("/", "-")}?secret=${adminSecret}`}
                   className="mt-2 block rounded-lg border border-amber-300/40 bg-amber-300/10 px-4 py-2 text-center text-xs font-semibold text-amber-300 transition hover:bg-amber-300/20"
                 >
                   Sınıflandırmayı düzelt
