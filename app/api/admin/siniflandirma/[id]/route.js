@@ -20,13 +20,15 @@ export async function POST(req, { params }) {
 
     await pool.query(
       `
-      UPDATE kararlar
-      SET
-        cezaevi_mi = $1,
-        ust_kategori = $2,
-        alt_kategori = $3
-      WHERE id = $4
-    `,
+  UPDATE kararlar
+  SET
+    cezaevi_mi = $1,
+    ust_kategori = NULLIF($2, ''),
+    alt_kategori = NULLIF($3, ''),
+    admin_kontrol_edildi = true,
+    admin_kontrol_at = now()
+  WHERE id = $4
+`,
       [
         cezaevi_mi,
         ust_kategori,
@@ -35,9 +37,13 @@ export async function POST(req, { params }) {
       ]
     );
 
-    return NextResponse.redirect(
-      new URL(req.headers.get("referer"))
-    );
+    const referer =
+      req.headers.get("referer") ||
+      "/admin/siniflandirma";
+
+    return NextResponse.redirect(referer, {
+      status: 303,
+    });
   } catch (error) {
     console.error(error);
 

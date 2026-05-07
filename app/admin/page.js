@@ -37,8 +37,33 @@ export default async function AdminPage() {
         </h1>
 
         <p className="mt-4 text-slate-400">
-          Giriş başarılı. E-postadaki admin düzenleme linkleri artık şifresiz açılabilir.
+          Karar sınıflandırmalarını kontrol edin ve gelen yanlış sınıflandırma bildirimlerini yönetin.
         </p>
+      </div>
+      <div className="mt-8 grid gap-4 md:grid-cols-2">
+        <a
+          href="/admin/siniflandirma"
+          className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]"
+        >
+          <div className="text-lg font-semibold text-amber-300">
+            Sınıflandırma Kontrolü
+          </div>
+          <p className="mt-3 text-sm leading-6 text-slate-400">
+            Kararları toplu olarak gözden geçir, üst/alt kategori ve cezaevi durumunu güncelle.
+          </p>
+        </a>
+
+        <a
+          href="/admin/bildirimler"
+          className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]"
+        >
+          <div className="text-lg font-semibold text-amber-300">
+            Yanlış Sınıflandırma Bildirimleri
+          </div>
+          <p className="mt-3 text-sm leading-6 text-slate-400">
+            E-postadan gelen bildirimleri ileride burada listeleyebiliriz. Şimdilik gelen e-postadaki admin linkinden ilgili kaydı aç.
+          </p>
+        </a>
       </div>
     </main>
   );
