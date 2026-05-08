@@ -152,7 +152,7 @@ export default async function AdminSiniflandirmaListPage({ searchParams }) {
                                         {item.karar_adi}
                                     </h2>
 
-                                    <p className="mt-4 line-clamp-4 text-sm leading-7 text-slate-400">
+                                    <p className="mt-4 text-sm leading-7 text-slate-400">
                                         {item.basvuru_konusu || "Başvuru konusu bulunamadı."}
                                     </p>
                                 </div>
