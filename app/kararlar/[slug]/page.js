@@ -154,7 +154,6 @@ function IcLinklemeAlani({ item }) {
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const item = await getKarar(slug);
-  const benzerKararlar = await getBenzerKararlar(slug);
 
   if (!item) {
     return {
@@ -167,15 +166,34 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  if (item.cezaevi_mi === false) {
+    return {
+      title: `${item.karar_adi} | AYM Kararı`,
+      description: "Anayasa Mahkemesi kararı.",
+
+      robots: {
+        index: false,
+        follow: true,
+      },
+
+      alternates: {
+        canonical: `https://cezaevihaklari.com/kararlar/${slug}`,
+      },
+    };
+  }
+
   const basvuruNoSlug = item.basvuru_no?.replace("/", "-");
 
-  const title = `${item.karar_adi} | AYM Kararı`;
+  const kategori =
+    item.ust_kategori ||
+    item.alt_kategori ||
+    "Cezaevi Hakkı";
+
+  const title = `${kategori} | ${item.karar_adi} AYM Kararı`;
 
   const description =
     item.ai_karar_ozeti ||
-    item.basvuru_konusu ||
-    item.ai_basvuru_konusu ||
-    `${item.karar_adi} başvurusu hakkında Anayasa Mahkemesi kararı.`;
+    `${kategori} kapsamında verilen ${item.karar_adi} Anayasa Mahkemesi kararının özeti, değerlendirmesi ve sonucu.`;
 
   return {
     title,
