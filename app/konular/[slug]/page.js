@@ -199,9 +199,9 @@ export default async function KonuPage({ params, searchParams }) {
                 </h2>
               </Link>
 
-              {(item.ai_karar_ozeti || item.basvuru_konusu) && (
+              {(item.basvuru_konusu || item.ai_basvuru_konusu) && (
                 <p className="mt-5 line-clamp-3 text-sm leading-7 text-slate-300">
-                  {item.ai_karar_ozeti || item.basvuru_konusu}
+                  {item.basvuru_konusu || item.ai_basvuru_konusu}
                 </p>
               )}
 
@@ -236,8 +236,8 @@ export default async function KonuPage({ params, searchParams }) {
                 key={p}
                 href={`/konular/${resolvedParams.slug}?page=${p}`}
                 className={`rounded-lg border px-3 py-2 text-sm ${p === page
-                    ? "border-[#c9a96e] bg-[#c9a96e]/20 text-[#f3d99b]"
-                    : "border-white/10 text-slate-300 hover:border-[#c9a96e]"
+                  ? "border-[#c9a96e] bg-[#c9a96e]/20 text-[#f3d99b]"
+                  : "border-white/10 text-slate-300 hover:border-[#c9a96e]"
                   }`}
               >
                 {p}

@@ -8,6 +8,47 @@ function titleFromSlug(slug = "") {
     .replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
+export async function generateMetadata({ params }) {
+  const resolvedParams = await params;
+
+  const ustSlug = resolvedParams?.ustKategori || "";
+  const altSlug = resolvedParams?.altKategori || "";
+
+  const ustTitle = titleFromSlug(ustSlug);
+  const altTitle = titleFromSlug(altSlug);
+
+  const title = `${altTitle} | Cezaevi Hakları ve AYM Kararları`;
+
+  const description =
+    `Cezaevlerinde ${altTitle.toLowerCase()} kapsamında verilen ` +
+    `Anayasa Mahkemesi bireysel başvuru kararlarını inceleyin. ` +
+    `İlgili hak ihlalleri, karar sonuçları ve başvuru konuları bu sayfada listelenmektedir.`;
+
+  return {
+    title,
+    description,
+
+    alternates: {
+      canonical: `https://cezaevihaklari.com/haklar/${ustSlug}/${altSlug}`,
+    },
+
+    openGraph: {
+      title,
+      description,
+      url: `https://cezaevihaklari.com/haklar/${ustSlug}/${altSlug}`,
+      siteName: "Cezaevi Hakları",
+      locale: "tr_TR",
+      type: "website",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
+
 function normalize(value = "") {
   return slugifyTR(String(value || "").trim());
 }
@@ -61,9 +102,11 @@ export default async function HakAltKategoriPage({ params, searchParams }) {
           {sayfaBasligi}
         </h1>
 
-        <p className="mt-6 max-w-3xl text-lg leading-8 text-white/60">
-          Bu başlık altında Anayasa Mahkemesi bireysel başvuru kararları
-          içinden ilgili ceza infaz kurumu kararları listelenmektedir.
+        <p className="mt-6 max-w-3xl text-lg leading-8 text-white/75">
+          Cezaevlerinde {altKategoriTitle.toLowerCase()} kapsamında verilen
+          Anayasa Mahkemesi bireysel başvuru kararlarını inceleyebilirsiniz.
+          Bu sayfada ilgili hak ihlallerine ilişkin karar özetleri,
+          müdahale iddiaları ve karar sonuçları listelenmektedir.
         </p>
 
         <div className="mt-10 rounded-3xl border border-amber-300/20 bg-amber-300/10 p-6">
@@ -133,8 +176,8 @@ export default async function HakAltKategoriPage({ params, searchParams }) {
                 key={sayfa}
                 href={`/haklar/${ustSlug}/${altSlug}?sayfa=${sayfa}`}
                 className={`rounded-xl px-4 py-2 text-sm font-bold transition ${aktifSayfa === sayfa
-                    ? "bg-amber-300 text-black"
-                    : "border border-white/10 bg-white/[0.03] text-white/70 hover:border-amber-300/40 hover:text-amber-300"
+                  ? "bg-amber-300 text-black"
+                  : "border border-white/10 bg-white/[0.03] text-white/70 hover:border-amber-300/40 hover:text-amber-300"
                   }`}
               >
                 {sayfa}

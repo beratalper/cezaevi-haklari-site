@@ -250,17 +250,6 @@ LIMIT 6
         </div>
       </section>
 
-      <div style={{ display: "none" }}>
-        {seoKararlar.map((item) => (
-          <a
-            key={item.basvuru_no}
-            href={`/kararlar/${item.basvuru_no.replace("/", "-")}`}
-          >
-            {item.baslik}
-          </a>
-        ))}
-      </div>
-
       <InfoModal />
     </main>
   );

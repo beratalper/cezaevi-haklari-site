@@ -3,23 +3,23 @@ export const cezaeviHaklari = [
     title: "Haberleşme Hakkı",
     slug: "haberlesme",
     items: [
-      "Haberleşme (ceza infaz kurumu genel)",
-      "Haberleşme (ceza infaz kurumunda sakıncalı mektup)",
-      "Haberleşme-ceza infaz kurumu uygulamaları (sakıncalı mektup hariç)",
+      "Genel",
+      "Haberleşme (sakıncalı mektup)",
+      "Haberleşme (sakıncalı mektup hariç)",
     ],
   },
   {
     title: "Aile Hayatı ve Ziyaret Hakkı",
     slug: "ziyaret-aile-iliskisi",
-    items: ["Aile hayatı (ceza infaz kurumu)"],
+    items: ["Ziyaret Hakkı ve Aile hayatı"],
   },
   {
     title: "İfade Özgürlüğü, Yayın ve Bilgiye Erişim",
     slug: "ifade-yayin-bilgiye-erisim",
     items: [
-      "Ceza infaz kurumunda ifade",
-      "Ceza infaz kurumunda süreli yayın",
-      "Ceza infaz kurumunda kitap",
+      "İfade Özgürlüğü",
+      "Süreli yayın",
+      "Kitap",
     ],
   },
   {
@@ -35,7 +35,7 @@ export const cezaeviHaklari = [
     slug: "fiziksel-kosullar",
     items: [
       "İnfaz Kurumunun fiziki koşulları",
-      "Tutma koşulları nedeniyle kötü muamele (ceza infaz kurumu)",
+      "Tutma koşulları nedeniyle kötü muamele",
       "Tutma koşulları nedeniyle kötü muamele (tek kişilik oda)",
     ],
   },
@@ -44,8 +44,8 @@ export const cezaeviHaklari = [
     slug: "kotu-muamele-guc-kullanimi",
     items: [
       "İnfaz kurumunda güç kullanımı",
-      "Kamu görevlisinin güç kullanımı (ceza infaz kurumunda)",
-      "Kamu görevlisinin güç kullanımı sonucu ağır yaralanma / ölüm (ceza infaz kurumunda)",
+      "Kamu görevlisinin güç kullanımı",
+      "Kamu görevlisinin güç kullanımı sonucu ağır yaralanma / ölüm",
       "Çıplak/detaylı arama",
     ],
   },
@@ -71,7 +71,7 @@ export const cezaeviHaklari = [
   {
     title: "Açlık Grevi",
     slug: "aclik-grevi",
-    items: ["Ceza infaz kurumunda açlık grevi"],
+    items: ["Açlık grevi"],
   },
 ];
 

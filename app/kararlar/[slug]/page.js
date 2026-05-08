@@ -264,6 +264,11 @@ Teşekkürler.
       <h1 className="text-center text-4xl font-semibold">
         {item.karar_adi}
       </h1>
+      {item.basvuru_konusu && (
+        <p className="mx-auto mt-6 max-w-3xl text-center text-lg leading-8 text-slate-300">
+          {item.basvuru_konusu}
+        </p>
+      )}
 
       <div className="mt-6 flex flex-wrap justify-center gap-3 text-sm text-slate-400">
         <div className="rounded-full border border-[#c9a96e]/30 bg-[#c9a96e]/10 px-3 py-1 text-[#d9bd83]">

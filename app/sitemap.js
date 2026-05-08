@@ -29,6 +29,18 @@ export default async function sitemap() {
       lastModified: new Date(),
     },
     {
+      url: `${siteUrl}/haklar`,
+      lastModified: new Date(),
+    },
+    {
+      url: `${siteUrl}/konular`,
+      lastModified: new Date(),
+    },
+    {
+      url: `${siteUrl}/mevzuat`,
+      lastModified: new Date(),
+    },
+    {
       url: `${siteUrl}/kararlar`,
       lastModified: new Date(),
     },
