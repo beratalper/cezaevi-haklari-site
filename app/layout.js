@@ -16,8 +16,16 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata = {
   title: "Cezaevi Hakları | Tutuklu ve Hükümlü Hakları, AYM Kararları",
+
   description:
     "Cezaevi hakları, tutuklu ve hükümlü hakları, açık görüş, telefon hakkı, sağlık hakkı, disiplin cezaları, AYM kararları ve bireysel başvuru rehberi.",
+  
+  metadataBase: new URL("https://cezaevihaklari.com"),
+
+  alternates: {
+    canonical: "/",
+  },
+
   keywords: [
     "cezaevi hakları",
     "tutuklu hakları",
@@ -47,7 +55,7 @@ export default function RootLayout({ children }) {
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7518046066826938"
           crossorigin="anonymous"></script>
         <link rel="icon" href="/favicon.png" />
-        
+
         <Script
           async
           strategy="afterInteractive"
