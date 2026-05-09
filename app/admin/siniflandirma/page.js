@@ -98,8 +98,8 @@ export default async function AdminSiniflandirmaListPage({ searchParams }) {
                     <Link
                         href="/admin/siniflandirma?cezaevi=true"
                         className={`rounded-xl border px-4 py-2 text-sm font-semibold ${cezaevi === "true"
-                                ? "border-amber-300 bg-amber-300/15 text-amber-300"
-                                : "border-white/10 bg-white/5 text-slate-300"
+                            ? "border-amber-300 bg-amber-300/15 text-amber-300"
+                            : "border-white/10 bg-white/5 text-slate-300"
                             }`}
                     >
                         Sadece cezaevi true
@@ -108,8 +108,8 @@ export default async function AdminSiniflandirmaListPage({ searchParams }) {
                     <Link
                         href="/admin/siniflandirma?cezaevi=false"
                         className={`rounded-xl border px-4 py-2 text-sm font-semibold ${cezaevi === "false"
-                                ? "border-amber-300 bg-amber-300/15 text-amber-300"
-                                : "border-white/10 bg-white/5 text-slate-300"
+                            ? "border-amber-300 bg-amber-300/15 text-amber-300"
+                            : "border-white/10 bg-white/5 text-slate-300"
                             }`}
                     >
                         Sadece cezaevi false
@@ -118,8 +118,8 @@ export default async function AdminSiniflandirmaListPage({ searchParams }) {
                     <Link
                         href="/admin/siniflandirma?cezaevi=tum"
                         className={`rounded-xl border px-4 py-2 text-sm font-semibold ${cezaevi === "tum"
-                                ? "border-amber-300 bg-amber-300/15 text-amber-300"
-                                : "border-white/10 bg-white/5 text-slate-300"
+                            ? "border-amber-300 bg-amber-300/15 text-amber-300"
+                            : "border-white/10 bg-white/5 text-slate-300"
                             }`}
                     >
                         Tümü
@@ -145,6 +145,12 @@ export default async function AdminSiniflandirmaListPage({ searchParams }) {
                                             className="text-amber-300 hover:underline"
                                         >
                                             Kararı aç →
+                                        </Link>
+                                        <Link
+                                            href={`/admin/siniflandirma/${item.basvuru_no.replace(/\//g, "-")}`}
+                                            className="text-cyan-300 hover:underline"
+                                        >
+                                            Etiketleri yönet →
                                         </Link>
                                     </div>
 

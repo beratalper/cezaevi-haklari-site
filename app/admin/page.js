@@ -40,43 +40,51 @@ export default async function AdminPage() {
           Karar sınıflandırmalarını kontrol edin ve gelen yanlış sınıflandırma bildirimlerini yönetin.
         </p>
       </div>
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        <a
-          href="/admin/siniflandirma"
-          className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]"
-        >
-          <div className="text-lg font-semibold text-amber-300">
+      <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <a href="/admin/siniflandirma" className="group rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition duration-200 hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]" >
+
+          <div className="text-xl font-semibold text-amber-300 transition group-hover:text-[#f3d99b]">
             Sınıflandırma Kontrolü
           </div>
-          <p className="mt-3 text-sm leading-6 text-slate-400">
+          <p className="mt-3 text-sm leading-7 text-slate-400">
             Kararları toplu olarak gözden geçir, üst/alt kategori ve cezaevi durumunu güncelle.
           </p>
         </a>
-
-        <a
-          href="/admin/bildirimler"
-          className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]"
-        >
-          <div className="text-lg font-semibold text-amber-300">
+        <a href="/admin/bildirimler" className="group rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition duration-200 hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]" >
+          <div className="text-xl font-semibold text-amber-300 transition group-hover:text-[#f3d99b]">
             Yanlış Sınıflandırma Bildirimleri
           </div>
-          <p className="mt-3 text-sm leading-6 text-slate-400">
-            E-postadan gelen bildirimleri ileride burada listeleyebiliriz. Şimdilik gelen e-postadaki admin linkinden ilgili kaydı aç.
+          <p className="mt-3 text-sm leading-7 text-slate-400">
+            Kullanıcılardan gelen yanlış sınıflandırma bildirimlerini incele.
+          </p>
+        </a>
+        <a href="/admin/cezaevi-adaylari" className="group rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition duration-200 hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]" >
+          <div className="text-xl font-semibold text-amber-300 transition group-hover:text-[#f3d99b]">
+            Cezaevi Aday Kararlar
+          </div>
+          <p className="mt-3 text-sm leading-7 text-slate-400">
+            AYM cezaevi filtresinde bulunan ancak henüz işaretlenmemiş kararları incele.
+          </p>
+        </a>
+        <a href="/admin/siniflandirma" className="group rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition duration-200 hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]" >
+          <div className="text-xl font-semibold text-amber-300 transition group-hover:text-[#f3d99b]">
+            Etiket Yönetimi
+          </div>
+
+          <p className="mt-3 text-sm leading-7 text-slate-400">
+            Kararlara etiket ekle, etiket kaldır ve karar-etiket ilişkilerini yönet.
+          </p>
+        </a>
+        <a href="/admin/cezaevi-adaylari" className="group rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition duration-200 hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]" >
+          <div className="text-xl font-semibold text-amber-300 transition group-hover:text-[#f3d99b]">
+            AYM Tarama Workflow
+          </div>
+          <p className="mt-3 text-sm leading-7 text-slate-400">
+            Yeni AYM arama sonuçlarını scrape ederek moderasyon kuyruğuna aktar.
           </p>
         </a>
       </div>
-      <a
-        href="/admin/cezaevi-adaylari"
-        className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]"
-      >
-        <div className="text-lg font-semibold text-amber-300">
-          Cezaevi Aday Kararlar
-        </div>
 
-        <p className="mt-3 text-sm leading-6 text-slate-400">
-          AYM cezaevi filtresinde yer alan ancak cezaevi_mi=true olarak işaretlenmemiş kararları incele.
-        </p>
-      </a>
     </main>
   );
 }
