@@ -1,3 +1,4 @@
+import BenzerKararlarClient from "../../../components/BenzerKararlarClient";
 import ReportClassificationButton from "../../../components/ReportClassificationButton";
 import { headers } from "next/headers";
 
@@ -62,57 +63,6 @@ function BilgilendirmeAlani() {
           alt="Cezaevi Hakları"
           className="max-h-40 w-auto opacity-80"
         />
-      </div>
-    </div>
-  );
-}
-
-function BenzerKararlar({ item, kararlar }) {
-  if (!kararlar || kararlar.length === 0) return null;
-
-  const kategoriBasligi =
-    item.alt_kategori && item.alt_kategori !== item.ust_kategori
-      ? `${item.ust_kategori} / ${item.alt_kategori}`
-      : item.alt_kategori || item.ust_kategori;
-
-  const baslik = kategoriBasligi
-    ? `${kategoriBasligi} ile ilgili diğer kararlar`
-    : "Benzer kararlar";
-
-  return (
-    <div className="rounded-2xl border border-white/10 bg-[#0d1320] p-6">
-      <h3 className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
-        {baslik}
-      </h3>
-
-      <div className="mt-4 space-y-3">
-        {kararlar.map((karar) => (
-          <a
-            key={karar.id}
-            href={`/kararlar/${karar.slug || karar.basvuru_no.replace("/", "-")}`}
-            className="block rounded-xl border border-white/10 bg-white/[0.03] p-4 transition hover:border-[#c9a96e]/50 hover:bg-white/[0.06]"
-          >
-            <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-              <div className="text-sm font-medium text-slate-100">
-                {karar.karar_adi}
-              </div>
-
-              <div className="flex shrink-0 flex-wrap gap-2 text-xs text-slate-400 md:justify-end">
-                <span>Başvuru No: {karar.basvuru_no}</span>
-
-                {karar.karar_tarihi && (
-                  <span>Karar Tarihi: {karar.karar_tarihi}</span>
-                )}
-              </div>
-            </div>
-
-            {karar.basvuru_konusu && (
-              <p className="mt-3 text-sm leading-6 text-slate-400">
-                {karar.basvuru_konusu}
-              </p>
-            )}
-          </a>
-        ))}
       </div>
     </div>
   );
@@ -264,11 +214,6 @@ Teşekkürler.
       <h1 className="text-center text-4xl font-semibold">
         {item.karar_adi}
       </h1>
-      {item.basvuru_konusu && (
-        <p className="mx-auto mt-6 max-w-3xl text-center text-lg leading-8 text-slate-300">
-          {item.basvuru_konusu}
-        </p>
-      )}
 
       <div className="mt-6 flex flex-wrap justify-center gap-3 text-sm text-slate-400">
         <div className="rounded-full border border-[#c9a96e]/30 bg-[#c9a96e]/10 px-3 py-1 text-[#d9bd83]">
@@ -361,7 +306,10 @@ Teşekkürler.
           </div>
 
           <BilgilendirmeAlani />
-          <BenzerKararlar item={item} kararlar={benzerKararlar} />
+          <BenzerKararlarClient
+            item={item}
+            kararlar={benzerKararlar}
+          />
         </div>
       </div>
     </main>

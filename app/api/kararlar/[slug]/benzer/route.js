@@ -54,7 +54,7 @@ export async function GET(request, { params }) {
         AND id <> $2
         AND cezaevi_mi = true
       ORDER BY karar_tarihi DESC NULLS LAST, id DESC
-      LIMIT 10
+      LIMIT 100
       `,
       [mevcutKarar.alt_kategori, mevcutKarar.id]
     );
@@ -62,9 +62,9 @@ export async function GET(request, { params }) {
     let benzerKararlar = altKategoriResult.rows;
 
     // 3. Alt kategori 10’a tamamlanmazsa ust_kategori ile tamamla
-    if (benzerKararlar.length < 10) {
+    if (benzerKararlar.length < 100) {
       const mevcutIdler = benzerKararlar.map((k) => k.id);
-      const kalanLimit = 10 - benzerKararlar.length;
+      const kalanLimit = 100 - benzerKararlar.length;
 
       const ustKategoriResult = await pool.query(
         `
