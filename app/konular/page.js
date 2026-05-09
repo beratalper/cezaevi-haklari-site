@@ -22,42 +22,34 @@ function slugify(value = "") {
 }
 
 export default async function KonularPage() {
-  
+
   const result = await pool.query(`
-    SELECT
-      ust_kategori,
-      COUNT(*) AS toplam,
-      COUNT(*) FILTER (
-        WHERE sonuc ILIKE '%İhlal%'
-          AND sonuc NOT ILIKE '%İhlal Olmadığı%'
-      ) AS ihlal
-    FROM kararlar
-    WHERE cezaevi_mi = true
-      AND ust_kategori IS NOT NULL
-    GROUP BY ust_kategori
-    ORDER BY toplam DESC;
-  `);
+  SELECT
+    kis.mudahale_iddiasi_aym,
+    COUNT(DISTINCT kis.karar_id) AS toplam
+  FROM karar_inceleme_sonuclari kis
+  JOIN kararlar k
+    ON k.id = kis.karar_id
+  WHERE kis.mudahale_iddiasi_aym IS NOT NULL
+    AND TRIM(kis.mudahale_iddiasi_aym) <> ''
+    AND k.cezaevi_mi = true
+  GROUP BY kis.mudahale_iddiasi_aym
+  ORDER BY toplam DESC;
+`);
 
-  const kategoriler = result.rows.map((item) => {
-    const toplam = Number(item.toplam || 0);
-    const ihlal = Number(item.ihlal || 0);
-    const oran = toplam ? ((ihlal / toplam) * 100).toFixed(1) : "0.0";
-
-    return {
-      baslik: item.ust_kategori,
-      slug: slugify(item.ust_kategori),
-      toplam,
-      ihlal,
-      oran,
-    };
-  });
+  const kategoriler = result.rows.map((item) => ({
+    baslik: item.mudahale_iddiasi_aym,
+    slug: slugify(item.mudahale_iddiasi_aym),
+    toplam: Number(item.toplam || 0),
+  }));
 
   return (
     <main className="min-h-screen bg-[#070b14] text-white">
       <section className="relative overflow-hidden px-6 py-20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#c9a96e22,transparent_35%)]" />
 
-        <div className="relative mx-auto max-w-6xl">
+        <div className="relative mx-auto max-w-5xl">
+
           <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[#c9a96e]">
             Cezaevi Hakları
           </p>
@@ -67,52 +59,42 @@ export default async function KonularPage() {
           </h1>
 
           <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">
-            Ceza infaz kurumlarında yaşanan hak ihlallerine ilişkin Anayasa
-            Mahkemesi bireysel başvuru kararlarını konu başlıklarına göre
-            inceleyin.
+            Anayasa Mahkemesi kararlarında yer alan müdahale iddialarına göre
+            kararları inceleyin.
           </p>
 
-          <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-14 space-y-5">
+
             {kategoriler.map((item) => (
               <Link
                 key={item.baslik}
                 href={`/konular/${item.slug}`}
-                className="group rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:-translate-y-1 hover:border-[#c9a96e]/50 hover:bg-white/[0.06]"
+                className="group block rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:-translate-y-1 hover:border-[#c9a96e]/50 hover:bg-white/[0.06]"
               >
-                <div className="mb-5 h-1 w-12 rounded-full bg-[#c9a96e]" />
+                <div className="flex items-center justify-between gap-6">
 
-                <h2 className="font-serif text-2xl font-semibold leading-8 text-amber-300">
-                  {item.baslik}
-                </h2>
+                  <div className="min-w-0">
 
-                <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs">
-                  <div className="rounded-xl bg-white/[0.05] p-2">
-                    <div className="text-slate-400">Karar</div>
-                    <div className="mt-1 font-semibold text-white">
-                      {item.toplam}
+                    <div className="mb-3 h-1 w-14 rounded-full bg-[#c9a96e]" />
+
+                    <h2 className="font-serif text-2xl font-semibold leading-8 text-amber-300">
+                      {item.baslik}
+                    </h2>
+
+                    <div className="mt-4 text-sm text-slate-400">
+                      {item.toplam} karar
                     </div>
+
                   </div>
 
-                  <div className="rounded-xl bg-white/[0.05] p-2">
-                    <div className="text-slate-400">İhlal</div>
-                    <div className="mt-1 font-semibold text-white">
-                      {item.ihlal}
-                    </div>
+                  <div className="shrink-0 text-sm font-semibold text-amber-300">
+                    İncele →
                   </div>
 
-                  <div className="rounded-xl bg-white/[0.05] p-2">
-                    <div className="text-slate-400">Oran</div>
-                    <div className="mt-1 font-semibold text-white">
-                      %{item.oran}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-5 text-right text-sm font-semibold text-amber-300">
-                  Kararları Gör →
                 </div>
               </Link>
             ))}
+
           </div>
         </div>
       </section>
