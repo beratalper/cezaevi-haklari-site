@@ -11,6 +11,7 @@ export default function Navbar() {
     { label: "Haklar", href: "/haklar" },
     { label: "Kararlar", href: "/kararlar" },
     { label: "AYM Kategorileri", href: "/konular" },
+    { label: "Etiketler", href: "/etiketler" },
     { label: "Mevzuat", href: "/mevzuat" },
     { label: "Dilekçeler", href: "/dilekceler" },
   ];
@@ -18,7 +19,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#070b14]/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
-        
+
         {/* Logo */}
         <Link
           href="/"

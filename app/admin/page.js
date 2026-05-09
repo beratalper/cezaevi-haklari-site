@@ -65,6 +65,18 @@ export default async function AdminPage() {
           </p>
         </a>
       </div>
+      <a
+        href="/admin/cezaevi-adaylari"
+        className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]"
+      >
+        <div className="text-lg font-semibold text-amber-300">
+          Cezaevi Aday Kararlar
+        </div>
+
+        <p className="mt-3 text-sm leading-6 text-slate-400">
+          AYM cezaevi filtresinde yer alan ancak cezaevi_mi=true olarak işaretlenmemiş kararları incele.
+        </p>
+      </a>
     </main>
   );
 }

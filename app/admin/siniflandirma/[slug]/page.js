@@ -30,10 +30,11 @@ export default async function AdminSiniflandirmaPage({
             </main>
         );
     }
-    
+
     const { slug } = await params;
 
-    const basvuruNo = slug.replace("-", "/");
+    const basvuruNo =
+        slug.replace(/-/g, "/");
 
     const result = await pool.query(
         `
@@ -46,6 +47,33 @@ export default async function AdminSiniflandirmaPage({
     );
 
     const item = result.rows[0];
+
+    if (!item) {
+        return (
+            <main className="min-h-screen bg-[#070b14] p-10 text-white">
+                Karar bulunamadı
+            </main>
+        );
+    }
+    const etiketResult = await pool.query(
+        `
+    SELECT
+      e.id,
+      e.ad
+
+    FROM karar_etiketleri ke
+
+    JOIN etiketler e
+      ON e.id = ke.etiket_id
+
+    WHERE ke.karar_id = $1
+
+    ORDER BY e.ad ASC
+    `,
+        [item.id]
+    );
+
+    const etiketler = etiketResult.rows;
     const ustKategoriResult = await pool.query(`
   SELECT DISTINCT ust_kategori
   FROM kararlar
@@ -101,6 +129,114 @@ export default async function AdminSiniflandirmaPage({
             <p className="mt-2 text-slate-400">
                 Cezaevi mi: {item.cezaevi_mi ? "Evet" : "Hayır"}
             </p>
+            <div className="mt-6">
+                <div className="mb-3 text-sm font-semibold text-[#f3d99b]">
+                    Etiketler
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+
+                    {etiketler.length === 0 && (
+                        <div className="text-sm text-slate-500">
+                            Etiket bulunamadı
+                        </div>
+                    )}
+
+                    {etiketler.map((etiket) => (
+                        <div
+                            key={etiket.id}
+                            className="flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-sm text-amber-300"
+                        >
+                            <span>
+                                {etiket.ad}
+                            </span>
+
+                            <form
+                                action="/api/admin/etiket-sil"
+                                method="POST"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="karar_id"
+                                    value={item.id}
+                                />
+
+                                <input
+                                    type="hidden"
+                                    name="etiket_id"
+                                    value={etiket.id}
+                                />
+
+                                <button
+                                    type="submit"
+                                    className="text-red-300 transition hover:text-red-200"
+                                >
+                                    ×
+                                </button>
+                            </form>
+                        </div>
+                    ))}
+                    <form
+                        action={`/api/admin/etiket-ekle/${item.id}`}
+                        method="POST"
+                        className="mt-4 flex gap-3"
+                    >
+                        <select
+                            name="etiket_id"
+                            className="rounded-xl border border-white/10 bg-[#111827] px-4 py-3 text-white"
+                        >
+                            <option value="">
+                                Etiket seç
+                            </option>
+
+                            {(await pool.query(`
+            SELECT *
+            FROM etiketler
+            ORDER BY ad ASC
+        `)).rows.map((etiket) => (
+                                <option
+                                    key={etiket.id}
+                                    value={etiket.id}
+                                >
+                                    {etiket.ad}
+                                </option>
+                            ))}
+                        </select>
+
+                        <button
+                            type="submit"
+                            className="rounded-xl bg-amber-300 px-5 py-3 font-bold text-black"
+                        >
+                            Etiket Ekle
+                        </button>
+                    </form>
+                    <form
+                        action="/api/admin/etiket-olustur"
+                        method="POST"
+                        className="mt-4 flex gap-3"
+                    >
+                        <input
+                            type="text"
+                            name="ad"
+                            placeholder="Yeni etiket adı"
+                            className="w-full rounded-xl border border-white/10 bg-[#111827] px-4 py-3 text-white placeholder:text-slate-500"
+                        />
+
+                        <input
+                            type="hidden"
+                            name="karar_id"
+                            value={item.id}
+                        />
+
+                        <button
+                            type="submit"
+                            className="rounded-xl bg-[#1f2937] px-5 py-3 font-bold text-white transition hover:bg-[#374151]"
+                        >
+                            Oluştur
+                        </button>
+                    </form>
+                </div>
+            </div>
             <div className="mt-6 rounded-2xl border border-white/10 bg-[#0d1320] p-5">
                 <div className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
                     Başvuru Konusu

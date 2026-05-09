@@ -25,11 +25,28 @@ async function getKonuBySlug(slug) {
 
   const result = await pool.query(`
   SELECT DISTINCT kis.mudahale_iddiasi_aym
+
   FROM karar_inceleme_sonuclari kis
+
   JOIN kararlar k
     ON k.id = kis.karar_id
-  WHERE kis.mudahale_iddiasi_aym IS NOT NULL
-    AND k.cezaevi_mi = true
+
+  WHERE k.cezaevi_mi = true
+
+    AND kis.mudahale_iddiasi_aym IN (
+      'İnfaz Kurumunun fiziki koşulları',
+      'Nakil aracının fiziki koşulları',
+      'Ceza infaz kurumu uygulamaları',
+      'Ceza infaz kurumunda açlık grevi',
+      'Ceza infaz kurumunda eğitim',
+      'Ceza infaz kurumunda ifade',
+      'Ceza infaz kurumunda kitap',
+      'İnfaz kurumunda güç kullanımı',
+      'Ceza infaz kurumunda süreli yayın',
+      'Haberleşme-ceza infaz kurumu uygulamaları (sakıncalı mektup hariç)',
+      'Haberleşme-Sakıncalı mektup',
+      'İnfaz, koşullu salıverme'
+    )
 `);
 
   const konular = result.rows.map((row) => ({

@@ -27,14 +27,32 @@ export default async function KonularPage() {
   SELECT
     kis.mudahale_iddiasi_aym,
     COUNT(DISTINCT kis.karar_id) AS toplam
+
   FROM karar_inceleme_sonuclari kis
+
   JOIN kararlar k
     ON k.id = kis.karar_id
-  WHERE kis.mudahale_iddiasi_aym IS NOT NULL
-    AND TRIM(kis.mudahale_iddiasi_aym) <> ''
-    AND k.cezaevi_mi = true
+
+  WHERE k.cezaevi_mi = true
+
+    AND kis.mudahale_iddiasi_aym IN (
+      'İnfaz Kurumunun fiziki koşulları',
+      'Nakil aracının fiziki koşulları',
+      'Ceza infaz kurumu uygulamaları',
+      'Ceza infaz kurumunda açlık grevi',
+      'Ceza infaz kurumunda eğitim',
+      'Ceza infaz kurumunda ifade',
+      'Ceza infaz kurumunda kitap',
+      'İnfaz kurumunda güç kullanımı',
+      'Ceza infaz kurumunda süreli yayın',
+      'Haberleşme-ceza infaz kurumu uygulamaları (sakıncalı mektup hariç)',
+      'Haberleşme-Sakıncalı mektup',
+      'İnfaz, koşullu salıverme'
+    )
+
   GROUP BY kis.mudahale_iddiasi_aym
-  ORDER BY toplam DESC;
+
+  ORDER BY toplam DESC
 `);
 
   const kategoriler = result.rows.map((item) => ({
