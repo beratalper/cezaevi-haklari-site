@@ -177,10 +177,6 @@ export default function MevzuatPage() {
                         {item.desc}
                       </p>
 
-                      <div className="mt-5 text-sm font-semibold text-[#c9a96e]">
-                        Metne git →
-                      </div>
-
                     </a>
 
                   ))}
