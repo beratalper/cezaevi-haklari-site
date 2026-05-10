@@ -169,10 +169,6 @@ export default function MevzuatPage() {
                       className="block rounded-3xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-[#c9a96e]/40 hover:bg-white/[0.06]"
                     >
 
-                      <div className="mb-3 inline-flex rounded-full bg-[#c9a96e]/10 px-3 py-1 text-xs font-bold text-[#c9a96e]">
-                        {item.tag}
-                      </div>
-
                       <h3 className="text-xl font-bold text-white">
                         {item.title}
                       </h3>
