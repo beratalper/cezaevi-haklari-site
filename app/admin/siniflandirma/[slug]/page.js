@@ -319,7 +319,7 @@ export default async function AdminSiniflandirmaPage({
                     type="submit"
                     className="rounded-xl bg-amber-300 px-6 py-3 font-bold text-black transition hover:bg-[#e2c17c]"
                 >
-                    Kaydet
+                    Kaydet ve listeye dön
                 </button>
             </form>
         </main>

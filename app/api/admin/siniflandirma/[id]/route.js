@@ -12,23 +12,26 @@ export async function POST(req, { params }) {
 
     const formData = await req.formData();
 
-    const cezaevi_mi = formData.get("cezaevi_mi") === "true";
+    const cezaevi_mi =
+      formData.get("cezaevi_mi") === "true";
 
-    const ust_kategori = formData.get("ust_kategori") || null;
+    const ust_kategori =
+      formData.get("ust_kategori") || null;
 
-    const alt_kategori = formData.get("alt_kategori") || null;
+    const alt_kategori =
+      formData.get("alt_kategori") || null;
 
     await pool.query(
       `
-  UPDATE kararlar
-  SET
-    cezaevi_mi = $1,
-    ust_kategori = NULLIF($2, ''),
-    alt_kategori = NULLIF($3, ''),
-    admin_kontrol_edildi = true,
-    admin_kontrol_at = now()
-  WHERE id = $4
-`,
+      UPDATE kararlar
+      SET
+        cezaevi_mi = $1,
+        ust_kategori = NULLIF($2, ''),
+        alt_kategori = NULLIF($3, ''),
+        admin_kontrol_edildi = true,
+        admin_kontrol_at = now()
+      WHERE id = $4
+      `,
       [
         cezaevi_mi,
         ust_kategori,
@@ -37,14 +40,18 @@ export async function POST(req, { params }) {
       ]
     );
 
-    const referer =
-      req.headers.get("referer") ||
-      "/admin/siniflandirma";
+    return NextResponse.redirect(
+      new URL(
+        "/admin/siniflandirma?cezaevi=true",
+        req.url
+      ),
+      {
+        status: 303,
+      }
+    );
 
-    return NextResponse.redirect(referer, {
-      status: 303,
-    });
   } catch (error) {
+
     console.error(error);
 
     return NextResponse.json(
@@ -52,7 +59,9 @@ export async function POST(req, { params }) {
         ok: false,
         error: "Update failed",
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }
