@@ -137,19 +137,20 @@ export default function MevzuatPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 py-14">
-        <div className="space-y-12">
+      <section className="mx-auto max-w-6xl px-6 py-8">
+
+        <div className="space-y-6">
 
           {Object.entries(kategoriler).map(
             ([kategori, items]) => (
 
               <div key={kategori}>
 
-                <h2 className="mb-5 text-2xl font-bold text-[#f3d99b]">
+                <h2 className="mb-3 text-xl font-bold text-[#f3d99b]">
                   {kategori}
                 </h2>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
 
                   {items.map((item) => (
 
@@ -166,14 +167,14 @@ export default function MevzuatPage() {
                           ? "noopener noreferrer"
                           : undefined
                       }
-                      className="block rounded-3xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-[#c9a96e]/40 hover:bg-white/[0.06]"
+                      className="block rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition hover:border-[#c9a96e]/40 hover:bg-white/[0.06]"
                     >
 
-                      <h3 className="text-xl font-bold text-white">
+                      <h3 className="text-lg font-bold text-white">
                         {item.title}
                       </h3>
 
-                      <p className="mt-3 text-sm leading-7 text-slate-400">
+                      <p className="mt-2 text-sm leading-6 text-slate-400">
                         {item.desc}
                       </p>
 
@@ -188,6 +189,7 @@ export default function MevzuatPage() {
           )}
 
         </div>
+
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-20">
