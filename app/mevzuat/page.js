@@ -5,7 +5,6 @@ const mevzuatItems = [
       "Cezaevi idaresinin işlem ve kararlarına karşı yapılacak şikâyetlerde temel başvuru yolunu düzenler.",
     href:
       "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4675.pdf",
-    tag: "Kanun",
     kategori: "Kanunlar",
   },
 
@@ -16,7 +15,6 @@ const mevzuatItems = [
       "Ceza infaz kurumları, hükümlü hakları, disiplin, telefon, ziyaret, sağlık, nakil ve açık cezaevi süreçlerinin ana kanunudur.",
     href:
       "https://www.mevzuat.gov.tr/MevzuatMetin/1.5.5275.pdf",
-    tag: "Kanun",
     kategori: "Kanunlar",
   },
 
@@ -27,7 +25,6 @@ const mevzuatItems = [
       "Ceza infaz kurumlarının günlük işleyişi, kurum düzeni, hakların kullanımı ve uygulama esaslarını düzenler.",
     href:
       "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=2324&MevzuatTur=21&MevzuatTertip=5",
-    tag: "Yönetmelik",
     kategori: "Yönetmelikler",
   },
 
@@ -38,7 +35,6 @@ const mevzuatItems = [
       "Açık görüş, kapalı görüş, ziyaretçi kabulü, görüş süreleri ve ziyaret usullerine ilişkin temel düzenlemedir.",
     href:
       "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=8345&MevzuatTur=7&MevzuatTertip=5",
-    tag: "Yönetmelik",
     kategori: "Yönetmelikler",
   },
 
@@ -47,7 +43,6 @@ const mevzuatItems = [
     desc:
       "İşkence yasağı, insanlık dışı veya aşağılayıcı muamele, cezaevi koşulları ve kötü muamele iddiaları açısından temel rehber.",
     href: "/mevzuat/aihs-madde-3",
-    tag: "Rehber",
     kategori: "Rehberler",
   },
 
@@ -56,7 +51,6 @@ const mevzuatItems = [
     desc:
       "Avrupa Konseyi standartları, bağımsız denetim, sağlık, disiplin, aileyle temas ve cezaevi yaşam koşulları açısından temel referans metindir.",
     href: "/mevzuat/avrupa-cezaevi-kurallari",
-    tag: "Uluslararası",
     kategori: "Uluslararası Metinler",
   },
 
@@ -66,7 +60,6 @@ const mevzuatItems = [
       "Kötü muamele yasağı, özel hayat, aile hayatı, adil yargılanma ve etkili başvuru hakkı bakımından temel uluslararası metindir.",
     href:
       "https://www.echr.coe.int/documents/d/echr/convention_tur",
-    tag: "Uluslararası",
     kategori: "Uluslararası Metinler",
   },
 
@@ -75,7 +68,6 @@ const mevzuatItems = [
     desc:
       "Türkçe açıklama, cezaevi hakları açısından öne çıkan kurallar, sağlık hakkı, tecrit yasağı ve başvuru yolları.",
     href: "/mevzuat/mandela-kurallari",
-    tag: "Uluslararası",
     kategori: "Uluslararası Metinler",
   },
 
@@ -84,7 +76,6 @@ const mevzuatItems = [
     desc:
       "Kötü muamele yasağı, cezaevinde darp, çıplak arama, etkili soruşturma ve başvuru yolları açısından temel uluslararası metindir.",
     href: "/mevzuat/iskenceye-karsi-sozlesme",
-    tag: "Uluslararası",
     kategori: "Uluslararası Metinler",
   },
 ];
