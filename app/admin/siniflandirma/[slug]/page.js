@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import { cookies } from "next/headers";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -108,6 +109,14 @@ export default async function AdminSiniflandirmaPage({
 
     return (
         <main className="min-h-screen bg-[#070b14] p-10 text-white">
+            <div className="mb-6">
+                <Link
+                    href="/admin/siniflandirma?cezaevi=true"
+                    className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 hover:border-amber-300/50 hover:text-amber-300"
+                >
+                    ← Listeye geri dön
+                </Link>
+            </div>
             <h1 className="text-3xl font-semibold">Sınıflandırma Admin</h1>
 
             <p className="mt-6 text-2xl text-[#f3d99b]">
