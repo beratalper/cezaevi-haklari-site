@@ -64,6 +64,31 @@ AND
     `
     );
 
+    const toplamResult = await pool.query(
+        `
+    SELECT COUNT(*) AS toplam
+    FROM kararlar k
+
+    INNER JOIN cezaevi_basvurulari cb
+    ON cb.basvuru_no = k.basvuru_no
+
+    WHERE
+    (
+        k.cezaevi_mi = false
+        OR k.cezaevi_mi IS NULL
+    )
+
+    AND
+    (
+        k.cezaevi_incelendi = false
+        OR k.cezaevi_incelendi IS NULL
+    )
+    `
+    );
+
+    const toplamKarar =
+        Number(toplamResult.rows[0].toplam);
+
     const kararlar = result.rows;
 
     return (
@@ -79,6 +104,24 @@ AND
                     AYM cezaevi filtresinde bulunan ancak
                     cezaevi_mi=true olarak işaretlenmemiş kararlar.
                 </p>
+
+                <div className="mt-6 flex gap-4">
+
+                    <div className="rounded-xl bg-white/5 px-4 py-3 text-sm">
+                        Toplam Kalan:
+                        <span className="ml-2 font-bold text-[#f3d99b]">
+                            {toplamKarar}
+                        </span>
+                    </div>
+
+                    <div className="rounded-xl bg-white/5 px-4 py-3 text-sm">
+                        Bu Sayfadaki:
+                        <span className="ml-2 font-bold text-green-400">
+                            {kararlar.length}
+                        </span>
+                    </div>
+
+                </div>
 
                 <div className="mt-10 grid gap-5">
 
