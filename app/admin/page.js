@@ -31,14 +31,26 @@ export default async function AdminPage() {
 
   return (
     <main className="min-h-screen bg-[#070b14] p-10 text-white">
-      <div className="mx-auto max-w-3xl rounded-2xl border border-white/10 bg-[#0d1320] p-6">
-        <h1 className="text-3xl font-semibold text-[#f3d99b]">
-          Admin Panel
-        </h1>
+      <div className="flex items-start justify-between gap-4">
 
-        <p className="mt-4 text-slate-400">
-          Karar sınıflandırmalarını kontrol edin ve gelen yanlış sınıflandırma bildirimlerini yönetin.
-        </p>
+        <div>
+          <h1 className="text-3xl font-semibold text-[#f3d99b]">
+            Admin Panel
+          </h1>
+        </div>
+
+        <form
+          action="/api/admin/logout"
+          method="POST"
+        >
+          <button
+            type="submit"
+            className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
+          >
+            Çıkış Yap
+          </button>
+        </form>
+
       </div>
       <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         <a href="/admin/siniflandirma" className="group rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition duration-200 hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]" >
