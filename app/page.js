@@ -112,8 +112,8 @@ LIMIT 6
               {[
                 ["16000+", "Yayınlanmış Bireysel Başvuru Kararı"],
                 ["1000+", "Cezaevlerinde Yaşanan Hak İhlalleriyle İlgili Bireysel Başvuru Kararı"],
-                ["10", " Ana Kategori"],
-                ["21", "Alt Başlık"],
+                ["12", " Kategori"],
+                ["12", "Müdahale İddiası"],
               ].map(([num, label]) => (
                 <div
                   key={label}
