@@ -123,13 +123,17 @@ AND
 
                 </div>
 
-                <div className="mt-10 grid gap-5">
+                <form
+                    action="/api/admin/cezaevi-toplu"
+                    method="POST"
+                    className="mt-10 grid gap-5"
+                >
 
                     {kararlar.map((item) => (
 
                         <div
                             key={item.id}
-                            className="rounded-2xl border border-white/10 bg-[#0d1320] p-6"
+                            className="grid grid-cols-[1fr_120px_120px] items-start gap-6 rounded-2xl border border-white/10 bg-[#0d1320] p-5"
                         >
 
                             <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
@@ -145,64 +149,80 @@ AND
                                 )}
                             </div>
 
-                            <h2 className="mt-3 text-2xl font-semibold text-white">
-                                {item.karar_adi}
-                            </h2>
+                            <div className="mt-3 flex items-start justify-between gap-4">
+
+                                <h2 className="text-xl font-semibold text-white">
+                                    {item.karar_adi}
+                                </h2>
+
+                                <div className="flex gap-2">
+
+                                    <a
+                                        href={`/admin/siniflandirma/${item.basvuru_no.replace(/\//g, "-")}`}
+                                        className="rounded-xl bg-amber-300 px-4 py-2 text-sm font-bold text-black"
+                                    >
+                                        İncele
+                                    </a>
+
+                                    <a
+                                        href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${item.basvuru_no}`}
+                                        target="_blank"
+                                        className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white"
+                                    >
+                                        AYM
+                                    </a>
+
+                                </div>
+
+                            </div>
 
                             <p className="mt-4 line-clamp-3 text-sm leading-7 text-slate-300">
                                 {item.basvuru_konusu}
                             </p>
 
-                            <div className="mt-6 flex flex-wrap gap-3">
+                            <div className="flex flex-col items-center gap-4">
 
-                                <div className="flex gap-3">
-
-                                    <form
-                                        action={`/api/admin/cezaevi-onay/${item.id}`}
-                                        method="POST"
-                                    >
-                                        <button
-                                            type="submit"
-                                            className="rounded-xl bg-green-500 px-5 py-3 font-bold text-black transition hover:bg-green-400"
-                                        >
-                                            Evet
-                                        </button>
-                                    </form>
-
-                                    <form
-                                        action={`/api/admin/cezaevi-red/${item.id}`}
-                                        method="POST"
-                                    >
-                                        <button
-                                            type="submit"
-                                            className="rounded-xl bg-red-500 px-5 py-3 font-bold text-white transition hover:bg-red-400"
-                                        >
-                                            Hayır
-                                        </button>
-                                    </form>
-
+                                <div className="text-sm font-bold text-green-400">
+                                    Evet
                                 </div>
 
-                                <a
-                                    href={`/admin/siniflandirma/${item.basvuru_no.replace(/\//g, "-")}`}
-                                    className="rounded-xl bg-amber-300 px-5 py-3 font-bold text-black"
-                                >
-                                    İncele
-                                </a>
+                                <input
+                                    type="radio"
+                                    name={`karar_${item.id}`}
+                                    value="evet"
+                                    className="h-6 w-6"
+                                />
 
-                                <a
-                                    href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${item.basvuru_no}`}
-                                    target="_blank"
-                                    className="rounded-xl border border-white/10 px-5 py-3 text-white"
-                                >
-                                    AYM Kararını Aç
-                                </a>
+                            </div>
+
+                            <div className="flex flex-col items-center gap-4">
+
+                                <div className="text-sm font-bold text-red-400">
+                                    Hayır
+                                </div>
+
+                                <input
+                                    type="radio"
+                                    name={`karar_${item.id}`}
+                                    value="hayir"
+                                    className="h-6 w-6"
+                                />
 
                             </div>
                         </div>
                     ))}
-                </div>
+                    <div className="sticky bottom-6 flex justify-end">
+
+                        <button
+                            type="submit"
+                            className="rounded-2xl bg-amber-300 px-8 py-4 text-lg font-bold text-black shadow-2xl transition hover:bg-[#e2c17c]"
+                        >
+                            Seçilenleri Kaydet
+                        </button>
+
+                    </div>
+                </form>
             </div>
-        </main>
+        </main >
     );
 }
