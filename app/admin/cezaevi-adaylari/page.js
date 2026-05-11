@@ -133,83 +133,94 @@ AND
 
                         <div
                             key={item.id}
-                            className="grid grid-cols-[1fr_120px_120px] items-start gap-6 rounded-2xl border border-white/10 bg-[#0d1320] p-5"
+                            className="flex items-start justify-between gap-6 rounded-2xl border border-white/10 bg-[#0d1320] p-5"
                         >
 
-                            <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
+                            <div className="min-w-0 flex-1">
 
-                                <span>
-                                    {item.basvuru_no}
-                                </span>
+                                <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
 
-                                {item.karar_tarihi && (
                                     <span>
-                                        • {item.karar_tarihi}
+                                        {item.basvuru_no}
                                     </span>
-                                )}
-                            </div>
 
-                            <div className="mt-3 flex items-start justify-between gap-4">
-
-                                <h2 className="text-xl font-semibold text-white">
-                                    {item.karar_adi}
-                                </h2>
-
-                                <div className="flex gap-2">
-
-                                    <a
-                                        href={`/admin/siniflandirma/${item.basvuru_no.replace(/\//g, "-")}`}
-                                        className="rounded-xl bg-amber-300 px-4 py-2 text-sm font-bold text-black"
-                                    >
-                                        İncele
-                                    </a>
-
-                                    <a
-                                        href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${item.basvuru_no}`}
-                                        target="_blank"
-                                        className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white"
-                                    >
-                                        AYM
-                                    </a>
+                                    {item.karar_tarihi && (
+                                        <span>
+                                            • {item.karar_tarihi}
+                                        </span>
+                                    )}
 
                                 </div>
 
-                            </div>
+                                <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
 
-                            <p className="mt-4 line-clamp-3 text-sm leading-7 text-slate-300">
-                                {item.basvuru_konusu}
-                            </p>
+                                    <h2 className="max-w-3xl text-xl font-semibold text-white">
+                                        {item.karar_adi}
+                                    </h2>
 
-                            <div className="flex flex-col items-center gap-4">
+                                    <div className="flex shrink-0 gap-2">
 
-                                <div className="text-sm font-bold text-green-400">
-                                    Evet
+                                        <a
+                                            href={`/admin/siniflandirma/${item.basvuru_no.replace(/\//g, "-")}`}
+                                            className="rounded-xl bg-amber-300 px-4 py-2 text-sm font-bold text-black"
+                                        >
+                                            İncele
+                                        </a>
+
+                                        <a
+                                            href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${item.basvuru_no}`}
+                                            target="_blank"
+                                            className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white"
+                                        >
+                                            AYM
+                                        </a>
+
+                                    </div>
+
                                 </div>
 
-                                <input
-                                    type="radio"
-                                    name={`karar_${item.id}`}
-                                    value="evet"
-                                    className="h-6 w-6"
-                                />
+                                <p className="mt-4 line-clamp-3 text-sm leading-7 text-slate-300">
+                                    {item.basvuru_konusu}
+                                </p>
 
                             </div>
 
-                            <div className="flex flex-col items-center gap-4">
+                            <div className="flex shrink-0 items-center gap-6 rounded-2xl border border-white/10 bg-black/20 px-5 py-4">
 
-                                <div className="text-sm font-bold text-red-400">
-                                    Hayır
-                                </div>
+                                <label className="flex flex-col items-center gap-2">
 
-                                <input
-                                    type="radio"
-                                    name={`karar_${item.id}`}
-                                    value="hayir"
-                                    className="h-6 w-6"
-                                />
+                                    <span className="text-sm font-bold text-green-400">
+                                        Evet
+                                    </span>
+
+                                    <input
+                                        type="radio"
+                                        name={`karar_${item.id}`}
+                                        value="evet"
+                                        className="h-5 w-5 accent-green-500"
+                                    />
+
+                                </label>
+
+                                <label className="flex flex-col items-center gap-2">
+
+                                    <span className="text-sm font-bold text-red-400">
+                                        Hayır
+                                    </span>
+
+                                    <input
+                                        type="radio"
+                                        name={`karar_${item.id}`}
+                                        value="hayir"
+                                        className="h-5 w-5 accent-red-500"
+                                    />
+
+                                </label>
 
                             </div>
+
                         </div>
+
                     ))}
                     <div className="sticky bottom-6 flex justify-end">
 
