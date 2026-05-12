@@ -23,6 +23,18 @@ export default async function AdminYaziDetayPage({ params }) {
   );
 
   const yazi = result.rows[0];
+  const kararRes = await pool.query(
+    `
+    SELECT basvuru_no
+    FROM yazi_kararlar
+    WHERE yazi_id = $1
+  `,
+    [id]
+  );
+
+  const ilgiliKararlar = kararRes.rows
+    .map((k) => k.basvuru_no)
+    .join(", ");
 
   if (!yazi) {
     return (
