@@ -22,17 +22,17 @@ export default async function YaziDetay({ params }) {
     const yazi = result.rows[0];
     const kararRes = await pool.query(
         `
-  SELECT
-  k.basvuru_no,
-  ka.karar_adi,
-  ka.basvuru_konusu,
-  ka.slug,
-  ka.aym_url
-  FROM yazi_kararlar k
-  LEFT JOIN kararlar ka
-    ON ka.basvuru_no = k.basvuru_no
-  WHERE k.yazi_id = $1
-`,
+      SELECT
+        k.basvuru_no,
+        ka.karar_adi,
+        ka.basvuru_konusu,
+        ka.slug,
+        ka.aym_url
+      FROM yazi_kararlar k
+      LEFT JOIN kararlar ka
+        ON ka.basvuru_no = k.basvuru_no
+      WHERE k.yazi_id = $1
+    `,
         [yazi.id]
     );
 
@@ -61,11 +61,11 @@ export default async function YaziDetay({ params }) {
         const digerRes = await pool.query(
             `
       SELECT
-        k.basvuru_no,
-        ka.karar_adi,
-        ka.basvuru_konusu,
-        ka.slug,
-        ka.aym_url
+        basvuru_no,
+        karar_adi,
+        basvuru_konusu,
+        slug,
+        aym_url
       FROM kararlar
       WHERE ust_kategori = $1
         AND basvuru_no != ALL($2)
