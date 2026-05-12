@@ -21,13 +21,27 @@ Aşağıdaki Anayasa Mahkemesi karar pasajlarını esas alarak:
 - Kararın vatandaş açısından ne anlama geldiğini açıkla
 - Benzer durumda olan kişiler açısından nasıl bir sonuç çıkabileceğini değerlendir
 - SEO uyumlu ara başlıklar oluştur
-- Yazı için SEO başlığı üret
-- 160 karakterlik SEO açıklaması oluştur
 - Yazıyı kolay okunabilir kısa paragraflarla hazırla
 - Yalnızca verilen karar pasajlarına dayan
 - Verilmeyen karar, olay, ilke veya gerekçe uydurma
 - Kesin hukuki tavsiye verme
 - Yazının sonunda kısa bir genel değerlendirme yap
+- Çıktıyı HTML formatında üret
+
+ÇIKTIYI SADECE JSON FORMATINDA VER.
+
+Şu yapıyı kullan:
+
+{
+  "baslik": "",
+  "ozet": "",
+  "kategori": "",
+  "seoBaslik": "",
+  "seoAciklama": "",
+  "icerik": ""
+}
+
+icerik alanında HTML kullan.
 
 Karar pasajları:
 
@@ -51,11 +65,13 @@ ${kaynakMetinler}
     });
 
     const text =
-      completion.choices[0]?.message?.content || "";
+      completion.choices[0]?.message?.content || "{}";
+
+    const parsed = JSON.parse(text);
 
     return Response.json({
       success: true,
-      text,
+      ...parsed,
     });
   } catch (error) {
     console.error(error);

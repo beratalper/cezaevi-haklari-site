@@ -32,7 +32,12 @@ export default function YeniYaziPage() {
             const data = await response.json();
 
             if (data.success) {
-                setIcerik(data.text);
+                setBaslik(data.baslik || "");
+                setOzet(data.ozet || "");
+                setKategori(data.kategori || "");
+                setSeoBaslik(data.seoBaslik || "");
+                setSeoAciklama(data.seoAciklama || "");
+                setIcerik(data.icerik || "");
             } else {
                 alert("AI yazı oluşturamadı.");
             }
