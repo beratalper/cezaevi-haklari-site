@@ -15,18 +15,30 @@ Aşağıdaki Anayasa Mahkemesi karar pasajlarını esas alarak:
 
 - Vatandaşın anlayabileceği sade ve açık bir dil kullan
 - Gereksiz akademik ve teknik hukuk dilinden kaçın
+- icerik alanına kısa bir "Kısa Cevap" bölümüyle başla
 - Önce somut olayın ne olduğunu açıkla
 - AYM’nin olayı hangi hak veya özgürlük kapsamında değerlendirdiğini belirt
 - Mahkemenin neden ihlal veya ihlal olmadığı sonucuna vardığını sade biçimde anlat
 - Kararın vatandaş açısından ne anlama geldiğini açıkla
 - Benzer durumda olan kişiler açısından nasıl bir sonuç çıkabileceğini değerlendir
+- Başlığı vatandaşın Google'da arayacağı doğal bir soru veya gündelik ifade gibi oluştur
+- "Anayasa Mahkemesi Kararı" gibi yapay ve resmi başlıklardan kaçın
+- Başlık kısa, net ve merak uyandırıcı olsun
+- Gerekirse "AYM’ye Göre", "Hak İhlali Sayılır mı?", "Mümkün mü?" gibi doğal kalıplar kullan
+- Başlık clickbait olmasın
+- Başlık güven veren doğal haber diliyle yazılsın
 - SEO uyumlu ara başlıklar oluştur
 - Yazıyı kolay okunabilir kısa paragraflarla hazırla
 - Yalnızca verilen karar pasajlarına dayan
 - Verilmeyen karar, olay, ilke veya gerekçe uydurma
 - Kesin hukuki tavsiye verme
 - Yazının sonunda kısa bir genel değerlendirme yap
+- Yazı için virgülle ayrılmış kısa ve doğal tagler üret
+- Taglerde Türkçe karakter kullanma
+- Tagler kısa olsun
 - Çıktıyı HTML formatında üret
+- JSON dışında hiçbir açıklama yazma
+- Markdown işaretleri kullanma
 
 ÇIKTIYI SADECE JSON FORMATINDA VER.
 
@@ -38,6 +50,7 @@ Aşağıdaki Anayasa Mahkemesi karar pasajlarını esas alarak:
   "kategori": "",
   "seoBaslik": "",
   "seoAciklama": "",
+  "tagler": "",
   "icerik": ""
 }
 

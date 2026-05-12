@@ -14,6 +14,7 @@ export default function YeniYaziPage() {
     const [seoBaslik, setSeoBaslik] = useState("");
     const [seoAciklama, setSeoAciklama] = useState("");
     const [ilgiliKararlar, setIlgiliKararlar] = useState("");
+    const [tagler, setTagler] = useState("");
 
     async function handleGenerateAI() {
         try {
@@ -38,6 +39,7 @@ export default function YeniYaziPage() {
                 setSeoBaslik(data.seoBaslik || "");
                 setSeoAciklama(data.seoAciklama || "");
                 setIcerik(data.icerik || "");
+                setTagler(data.tagler || "");
             } else {
                 alert("AI yazı oluşturamadı.");
             }
@@ -67,6 +69,7 @@ export default function YeniYaziPage() {
                 seoBaslik,
                 seoAciklama,
                 ilgiliKararlar,
+                tagler,
             }),
         });
 
@@ -82,6 +85,7 @@ export default function YeniYaziPage() {
             setSeoAciklama("");
             setIlgiliKararlar("");
             setKaynakMetinler("");
+            setTagler("");
         } else {
             alert("Hata oluştu.");
         }
@@ -169,6 +173,18 @@ export default function YeniYaziPage() {
                             value={seoAciklama}
                             onChange={(e) => setSeoAciklama(e.target.value)}
                             rows={3}
+                            className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-300">
+                            Tagler (Tagleri virgülle ayır) 
+                        </label>
+
+                        <input
+                            type="text"
+                            value={tagler}
+                            onChange={(e) => setTagler(e.target.value)}
                             className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
                         />
                     </div>
