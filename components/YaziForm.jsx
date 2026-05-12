@@ -13,7 +13,7 @@ export default function YaziForm({ yazi }) {
     const [kapakGorseli, setKapakGorseli] = useState(yazi?.kapak_gorseli || "");
     const [seoBaslik, setSeoBaslik] = useState(yazi?.seo_baslik || "");
     const [seoAciklama, setSeoAciklama] = useState(yazi?.seo_aciklama || "");
-    const [ilgiliKararlar, setIlgiliKararlar] = useState("");
+    const [ilgiliKararlar, setIlgiliKararlar] = useState(yazi?.ilgiliKararlar || "");
     const [tagler, setTagler] = useState(yazi?.tagler || "");
 
     async function handleGenerateAI() {

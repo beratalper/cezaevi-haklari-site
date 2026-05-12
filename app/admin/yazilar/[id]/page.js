@@ -51,7 +51,12 @@ export default async function AdminYaziDetayPage({ params }) {
           Yazıyı Düzenle
         </h1>
 
-        <YaziForm yazi={yazi} />
+        <YaziForm
+          yazi={{
+            ...yazi,
+            ilgiliKararlar,
+          }}
+        />
       </div>
     </main>
   );
