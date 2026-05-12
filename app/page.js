@@ -87,6 +87,15 @@ LIMIT 6
 
   const seoKararlar = seoRes.rows;
 
+  const yaziRes = await pool.query(`
+  SELECT *
+  FROM yazilar
+  ORDER BY created_at DESC
+  LIMIT 3
+`);
+
+  const yazilar = yaziRes.rows;
+
   return (
     <main className="min-h-screen bg-[#070b14] text-white">
       <InfoModal />
@@ -133,6 +142,53 @@ LIMIT 6
               başlıklarıyla sunulur.
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-24">
+        <div className="mb-12 flex items-center justify-between">
+          <div>
+            <h2 className="text-4xl font-semibold">
+              İçtihat Analizleri
+            </h2>
+
+            <p className="mt-4 text-slate-400">
+              AYM kararlarına ilişkin değerlendirme yazıları.
+            </p>
+          </div>
+
+          <Link
+            href="/yazilar"
+            className="text-amber-300 font-semibold"
+          >
+            Tüm Yazılar →
+          </Link>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {yazilar.map((yazi) => (
+            <Link
+              key={yazi.id}
+              href={`/yazilar/${yazi.slug}`}
+              className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 hover:border-amber-300/40 transition"
+            >
+              <div className="text-sm text-amber-300 font-semibold">
+                İçtihat Analizi
+              </div>
+
+              <h3 className="mt-4 text-2xl font-bold leading-snug">
+                {yazi.baslik}
+              </h3>
+
+              <p className="mt-4 text-sm leading-7 text-white/60 line-clamp-3">
+                {yazi.ozet}
+              </p>
+
+              <div className="mt-6 text-sm font-semibold text-amber-300">
+                Yazıyı Oku →
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
