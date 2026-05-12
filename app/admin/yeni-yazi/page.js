@@ -95,69 +95,109 @@ export default function YeniYaziPage() {
                 </h1>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <input
-                        type="text"
-                        placeholder="Başlık"
-                        value={baslik}
-                        onChange={(e) => setBaslik(e.target.value)}
-                        className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
-                    />
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-300">
+                            Başlık
+                        </label>
 
-                    <textarea
-                        placeholder="Özet"
-                        value={ozet}
-                        onChange={(e) => setOzet(e.target.value)}
-                        rows={4}
-                        className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
-                    />
+                        <input
+                            type="text"
+                            value={baslik}
+                            onChange={(e) => setBaslik(e.target.value)}
+                            className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
+                        />
+                    </div>
 
-                    <input
-                        type="text"
-                        placeholder="Kategori"
-                        value={kategori}
-                        onChange={(e) => setKategori(e.target.value)}
-                        className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
-                    />
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-300">
+                            Özet
+                        </label>
 
-                    <input
-                        type="text"
-                        placeholder="Kapak görseli URL"
-                        value={kapakGorseli}
-                        onChange={(e) => setKapakGorseli(e.target.value)}
-                        className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
-                    />
+                        <textarea
+                            value={ozet}
+                            onChange={(e) => setOzet(e.target.value)}
+                            rows={4}
+                            className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
+                        />
+                    </div>
 
-                    <input
-                        type="text"
-                        placeholder="SEO Başlığı"
-                        value={seoBaslik}
-                        onChange={(e) => setSeoBaslik(e.target.value)}
-                        className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
-                    />
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-300">
+                            Kategori
+                        </label>
 
-                    <textarea
-                        placeholder="SEO Açıklaması"
-                        value={seoAciklama}
-                        onChange={(e) => setSeoAciklama(e.target.value)}
-                        rows={3}
-                        className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
-                    />
+                        <input
+                            type="text"
+                            value={kategori}
+                            onChange={(e) => setKategori(e.target.value)}
+                            className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
+                        />
+                    </div>
 
-                    <textarea
-                        placeholder="İlgili karar numaraları (her satıra bir tane)"
-                        value={ilgiliKararlar}
-                        onChange={(e) => setIlgiliKararlar(e.target.value)}
-                        rows={4}
-                        className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
-                    />
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-300">
+                            Kapak Görseli URL
+                        </label>
 
-                    <textarea
-                        placeholder="Kararlardan ilgili pasajları buraya yapıştır..."
-                        value={kaynakMetinler}
-                        onChange={(e) => setKaynakMetinler(e.target.value)}
-                        rows={10}
-                        className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
-                    />
+                        <input
+                            type="text"
+                            value={kapakGorseli}
+                            onChange={(e) => setKapakGorseli(e.target.value)}
+                            className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-300">
+                            SEO Başlığı
+                        </label>
+
+                        <input
+                            type="text"
+                            value={seoBaslik}
+                            onChange={(e) => setSeoBaslik(e.target.value)}
+                            className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-300">
+                            SEO Açıklaması
+                        </label>
+
+                        <textarea
+                            value={seoAciklama}
+                            onChange={(e) => setSeoAciklama(e.target.value)}
+                            rows={3}
+                            className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-300">
+                            İlgili Kararlar
+                        </label>
+
+                        <textarea
+                            value={ilgiliKararlar}
+                            onChange={(e) => setIlgiliKararlar(e.target.value)}
+                            rows={4}
+                            className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-slate-300">
+                            Karar Pasajları
+                        </label>
+
+                        <textarea
+                            value={kaynakMetinler}
+                            onChange={(e) => setKaynakMetinler(e.target.value)}
+                            rows={10}
+                            className="w-full rounded-2xl bg-white/5 border border-white/10 p-4"
+                        />
+                    </div>
 
                     <button
                         type="button"
