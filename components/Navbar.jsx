@@ -8,8 +8,9 @@ export default function Navbar() {
 
   const menuItems = [
     { label: "Ana Sayfa", href: "/" },
-    { label: "Haklar", href: "/haklar" },
+    { label: "Yazılar", href: "/yazilar" },
     { label: "Kararlar", href: "/kararlar" },
+    { label: "Haklar", href: "/haklar" },
     { label: "AYM Kategorileri", href: "/konular" },
     { label: "Etiketler", href: "/etiketler" },
     { label: "Mevzuat", href: "/mevzuat" },

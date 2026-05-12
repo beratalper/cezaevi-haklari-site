@@ -35,6 +35,7 @@ export async function POST(req) {
       ilgiliKararlar,
       kaynakMetinler,
       tagler,
+      durum = "yayinda",
     } = body;
 
     const slug = slugify(baslik);
@@ -50,9 +51,10 @@ export async function POST(req) {
     kapak_gorseli,
     seo_baslik,
     seo_aciklama,
-    tagler
+    tagler,
+    durum
   )
-  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
   RETURNING id
 `,
       [
@@ -65,6 +67,7 @@ export async function POST(req) {
         seoBaslik,
         seoAciklama,
         tagler,
+        durum
       ]
     );
 

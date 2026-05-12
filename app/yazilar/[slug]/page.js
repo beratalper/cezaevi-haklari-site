@@ -22,7 +22,10 @@ export default async function YaziDetay({ params }) {
     const yazi = result.rows[0];
     const kararRes = await pool.query(
         `
-  SELECT k.basvuru_no, ka.karar_adi
+  SELECT
+  k.basvuru_no,
+  ka.karar_adi,
+  ka.basvuru_konusu
   FROM yazi_kararlar k
   LEFT JOIN kararlar ka
     ON ka.basvuru_no = k.basvuru_no
@@ -32,6 +35,48 @@ export default async function YaziDetay({ params }) {
     );
 
     const ilgiliKararlar = kararRes.rows;
+    const ilkKarar = ilgiliKararlar[0];
+
+    let ustKategori = null;
+
+    if (ilkKarar) {
+        const kategoriRes = await pool.query(
+            `
+      SELECT ust_kategori
+      FROM kararlar
+      WHERE basvuru_no = $1
+      LIMIT 1
+    `,
+            [ilkKarar.basvuru_no]
+        );
+
+        ustKategori = kategoriRes.rows[0]?.ust_kategori;
+    }
+
+    let digerKararlar = [];
+
+    if (ustKategori) {
+        const digerRes = await pool.query(
+            `
+      SELECT
+        basvuru_no,
+        karar_adi,
+        basvuru_konusu,
+        slug
+      FROM kararlar
+      WHERE ust_kategori = $1
+        AND basvuru_no != ALL($2)
+      ORDER BY karar_tarihi DESC NULLS LAST
+      LIMIT 6
+    `,
+            [
+                ustKategori,
+                ilgiliKararlar.map((k) => k.basvuru_no),
+            ]
+        );
+
+        digerKararlar = digerRes.rows;
+    }
 
     if (!yazi) {
         return (
@@ -47,6 +92,28 @@ export default async function YaziDetay({ params }) {
                 <h1 className="text-5xl font-bold leading-tight">
                     {yazi.baslik}
                 </h1>
+
+                <div className="mb-6 flex flex-wrap gap-3">
+                    {yazi.kategori && (
+                        <span className="rounded-full bg-amber-300/10 border border-amber-300/20 px-4 py-1 text-sm font-semibold text-amber-300">
+                            {yazi.kategori}
+                        </span>
+                    )}
+
+                    {yazi.tagler &&
+                        yazi.tagler.split(",").map((tag) => (
+                            <a
+                                key={tag}
+                                href={`/etiket/${tag
+                                    .trim()
+                                    .toLowerCase()
+                                    .replaceAll(" ", "-")}`}
+                                className="rounded-full bg-white/5 border border-white/10 px-4 py-1 text-sm text-white/70 hover:border-amber-300/40 hover:text-amber-300 transition"
+                            >
+                                #{tag.trim()}
+                            </a>
+                        ))}
+                </div>
 
                 <p className="mt-6 text-lg text-white/60">
                     {yazi.ozet}
@@ -88,7 +155,7 @@ export default async function YaziDetay({ params }) {
                 {ilgiliKararlar.length > 0 && (
                     <section className="mt-20 border-t border-white/10 pt-12">
                         <h2 className="text-3xl font-bold mb-8">
-                            İlgili Kararlar
+                            Bu Yazıda İncelenen Kararlar
                         </h2>
 
                         <div className="space-y-4">
@@ -104,6 +171,47 @@ export default async function YaziDetay({ params }) {
 
                                     <div className="mt-2 text-xl font-semibold text-white">
                                         {karar.karar_adi || "Kararı İncele"}
+                                    </div>
+
+                                    <p className="mt-3 text-sm leading-7 text-white/60">
+                                        {karar.basvuru_konusu}
+                                    </p>
+
+                                    <div className="mt-4 text-sm font-semibold text-amber-300">
+                                        Kararı İncele →
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
+                    </section>
+                )}
+                {digerKararlar.length > 0 && (
+                    <section className="mt-20 border-t border-white/10 pt-12">
+                        <h2 className="text-3xl font-bold mb-8">
+                            Bunları da İnceleyin
+                        </h2>
+
+                        <div className="space-y-4">
+                            {digerKararlar.map((karar) => (
+                                <a
+                                    key={karar.basvuru_no}
+                                    href={`/kararlar/${karar.slug}`}
+                                    className="block rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-amber-300/40 transition"
+                                >
+                                    <div className="text-sm text-amber-300 font-semibold">
+                                        Başvuru No: {karar.basvuru_no}
+                                    </div>
+
+                                    <div className="mt-2 text-xl font-semibold text-white">
+                                        {karar.karar_adi}
+                                    </div>
+
+                                    <p className="mt-3 text-sm leading-7 text-white/60">
+                                        {karar.basvuru_konusu}
+                                    </p>
+
+                                    <div className="mt-4 text-sm font-semibold text-amber-300">
+                                        Kararı İncele →
                                     </div>
                                 </a>
                             ))}

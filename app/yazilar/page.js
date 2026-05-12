@@ -11,8 +11,9 @@ const pool = new Pool({
 export default async function YazilarPage() {
   const result = await pool.query(`
     SELECT *
-    FROM yazilar
-    ORDER BY created_at DESC
+FROM yazilar
+WHERE durum = 'yayinda'
+ORDER BY created_at DESC
   `);
 
   const yazilar = result.rows;
@@ -31,6 +32,13 @@ export default async function YazilarPage() {
               href={`/yazilar/${yazi.slug}`}
               className="block rounded-3xl border border-white/10 bg-white/[0.03] p-6 hover:border-amber-300/40 transition"
             >
+
+              {yazi.kategori && (
+                <div className="text-sm font-semibold text-white/50">
+                  {yazi.kategori}
+                </div>
+              )}
+
               <h2 className="text-2xl font-semibold text-amber-300">
                 {yazi.baslik}
               </h2>
@@ -38,6 +46,10 @@ export default async function YazilarPage() {
               <p className="mt-3 text-white/60">
                 {yazi.ozet}
               </p>
+
+              <div className="mt-5 text-sm font-semibold text-amber-300">
+                Yazıyı Oku →
+              </div>
             </Link>
           ))}
         </div>
