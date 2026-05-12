@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import YaziDuzenleForm from "@/components/YaziDuzenleForm";
+import YaziForm from "@/components/YaziForm";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +39,7 @@ export default async function AdminYaziDetayPage({ params }) {
           Yazıyı Düzenle
         </h1>
 
-        <YaziDuzenleForm yazi={yazi} />
+        <YaziForm yazi={yazi} />
       </div>
     </main>
   );

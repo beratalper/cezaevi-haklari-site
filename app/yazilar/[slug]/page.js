@@ -121,37 +121,35 @@ export default async function YaziDetay({ params }) {
 
                 <article
                     className="
-    prose
-    prose-invert
-    prose-lg
-    max-w-none
-    mt-14
+                      prose
+                      prose-invert
+                      prose-lg
+                      max-w-none
+                      mt-14
 
-    prose-headings:text-white
-    prose-headings:font-bold
+                      prose-headings:text-white
+                      prose-headings:font-bold
 
-    prose-p:text-white/80
-    prose-p:leading-8
+                      prose-p:text-white/80
+                      prose-p:leading-8
+                      prose-p:mb-6
 
-    prose-li:text-white/75
+                      prose-li:text-white/75
 
-    prose-strong:text-amber-300
+                      prose-strong:text-amber-300
 
-    prose-h2:text-3xl
-    prose-h2:mt-16
-    prose-h2:mb-6
+                      prose-h2:text-3xl
+                      prose-h2:mt-16
+                      prose-h2:mb-6
 
-    prose-ul:my-8
+                      prose-ul:my-8
 
-    prose-a:text-amber-300
-  "
-                >
-                    <div
-                        dangerouslySetInnerHTML={{
-                            __html: yazi.icerik,
-                        }}
-                    />
-                </article>
+                      prose-a:text-amber-300
+                    "
+                    dangerouslySetInnerHTML={{
+                        __html: yazi.icerik,
+                    }}
+                />
                 {ilgiliKararlar.length > 0 && (
                     <section className="mt-20 border-t border-white/10 pt-12">
                         <h2 className="text-3xl font-bold mb-8">
