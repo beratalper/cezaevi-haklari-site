@@ -109,6 +109,18 @@ export default async function AdminPage() {
           </p>
 
         </a>
+        <a
+          href="/admin/yeni-yazi"
+          className="group rounded-3xl border border-white/10 bg-white/[0.04] p-7 transition duration-200 hover:-translate-y-1 hover:border-amber-300/50 hover:bg-white/[0.06]"
+        >
+          <div className="text-xl font-semibold text-amber-300 transition group-hover:text-[#f3d99b]">
+            İçtihat Yazısı Oluştur
+          </div>
+
+          <p className="mt-3 text-sm leading-7 text-slate-400">
+            AI destekli içtihat analizi ve vatandaş odaklı açıklama yazıları oluştur.
+          </p>
+        </a>
       </div>
 
     </main>
