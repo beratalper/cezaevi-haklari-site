@@ -26,7 +26,8 @@ export default async function YaziDetay({ params }) {
   k.basvuru_no,
   ka.karar_adi,
   ka.basvuru_konusu,
-  ka.url
+  ka.slug,
+  ka.aym_url
   FROM yazi_kararlar k
   LEFT JOIN kararlar ka
     ON ka.basvuru_no = k.basvuru_no
@@ -162,7 +163,7 @@ export default async function YaziDetay({ params }) {
                             {ilgiliKararlar.map((karar) => (
                                 <a
                                     key={karar.basvuru_no}
-                                    href={karar.url}
+                                    href={karar.aym_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="block rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-amber-300/40 transition"
