@@ -60,10 +60,11 @@ export default async function YaziDetay({ params }) {
         const digerRes = await pool.query(
             `
       SELECT
-        basvuru_no,
-        karar_adi,
-        basvuru_konusu,
-        slug
+        k.basvuru_no,
+        ka.karar_adi,
+        ka.basvuru_konusu,
+        ka.slug,
+        ka.aym_url
       FROM kararlar
       WHERE ust_kategori = $1
         AND basvuru_no != ALL($2)
@@ -196,7 +197,9 @@ export default async function YaziDetay({ params }) {
                             {digerKararlar.map((karar) => (
                                 <a
                                     key={karar.basvuru_no}
-                                    href={`/kararlar/${karar.slug}`}
+                                    href={karar.aym_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="block rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-amber-300/40 transition"
                                 >
                                     <div className="text-sm text-amber-300 font-semibold">
@@ -212,7 +215,7 @@ export default async function YaziDetay({ params }) {
                                     </p>
 
                                     <div className="mt-4 text-sm font-semibold text-amber-300">
-                                        Kararı İncele →
+                                        AYM Kararını Aç →
                                     </div>
                                 </a>
                             ))}
