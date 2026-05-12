@@ -25,7 +25,8 @@ export default async function YaziDetay({ params }) {
   SELECT
   k.basvuru_no,
   ka.karar_adi,
-  ka.basvuru_konusu
+  ka.basvuru_konusu,
+  ka.url
   FROM yazi_kararlar k
   LEFT JOIN kararlar ka
     ON ka.basvuru_no = k.basvuru_no
@@ -160,7 +161,9 @@ export default async function YaziDetay({ params }) {
                             {ilgiliKararlar.map((karar) => (
                                 <a
                                     key={karar.basvuru_no}
-                                    href={`/kararlar/${karar.basvuru_no.replace("/", "-")}`}
+                                    href={karar.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="block rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-amber-300/40 transition"
                                 >
                                     <div className="text-sm text-amber-300 font-semibold">
@@ -176,7 +179,7 @@ export default async function YaziDetay({ params }) {
                                     </p>
 
                                     <div className="mt-4 text-sm font-semibold text-amber-300">
-                                        Kararı İncele →
+                                        Tam Metni Oku →
                                     </div>
                                 </a>
                             ))}
