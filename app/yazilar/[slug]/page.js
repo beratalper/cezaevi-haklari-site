@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import Script from "next/script";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,30 @@ export default async function YaziDetay({ params }) {
     );
 
     const yazi = result.rows[0];
+    const articleSchema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: yazi.baslik,
+        description: yazi.ozet,
+        author: {
+            "@type": "Organization",
+            name: "Cezaevi Hakları",
+        },
+        publisher: {
+            "@type": "Organization",
+            name: "Cezaevi Hakları",
+            logo: {
+                "@type": "ImageObject",
+                url: "https://cezaevihaklari.com/favicon.png",
+            },
+        },
+        mainEntityOfPage: {
+            "@type": "WebPage",
+            "@id": `https://cezaevihaklari.com/yazilar/${yazi.slug}`,
+        },
+        datePublished: yazi.created_at,
+        dateModified: yazi.updated_at || yazi.created_at,
+    };
     const kararRes = await pool.query(
         `
       SELECT
@@ -91,6 +116,15 @@ export default async function YaziDetay({ params }) {
 
     return (
         <main className="min-h-screen bg-[#070b14] text-white px-6 py-20">
+
+            <Script
+                id="article-schema"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(articleSchema),
+                }}
+            />
+            
             <div className="mx-auto max-w-4xl">
                 <h1 className="text-5xl font-bold leading-tight">
                     {yazi.baslik}
