@@ -45,6 +45,30 @@ export default async function YaziDetay({ params }) {
         datePublished: yazi.created_at,
         dateModified: yazi.updated_at || yazi.created_at,
     };
+    const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            {
+                "@type": "ListItem",
+                position: 1,
+                name: "Ana Sayfa",
+                item: "https://cezaevihaklari.com",
+            },
+            {
+                "@type": "ListItem",
+                position: 2,
+                name: "Yazılar",
+                item: "https://cezaevihaklari.com/yazilar",
+            },
+            {
+                "@type": "ListItem",
+                position: 3,
+                name: yazi.baslik,
+                item: `https://cezaevihaklari.com/yazilar/${yazi.slug}`,
+            },
+        ],
+    };
     const kararRes = await pool.query(
         `
       SELECT
@@ -124,7 +148,14 @@ export default async function YaziDetay({ params }) {
                     __html: JSON.stringify(articleSchema),
                 }}
             />
-            
+            <Script
+                id="breadcrumb-schema"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(breadcrumbSchema),
+                }}
+            />
+
             <div className="mx-auto max-w-4xl">
                 <h1 className="text-5xl font-bold leading-tight">
                     {yazi.baslik}
