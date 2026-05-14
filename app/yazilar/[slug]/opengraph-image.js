@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { Pool } from "pg";
 
-export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
