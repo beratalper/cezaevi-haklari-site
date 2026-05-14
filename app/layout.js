@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Inter, Cormorant_Garamond } from "next/font/google";
 import Navbar from "../components/Navbar";
+import CookieBanner from "../components/CookieBanner";
 import Script from "next/script"; // 👈 EKLENDİ
 
 const inter = Inter({
@@ -65,7 +66,7 @@ export default function RootLayout({ children }) {
         className={`${inter.variable} ${cormorant.variable} bg-[#070b14] text-white antialiased`}
       >
         <Navbar />
-
+        <CookieBanner />
         {children}
 
         <footer className="border-t border-white/10 bg-[#05080f]">
