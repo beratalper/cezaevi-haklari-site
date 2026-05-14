@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import Script from "next/script";
+import AdBanner from "../../../components/AdBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -264,6 +265,10 @@ export default async function YaziDetay({ params }) {
                 <p className="mt-6 text-lg text-white/60">
                     {yazi.ozet}
                 </p>
+
+                <div className="my-10">
+                    <AdBanner />
+                </div>
 
                 <article
                     className="
