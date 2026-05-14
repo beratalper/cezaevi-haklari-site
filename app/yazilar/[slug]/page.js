@@ -33,19 +33,34 @@ export async function generateMetadata({ params }) {
 
     const image = `${url}/opengraph-image`;
 
+    const seoTitle =
+        yazi.baslik.length > 60
+            ? yazi.baslik.slice(0, 57) + "..."
+            : yazi.baslik;
+
+    const seoDescription =
+        yazi.ozet.length > 155
+            ? yazi.ozet.slice(0, 152) + "..."
+            : yazi.ozet;
+
     return {
-        title: yazi.baslik,
-        description: yazi.ozet,
+        title: seoTitle,
+
+        description: seoDescription,
 
         alternates: {
             canonical: url,
         },
 
         openGraph: {
-            title: yazi.baslik,
-            description: yazi.ozet,
+            title: seoTitle,
+
+            description: seoDescription,
+
             url,
+
             siteName: "Cezaevi Hakları",
+
             images: [
                 {
                     url: image,
@@ -53,14 +68,19 @@ export async function generateMetadata({ params }) {
                     height: 630,
                 },
             ],
+
             locale: "tr_TR",
+
             type: "article",
         },
 
         twitter: {
             card: "summary_large_image",
-            title: yazi.baslik,
-            description: yazi.ozet,
+
+            title: seoTitle,
+
+            description: seoDescription,
+
             images: [image],
         },
     };
