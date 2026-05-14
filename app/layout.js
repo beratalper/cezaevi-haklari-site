@@ -93,6 +93,7 @@ export default function RootLayout({ children }) {
               <div className="mt-4 space-y-2 text-sm text-slate-400">
                 <div><a href="/hakkimizda">Hakkımızda</a></div>
                 <div><a href="/gizlilik">Gizlilik</a></div>
+                <div><a href="/cerez-politikasi">Çerez Politikası</a></div>
                 <div><a href="/yasal-uyari">Yasal Uyarı</a></div>
                 <div><a href="/iletisim">İletişim</a></div>
               </div>
