@@ -49,10 +49,34 @@ export const metadata = {
   ],
 };
 
+const organizationSchema = {
+  "@context": "https://schema.org",
+
+  "@type": "Organization",
+
+  name: "Cezaevi Hakları",
+
+  url: "https://cezaevihaklari.com",
+
+  logo: "https://cezaevihaklari.com/favicon.png",
+
+  sameAs: [],
+
+  description:
+    "Cezaevlerinde yaşanan hak ihlallerine ilişkin AYM bireysel başvuru karar arşivi ve içtihat analiz platformu.",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="tr">
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
+        
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7518046066826938"
