@@ -4,6 +4,7 @@ import sqlite3
 import time
 from urllib.parse import urljoin
 import os
+import subprocess
 
 from dotenv import load_dotenv
 import requests
@@ -501,3 +502,37 @@ Link listesi:
 
 if __name__ == "__main__":
     main()
+
+    print("\n=== CEZAEVİ CLASSIFIER BAŞLATILIYOR ===\n")
+
+    classifier = subprocess.run(
+    ["node", "classify-cezaevi.cjs"],
+    capture_output=True,
+    text=True,
+    encoding="utf-8",
+    errors="ignore"
+    )
+
+    print(classifier.stdout)
+
+    if classifier.stderr:
+        print("\nCLASSIFIER STDERR:\n")
+        print(classifier.stderr)
+
+    print("\n=== AI PIPELINE BAŞLATILIYOR ===\n")
+
+    ai_pipeline = subprocess.run(
+    ["node", "ai-auto-pipeline.js"],
+    capture_output=True,
+    text=True,
+    encoding="utf-8",
+    errors="ignore"
+   )
+
+    print(ai_pipeline.stdout)
+
+    if ai_pipeline.stderr:
+        print("\nAI PIPELINE STDERR:\n")
+        print(ai_pipeline.stderr)
+
+    print("\n=== TÜM PIPELINE TAMAMLANDI ===\n")

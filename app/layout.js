@@ -19,7 +19,7 @@ export const metadata = {
 
   description:
     "Cezaevi hakları, tutuklu ve hükümlü hakları, açık görüş, telefon hakkı, sağlık hakkı, disiplin cezaları, AYM kararları ve bireysel başvuru rehberi.",
-  
+
   metadataBase: new URL("https://cezaevihaklari.com"),
 
   alternates: {
@@ -52,16 +52,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="tr">
       <head>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7518046066826938"
-          crossorigin="anonymous"></script>
-        <link rel="icon" href="/favicon.png" />
-
-        <Script
+        <script
           async
-          strategy="afterInteractive"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXX"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7518046066826938"
           crossOrigin="anonymous"
-        />
+        ></script>
+
+        <link rel="icon" href="/favicon.png" />
       </head>
 
       <body
