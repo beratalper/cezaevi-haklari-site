@@ -8,6 +8,64 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false },
 });
 
+export async function generateMetadata({ params }) {
+    const { slug } = await params;
+
+    const result = await pool.query(
+        `
+      SELECT *
+      FROM yazilar
+      WHERE slug = $1
+      LIMIT 1
+    `,
+        [slug]
+    );
+
+    const yazi = result.rows[0];
+
+    if (!yazi) {
+        return {
+            title: "Yazı Bulunamadı",
+        };
+    }
+
+    const url = `https://cezaevihaklari.com/yazilar/${yazi.slug}`;
+
+    const image = `${url}/opengraph-image`;
+
+    return {
+        title: yazi.baslik,
+        description: yazi.ozet,
+
+        alternates: {
+            canonical: url,
+        },
+
+        openGraph: {
+            title: yazi.baslik,
+            description: yazi.ozet,
+            url,
+            siteName: "Cezaevi Hakları",
+            images: [
+                {
+                    url: image,
+                    width: 1200,
+                    height: 630,
+                },
+            ],
+            locale: "tr_TR",
+            type: "article",
+        },
+
+        twitter: {
+            card: "summary_large_image",
+            title: yazi.baslik,
+            description: yazi.ozet,
+            images: [image],
+        },
+    };
+}
+
 export default async function YaziDetay({ params }) {
     const { slug } = await params;
 
