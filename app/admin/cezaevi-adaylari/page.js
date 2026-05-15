@@ -179,7 +179,7 @@ AND
 
                                 </div>
 
-                                <p className="mt-4 line-clamp-3 text-sm leading-7 text-slate-300">
+                                <p className="mt-4 line-clamp-5 text-sm leading-7 text-slate-300">
                                     {item.basvuru_konusu}
                                 </p>
 
