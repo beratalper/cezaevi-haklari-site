@@ -119,7 +119,7 @@ LIMIT 6
           <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-xl">
             <div className="grid gap-5 sm:grid-cols-2">
               {[
-                ["16000+", "Yayınlanmış Bireysel Başvuru Kararı"],
+                ["17000+", "Yayınlanmış Bireysel Başvuru Kararı"],
                 ["1000+", "Cezaevlerinde Yaşanan Hak İhlalleriyle İlgili Bireysel Başvuru Kararı"],
                 ["12", " Kategori/Müdahale İddiası"],
                 ["30+", "Konu Etiketi"],
