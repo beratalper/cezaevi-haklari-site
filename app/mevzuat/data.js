@@ -12,6 +12,12 @@ const mevzuatItems = [
     "kategori": "Kanunlar"
   },
   {
+    "title": "2548 Sayılı Ceza Evleriyle Mahkeme Binaları İnşası Karşılığı Olarak Alınacak Harçlar Ve Mahkumlara Ödettirilecek Yiyecek Bedelleri Hakkında Kanun",
+    "desc": "Cezaevlerinde kalan mahkumlardan alınacak yiyecek bedellerinin miktarını ve bu bedellerin ne surette alınacağını düzenler.",
+    "href": "https://mevzuat.gov.tr/mevzuat?MevzuatNo=2548&MevzuatTur=1&MevzuatTertip=3",
+    "kategori": "Kanunlar"
+  },
+  {
     "title": "4675 Sayılı İnfaz Hâkimliği Kanunu",
     "desc": "Cezaevi idaresinin işlem ve kararlarına karşı yapılacak şikâyetlerde temel başvuru yolunu düzenler.",
     "href": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4675.pdf",
