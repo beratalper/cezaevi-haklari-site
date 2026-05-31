@@ -1,42 +1,5 @@
 import IctihatKart from "@/components/ictihat/IctihatKart";
-
-const ihlalKararlari = [
-    {
-        ad: "Ramazan Vural",
-        basvuruNo: "2013/1148",
-    },
-    {
-        ad: "Ertuğrul Akın",
-        basvuruNo: "2017/38027",
-    },
-    {
-        ad: "Ayberk Demirdöğen",
-        basvuruNo: "2018/12329",
-    },
-    {
-        ad: "Eşref Kaya",
-        basvuruNo: "2019/31265",
-    },
-];
-
-const ihlalYokKararlari = [
-    {
-        ad: "Ahmet Temiz (3)",
-        basvuruNo: "2013/3594",
-    },
-    {
-        ad: "Özkan Kart (2)",
-        basvuruNo: "2013/1201",
-    },
-    {
-        ad: "Sadık Sabancılar",
-        basvuruNo: "2013/3536",
-    },
-    {
-        ad: "Veysel Kaplan (7)",
-        basvuruNo: "2015/6863",
-    },
-];
+import { sakincaliMektupRehberi } from "@/data/ictihatlar/sakincali-mektup";
 
 export default function Page() {
     return (
@@ -51,18 +14,17 @@ export default function Page() {
                         İçtihat Rehberleri
                     </a>
 
-                    <span className="mx-2">›</span>
+                    <span className="mx-2"></span>
 
-                    <span>Sakıncalı Mektup</span>
+                    <span>{sakincaliMektupRehberi.baslik}</span>
                 </div>
 
                 <h1 className="text-5xl font-bold leading-tight mb-6">
-                    Sakıncalı Mektup AYM Testi
+                    {sakincaliMektupRehberi.baslik}
                 </h1>
 
                 <p className="text-lg text-white/60 mb-10">
-                    Yaklaşık 20 Anayasa Mahkemesi kararının incelenmesiyle
-                    oluşturulmuş içtihat rehberi.
+                    {sakincaliMektupRehberi.aciklama}
                 </p>
 
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 mb-10">
@@ -71,10 +33,7 @@ export default function Page() {
                     </h2>
 
                     <p className="text-white/70 mb-4">
-                        Anayasa Mahkemesi, mektubun sakıncalı olduğunun yalnızca
-                        genel ifadelerle söylenmesini yeterli görmez. İdare ve
-                        mahkemeler, sakıncalı görülen içeriği ve doğurduğu somut
-                        riski açıklamalıdır.
+                        {sakincaliMektupRehberi.ihlalAciklama}
                     </p>
 
                     <p className="text-white/70">
@@ -88,7 +47,7 @@ export default function Page() {
 
                     <div className="border rounded-lg p-4 text-center">
                         <div className="text-3xl font-bold">
-                            20+
+                            {sakincaliMektupRehberi.istatistikler.incelenen}
                         </div>
                         <div className="text-sm text-gray-500">
                             İncelenen Karar
@@ -97,7 +56,7 @@ export default function Page() {
 
                     <div className="border rounded-lg p-4 text-center">
                         <div className="text-3xl font-bold text-red-600">
-                            14
+                            {sakincaliMektupRehberi.istatistikler.ihlal}
                         </div>
                         <div className="text-sm text-gray-500">
                             İhlal
@@ -106,7 +65,7 @@ export default function Page() {
 
                     <div className="border rounded-lg p-4 text-center">
                         <div className="text-3xl font-bold text-green-600">
-                            5
+                            {sakincaliMektupRehberi.istatistikler.ihlalYok}
                         </div>
                         <div className="text-sm text-gray-500">
                             İhlal Yok
@@ -347,7 +306,7 @@ export default function Page() {
                             </h3>
 
                             <ul className="space-y-2">
-                                {ihlalKararlari.map((k) => (
+                                {sakincaliMektupRehberi.ihlalKararlari.map((k) => (
                                     <li key={k.basvuruNo}>
                                         <a
                                             href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${k.basvuruNo}`}
@@ -368,7 +327,7 @@ export default function Page() {
                             </h3>
 
                             <ul className="space-y-2">
-                                {ihlalYokKararlari.map((k) => (
+                                {sakincaliMektupRehberi.ihlalYokKararlari.map((k) => (
                                     <li key={k.basvuruNo}>
                                         <a
                                             href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${k.basvuruNo}`}

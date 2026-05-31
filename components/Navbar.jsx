@@ -10,11 +10,12 @@ export default function Navbar() {
     { label: "Ana Sayfa", href: "/" },
     { label: "Yazılar", href: "/yazilar" },
     { label: "Kararlar", href: "/kararlar" },
+    { label: "İçtihat Rehberleri", href: "/ictihatlar" },
     { label: "Haklar", href: "/haklar" },
     { label: "AYM Kategorileri", href: "/konular" },
     { label: "Etiketler", href: "/etiketler" },
     { label: "Mevzuat", href: "/mevzuat" },
-    { label: "Dilekçeler", href: "/dilekceler" },
+    // { label: "Dilekçeler", href: "/dilekceler" },
   ];
 
   return (

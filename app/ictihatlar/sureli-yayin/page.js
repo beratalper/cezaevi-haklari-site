@@ -1,26 +1,5 @@
 import IctihatKart from "@/components/ictihat/IctihatKart";
-
-const ihlalKararlari = [
-    {
-        ad: "Kamuran Reşit Bekir",
-        basvuruNo: "2013/3614",
-    },
-    {
-        ad: "Faik Özgür Erol",
-        basvuruNo: "2013/2719",
-    },
-];
-
-const ihlalYokKararlari = [
-    {
-        ad: "Hayrettin Öztekin",
-        basvuruNo: "2013/4535",
-    },
-    {
-        ad: "Kamuran Reşit Bekir (4)",
-        basvuruNo: "2013/7644",
-    },
-];
+import { sureliYayinRehberi } from "../../../data/ictihatlar/sureli-yayin";
 
 export default function Page() {
     return (
@@ -41,13 +20,11 @@ export default function Page() {
                 </div>
 
                 <h1 className="text-5xl font-bold leading-tight mb-6">
-                    Süreli Yayın AYM Testi
+                    {sureliYayinRehberi.baslik}
                 </h1>
 
                 <p className="text-lg text-white/60 mb-10">
-                    Ceza infaz kurumlarında gazete ve dergi gibi süreli
-                    yayınlara erişimin engellenmesine ilişkin Anayasa
-                    Mahkemesi içtihadı.
+                    {sureliYayinRehberi.aciklama}
                 </p>
 
                 <div className="border rounded-lg p-6 mb-10 bg-white/[0.03]">
@@ -74,7 +51,7 @@ export default function Page() {
 
                     <div className="border rounded-lg p-4 text-center">
                         <div className="text-3xl font-bold">
-                            50+
+                            {sureliYayinRehberi.istatistikler.incelenen}
                         </div>
                         <div className="text-sm text-white/50">
                             İncelenen Karar
@@ -83,7 +60,7 @@ export default function Page() {
 
                     <div className="border rounded-lg p-4 text-center">
                         <div className="text-3xl font-bold text-red-600">
-                            35
+                            {sureliYayinRehberi.istatistikler.ihlal}
                         </div>
                         <div className="text-sm text-white/50">
                             İhlal
@@ -92,7 +69,7 @@ export default function Page() {
 
                     <div className="border rounded-lg p-4 text-center">
                         <div className="text-3xl font-bold text-green-600">
-                            6
+                            {sureliYayinRehberi.istatistikler.ihlalYok}
                         </div>
                         <div className="text-sm text-white/50">
                             İhlal Yok
@@ -277,7 +254,7 @@ export default function Page() {
 
                             <ul className="space-y-2">
 
-                                {ihlalKararlari.map((k) => (
+                                {sureliYayinRehberi.ihlalKararlari.map((k) => (
                                     <li key={k.basvuruNo}>
                                         <a
                                             href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${k.basvuruNo}`}
@@ -302,7 +279,7 @@ export default function Page() {
 
                             <ul className="space-y-2">
 
-                                {ihlalYokKararlari.map((k) => (
+                                {sureliYayinRehberi.ihlalYokKararlari.map((k) => (
                                     <li key={k.basvuruNo}>
                                         <a
                                             href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${k.basvuruNo}`}

@@ -1,23 +1,32 @@
 import Link from "next/link";
+import { Pool } from "pg";
 
-const rehberler = [
-    {
-        baslik: "Sakıncalı Mektup AYM Testi",
-        aciklama:
-            "Ceza infaz kurumlarında mektupların sakıncalı bulunarak alıkonulmasına ilişkin içtihat rehberi.",
-        href: "/ictihatlar/sakincali-mektup",
-        kararSayisi: "20+ karar",
-    },
-    {
-        baslik: "Süreli Yayın AYM Testi",
-        aciklama:
-            "Gazete ve dergi gibi süreli yayınlara erişimin engellenmesine ilişkin içtihat rehberi.",
-        href: "/ictihatlar/sureli-yayin",
-        kararSayisi: "50+ karar",
-    },
-];
+export const dynamic = "force-dynamic";
 
-export default function Page() {
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+});
+
+async function getRehberler() {
+    const result = await pool.query(`
+        SELECT
+            slug,
+            baslik,
+            aciklama,
+            istatistik_incelenen,
+            istatistik_ihlal,
+            istatistik_ihlal_yok
+        FROM ictihat_kategori_haritasi
+        ORDER BY id;
+    `);
+
+    return result.rows;
+}
+
+export default async function Page() {
+    const rehberler = await getRehberler();
+
     return (
         <main className="min-h-screen bg-[#070b14] text-white px-6 py-20">
             <div className="mx-auto max-w-5xl">
@@ -34,12 +43,12 @@ export default function Page() {
                 <div className="grid md:grid-cols-2 gap-6">
                     {rehberler.map((rehber) => (
                         <Link
-                            key={rehber.href}
-                            href={rehber.href}
+                            key={rehber.slug}
+                            href={`/ictihatlar/${rehber.slug}`}
                             className="block rounded-2xl border border-white/10 bg-white/[0.03] p-6 hover:border-amber-300/40 transition"
                         >
                             <div className="text-sm text-amber-300 font-semibold mb-2">
-                                {rehber.kararSayisi}
+                                {rehber.istatistik_incelenen} karar incelendi
                             </div>
 
                             <h2 className="text-2xl font-semibold mb-3 text-white">
@@ -50,40 +59,22 @@ export default function Page() {
                                 {rehber.aciklama}
                             </p>
 
+                            <div className="mt-5 flex gap-3 text-sm">
+                                <span className="rounded-full bg-red-500/10 px-3 py-1 text-red-300">
+                                    {rehber.istatistik_ihlal} ihlal
+                                </span>
+
+                                <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-emerald-300">
+                                    {rehber.istatistik_ihlal_yok} ihlal yok
+                                </span>
+                            </div>
+
                             <div className="mt-5 text-sm font-semibold text-amber-300">
                                 Rehberi Aç →
                             </div>
                         </Link>
                     ))}
                 </div>
-
-                <section className="mt-16">
-
-                    <h2 className="text-3xl font-bold mb-6">
-                        Yakında Eklenecek Rehberler
-                    </h2>
-
-                    <div className="grid md:grid-cols-2 gap-4">
-
-                        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-white/70">
-                            📚 Kitap Yasakları
-                        </div>
-
-                        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-white/70">
-                            📞 Telefon Görüşmeleri
-                        </div>
-
-                        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-white/70">
-                            👥 Açık ve Kapalı Görüş
-                        </div>
-
-                        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-white/70">
-                            ⚖️ Disiplin Cezaları
-                        </div>
-
-                    </div>
-
-                </section>
 
             </div>
         </main>
