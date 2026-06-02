@@ -8,7 +8,7 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false },
 });
 
-async function getIctihatRehberi(slug, searchParams) {
+async function getIctihatRehberi(slug, searchParams = {}) {
     const result = await pool.query(
         `
         SELECT
@@ -179,6 +179,49 @@ async function getIctihatRehberi(slug, searchParams) {
     return rehber;
 }
 
+export async function generateMetadata({ params }) {
+    const { slug } = await params;
+
+    const rehber = await getIctihatRehberi(slug);
+
+    if (!rehber) {
+        return {};
+    }
+
+    const title =
+        rehber.baslik ||
+        `${rehber.alt_kategori} İçtihat Rehberi`;
+
+    const description =
+        rehber.aciklama;
+
+    const url =
+        `https://cezaevihaklari.com/ictihatlar/${rehber.slug}`;
+
+    return {
+        title,
+        description,
+
+        alternates: {
+            canonical: url,
+        },
+
+        openGraph: {
+            title,
+            description,
+            url,
+            type: "article",
+            siteName: "Cezaevi Hakları",
+        },
+
+        twitter: {
+            card: "summary_large_image",
+            title,
+            description,
+        },
+    };
+}
+
 function KararListeleri({ kural }) {
     return (
         <div className="mt-5 space-y-4 text-sm">
@@ -281,218 +324,302 @@ export default async function IctihatDetayPage({
         1
     );
 
+    const articleSchema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: rehber.baslik,
+        description: rehber.aciklama,
+        author: {
+            "@type": "Organization",
+            name: "Cezaevi Hakları",
+        },
+        publisher: {
+            "@type": "Organization",
+            name: "Cezaevi Hakları",
+        },
+        mainEntityOfPage:
+            `https://cezaevihaklari.com/ictihatlar/${rehber.slug}`,
+    };
+
+    const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            {
+                "@type": "ListItem",
+                position: 1,
+                name: "Ana Sayfa",
+                item: "https://cezaevihaklari.com",
+            },
+            {
+                "@type": "ListItem",
+                position: 2,
+                name: "İçtihat Rehberleri",
+                item: "https://cezaevihaklari.com/ictihatlar",
+            },
+            {
+                "@type": "ListItem",
+                position: 3,
+                name: rehber.baslik,
+                item:
+                    `https://cezaevihaklari.com/ictihatlar/${rehber.slug}`,
+            },
+        ],
+    };
+
+    const faqSchema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity:
+            (rehber.test_sorulari || []).map(
+                (soru) => ({
+                    "@type": "Question",
+                    name: soru,
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text:
+                            rehber.ihlal_aciklama ||
+                            rehber.aciklama,
+                    },
+                })
+            ),
+    };
+
     return (
-        <main className="min-h-screen bg-[#070b14] px-6 py-10 text-white">
-            <section className="mx-auto max-w-5xl">
-                <p className="text-sm text-slate-400">
-                    İçtihat Rehberleri / {rehber.kategori}
-                </p>
+        <>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(articleSchema),
+                }}
+            />
 
-                <h1 className="mt-3 text-4xl font-bold tracking-tight">
-                    {rehber.baslik || `${rehber.alt_kategori} İçtihat Rehberi`}
-                </h1>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(breadcrumbSchema),
+                }}
+            />
 
-                <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
-                    {rehber.aciklama}
-                </p>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify(faqSchema),
+                }}
+            />
 
-                <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5 text-center">
-                        <div className="text-4xl font-bold">
-                            {rehber.istatistik_incelenen}
-                        </div>
-                        <div className="mt-2 text-sm text-white/60">
-                            İncelenen Karar
-                        </div>
-                    </div>
+            <main className="min-h-screen bg-[#070b14] px-6 py-10 text-white">
+                <section className="mx-auto max-w-5xl">
+                    <p className="text-sm text-slate-400">
+                        İçtihat Rehberleri / {rehber.kategori}
+                    </p>
 
-                    <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-5 text-center">
-                        <div className="text-4xl font-bold text-red-400">
-                            {rehber.istatistik_ihlal}
-                        </div>
-                        <div className="mt-2 text-sm text-white/60">
-                            İhlal
-                        </div>
-                    </div>
+                    <h1 className="mt-3 text-4xl font-bold tracking-tight">
+                        {rehber.baslik || `${rehber.alt_kategori} İçtihat Rehberi`}
+                    </h1>
 
-                    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5 text-center">
-                        <div className="text-4xl font-bold text-emerald-400">
-                            {rehber.istatistik_ihlal_yok}
-                        </div>
-                        <div className="mt-2 text-sm text-white/60">
-                            İhlal Yok
-                        </div>
-                    </div>
-                </div>
+                    <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-300">
+                        {rehber.aciklama}
+                    </p>
 
-                <div className="mt-10 space-y-6">
-                    <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-                        <h2 className="mb-3 text-2xl font-semibold">
-                            AYM'nin Yaklaşımı
-                        </h2>
-                        <p className="leading-8 text-white/70">
-                            {rehber.ihlal_aciklama}
-                        </p>
-                    </section>
-
-                    <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-                        <h2 className="mb-3 text-2xl font-semibold">
-                            Bu rehber nasıl oluşturuldu?
-                        </h2>
-                        <p className="leading-8 text-white/70">
-                            {rehber.nasil_olusturuldu}
-                        </p>
-                    </section>
-
-                    <section>
-                        <h2 className="mb-4 text-2xl font-semibold">
-                            Hızlı Sonuç
-                        </h2>
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-5">
-                                <h3 className="mb-3 font-semibold">
-                                    AYM'nin En Sık İhlal Bulduğu Durumlar
-                                </h3>
-
-                                <ul className="space-y-2 text-sm text-white/80">
-                                    {rehber.hizli_sonuc_ihlal?.map((item) => (
-                                        <li key={item}>• {item}</li>
-                                    ))}
-                                </ul>
+                    <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5 text-center">
+                            <div className="text-4xl font-bold">
+                                {rehber.istatistik_incelenen}
                             </div>
-
-                            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5">
-                                <h3 className="mb-3 font-semibold">
-                                    AYM'nin Genellikle Kabul Ettiği Müdahaleler
-                                </h3>
-
-                                <ul className="space-y-2 text-sm text-white/80">
-                                    {rehber.hizli_sonuc_ihlal_yok?.map((item) => (
-                                        <li key={item}>• {item}</li>
-                                    ))}
-                                </ul>
+                            <div className="mt-2 text-sm text-white/60">
+                                İncelenen Karar
                             </div>
                         </div>
-                    </section>
-                </div>
 
-                <section className="mt-10">
-                    <h2 className="mb-4 text-2xl font-semibold">
-                        AYM Testi
-                    </h2>
-
-                    <div className="grid gap-3 md:grid-cols-2">
-                        {rehber.test_sorulari?.map((soru) => (
-                            <div
-                                key={soru}
-                                className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
-                            >
-                                ☐ {soru}
+                        <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-5 text-center">
+                            <div className="text-4xl font-bold text-red-400">
+                                {rehber.istatistik_ihlal}
                             </div>
-                        ))}
+                            <div className="mt-2 text-sm text-white/60">
+                                İhlal
+                            </div>
+                        </div>
+
+                        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5 text-center">
+                            <div className="text-4xl font-bold text-emerald-400">
+                                {rehber.istatistik_ihlal_yok}
+                            </div>
+                            <div className="mt-2 text-sm text-white/60">
+                                İhlal Yok
+                            </div>
+                        </div>
                     </div>
-                </section>
 
-                <section className="mt-10">
-                    <h2 className="text-2xl font-bold text-red-300">
-                        AYM İhlal Bulabilir Eğer
-                    </h2>
+                    <div className="mt-10 space-y-6">
+                        <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+                            <h2 className="mb-3 text-2xl font-semibold">
+                                AYM'nin Dikkat Ettiği Konular
+                            </h2>
+                            <p className="leading-8 text-white/70">
+                                {rehber.ihlal_aciklama}
+                            </p>
+                        </section>
 
-                    <div className="mt-5 grid gap-4">
-                        {ihlalKurallari.map((kural) => (
-                            <KuralKart
-                                key={kural.id}
-                                kural={kural}
-                                renk="red"
-                            />
-                        ))}
-                    </div>
-                </section>
+                        <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+                            <h2 className="mb-3 text-2xl font-semibold">
+                                Bu rehber nasıl oluşturuldu?
+                            </h2>
+                            <p className="leading-8 text-white/70">
+                                {rehber.nasil_olusturuldu}
+                            </p>
+                        </section>
 
-                <section className="mt-12">
-                    <h2 className="text-2xl font-bold text-emerald-300">
-                        AYM İhlal Bulmayabilir Eğer
-                    </h2>
+                        <section>
+                            <h2 className="mb-4 text-2xl font-semibold">
+                                Hızlı Sonuç
+                            </h2>
 
-                    <div className="mt-5 grid gap-4">
-                        {ihlalYokKurallari.map((kural) => (
-                            <KuralKart
-                                key={kural.id}
-                                kural={kural}
-                                renk="emerald"
-                            />
-                        ))}
-                    </div>
-                </section>
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-5">
+                                    <h3 className="mb-3 font-semibold">
+                                        AYM'nin En Sık İhlal Bulduğu Durumlar
+                                    </h3>
 
-                <section className="mt-14">
-                    <h2 className="text-2xl font-bold text-white">
-                        Bu Rehbere Ait Kararlar
-                    </h2>
-
-                    <div className="mt-5 grid gap-3">
-                        {rehber.rehberKararlari?.map((karar) => (
-                            <a
-                                key={karar.basvuru_no}
-                                href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${karar.basvuru_no}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="rounded-xl border border-white/10 bg-white/[0.03] p-4 transition hover:border-amber-300/40"
-                            >
-                                <div className="text-sm font-semibold text-amber-300">
-                                    {rehber.alt_kategori}
-                                </div>
-
-                                <div className="mt-2 font-semibold text-white">
-                                    {karar.karar_adi} - {karar.basvuru_no}
-                                </div>
-
-                                {karar.ilgiliKurallar?.length > 0 && (
-                                    <div className="mt-3 flex flex-wrap gap-2">
-                                        {karar.ilgiliKurallar.map((kural) => (
-                                            <span
-                                                key={kural}
-                                                className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-medium text-amber-200"
-                                            >
-                                                {kural}
-                                            </span>
+                                    <ul className="space-y-2 text-sm text-white/80">
+                                        {rehber.hizli_sonuc_ihlal?.map((item) => (
+                                            <li key={item}>• {item}</li>
                                         ))}
-                                    </div>
-                                )}
-                            </a>
-                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-5">
+                                    <h3 className="mb-3 font-semibold">
+                                        AYM'nin Genellikle Kabul Ettiği Müdahaleler
+                                    </h3>
+
+                                    <ul className="space-y-2 text-sm text-white/80">
+                                        {rehber.hizli_sonuc_ihlal_yok?.map((item) => (
+                                            <li key={item}>• {item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
                     </div>
 
-                    <div className="mt-6 flex items-center justify-between">
-                        {rehber.rehberKararSayfa > 1 ? (
-                            <a
-                                href={`/ictihatlar/${rehber.slug}?kararSayfa=${rehber.rehberKararSayfa - 1}`}
-                                className="rounded-lg border border-white/10 px-4 py-2 text-sm text-white/80 hover:border-amber-300/40"
-                            >
-                                ← Önceki
-                            </a>
-                        ) : (
-                            <span />
-                        )}
+                    <section className="mt-10">
+                        <h2 className="mb-4 text-2xl font-semibold">
+                            AYM Testi
+                        </h2>
 
-                        <div className="text-sm text-white/50">
-                            Sayfa {rehber.rehberKararSayfa} / {toplamSayfa}
+                        <div className="grid gap-3 md:grid-cols-2">
+                            {rehber.test_sorulari?.map((soru) => (
+                                <div
+                                    key={soru}
+                                    className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
+                                >
+                                    ☐ {soru}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    <section className="mt-10">
+                        <h2 className="text-2xl font-bold text-red-300">
+                            AYM İhlal Bulabilir Eğer
+                        </h2>
+
+                        <div className="mt-5 grid gap-4">
+                            {ihlalKurallari.map((kural) => (
+                                <KuralKart
+                                    key={kural.id}
+                                    kural={kural}
+                                    renk="red"
+                                />
+                            ))}
+                        </div>
+                    </section>
+
+                    <section className="mt-12">
+                        <h2 className="text-2xl font-bold text-emerald-300">
+                            AYM İhlal Bulmayabilir Eğer
+                        </h2>
+
+                        <div className="mt-5 grid gap-4">
+                            {ihlalYokKurallari.map((kural) => (
+                                <KuralKart
+                                    key={kural.id}
+                                    kural={kural}
+                                    renk="emerald"
+                                />
+                            ))}
+                        </div>
+                    </section>
+
+                    <section className="mt-14">
+                        <h2 className="text-2xl font-bold text-white">
+                            Bu Rehbere Ait Kararlar
+                        </h2>
+
+                        <div className="mt-5 grid gap-3">
+                            {rehber.rehberKararlari?.map((karar) => (
+                                <a
+                                    key={karar.basvuru_no}
+                                    href={`https://kararlarbilgibankasi.anayasa.gov.tr/BB/${karar.basvuru_no}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="rounded-xl border border-white/10 bg-white/[0.03] p-4 transition hover:border-amber-300/40"
+                                >
+                                    <div className="text-sm font-semibold text-amber-300">
+                                        {rehber.alt_kategori}
+                                    </div>
+
+                                    <div className="mt-2 font-semibold text-white">
+                                        {karar.karar_adi} - {karar.basvuru_no}
+                                    </div>
+
+                                    {karar.ilgiliKurallar?.length > 0 && (
+                                        <div className="mt-3 flex flex-wrap gap-2">
+                                            {karar.ilgiliKurallar.map((kural) => (
+                                                <span
+                                                    key={kural}
+                                                    className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-medium text-amber-200"
+                                                >
+                                                    {kural}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </a>
+                            ))}
                         </div>
 
-                        {rehber.rehberKararSayfa < toplamSayfa ? (
-                            <a
-                                href={`/ictihatlar/${rehber.slug}?kararSayfa=${rehber.rehberKararSayfa + 1}`}
-                                className="rounded-lg border border-white/10 px-4 py-2 text-sm text-white/80 hover:border-amber-300/40"
-                            >
-                                Sonraki →
-                            </a>
-                        ) : (
-                            <span />
-                        )}
-                    </div>
+                        <div className="mt-6 flex items-center justify-between">
+                            {rehber.rehberKararSayfa > 1 ? (
+                                <a
+                                    href={`/ictihatlar/${rehber.slug}?kararSayfa=${rehber.rehberKararSayfa - 1}`}
+                                    className="rounded-lg border border-white/10 px-4 py-2 text-sm text-white/80 hover:border-amber-300/40"
+                                >
+                                    ← Önceki
+                                </a>
+                            ) : (
+                                <span />
+                            )}
+
+                            <div className="text-sm text-white/50">
+                                Sayfa {rehber.rehberKararSayfa} / {toplamSayfa}
+                            </div>
+
+                            {rehber.rehberKararSayfa < toplamSayfa ? (
+                                <a
+                                    href={`/ictihatlar/${rehber.slug}?kararSayfa=${rehber.rehberKararSayfa + 1}`}
+                                    className="rounded-lg border border-white/10 px-4 py-2 text-sm text-white/80 hover:border-amber-300/40"
+                                >
+                                    Sonraki →
+                                </a>
+                            ) : (
+                                <span />
+                            )}
+                        </div>
+                    </section>
                 </section>
-            </section>
-        </main>
+            </main>
+        </>
     );
 }

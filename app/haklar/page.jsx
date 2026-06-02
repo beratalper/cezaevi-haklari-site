@@ -11,18 +11,29 @@ const pool = new Pool({
 export default async function HaklarPage() {
   const result = await pool.query(`
   SELECT
-    ust_kategori,
-    MAX(basvuru_konusu) AS basvuru_konusu,
-    COUNT(*) AS toplam,
-    COUNT(*) FILTER (
-      WHERE sonuc ILIKE '%İhlal%'
-        AND sonuc NOT ILIKE '%İhlal Olmadığı%'
-    ) AS ihlal
-  FROM kararlar
-  WHERE cezaevi_mi = true
-    AND ust_kategori IS NOT NULL
-    GROUP BY ust_kategori
-  ORDER BY ust_kategori, toplam DESC;
+    h.kategori,
+    h.alt_kategori,
+    h.slug,
+    h.baslik,
+    h.aciklama,
+    COUNT(k.id)::int AS karar_sayisi,
+    COUNT(k.id) FILTER (
+      WHERE k.sonuc ILIKE '%İhlal%'
+        AND k.sonuc NOT ILIKE '%İhlal Olmadığı%'
+    )::int AS ihlal_sayisi
+  FROM ictihat_kategori_haritasi h
+  LEFT JOIN kararlar k
+    ON k.ictihat_slug = h.slug
+   AND k.cezaevi_mi = true
+  GROUP BY
+    h.kategori,
+    h.alt_kategori,
+    h.slug,
+    h.baslik,
+    h.aciklama
+  ORDER BY
+    h.kategori,
+    h.alt_kategori;
 `);
 
   function slugify(value = "") {
@@ -41,91 +52,28 @@ export default async function HaklarPage() {
   const grouped = {};
 
   for (const row of result.rows) {
-    const ust = row.ust_kategori;
-    console.log(row.ust_kategori);
-    if (!grouped[ust]) {
-      grouped[ust] = {
-        title: ust,
-        slug: slugify(ust),
-        description: "",
-        konular: [],
+    const kategori = row.kategori || "Diğer cezaevi hakları";
+
+    if (!grouped[kategori]) {
+      grouped[kategori] = {
+        title: kategori,
         toplam: 0,
         ihlal: 0,
         items: [],
       };
     }
 
-    const toplam = Number(row.toplam || 0);
-    const ihlal = Number(row.ihlal || 0);
+    grouped[kategori].toplam += Number(row.karar_sayisi || 0);
+    grouped[kategori].ihlal += Number(row.ihlal_sayisi || 0);
 
-    grouped[ust].toplam += toplam;
-    grouped[ust].ihlal += ihlal;
-
-    if (row.basvuru_konusu) {
-      grouped[ust].konular.push(row.basvuru_konusu);
-    }
-
-  }
-
-  const customDescriptions = {
-    "Telefon, mektup ve haberleşme":
-      "Telefon görüşleri, mektup hakkı ve iletişim kısıtlamalarına ilişkin Anayasa Mahkemesi bireysel başvuru kararları.",
-
-    "Kötü muamele / işkence":
-      "Fiziksel müdahale, kötü muamele iddiaları ve güç kullanımına ilişkin bireysel başvuru kararları.",
-
-    "Ziyaret ve aile hayatı":
-      "Açık görüş, kapalı görüş ve aile ziyaretlerine ilişkin hak ihlali kararları.",
-
-    "Disiplin cezaları":
-      "Cezaevlerinde uygulanan disiplin cezaları ve infaz uygulamalarına ilişkin Anayasa Mahkemesi kararları.",
-
-    "Yayın, kitap, ifade özgürlüğü":
-      "Kitap, gazete, yayın erişimi ve ifade özgürlüğüne ilişkin cezaevi kararları.",
-
-    "Avukat görüşü ve savunma":
-      "Avukatla görüşme hakkı, savunma hakkı ve müdafi erişimine ilişkin bireysel başvuru kararları.",
-
-    "Sağlık ve tedavi":
-      "Hastane sevkleri, tedavi süreçleri ve sağlık hizmetine erişime ilişkin Anayasa Mahkemesi kararları.",
-
-    "Tahliye, infaz hesabı, koşullu salıverilme":
-      "Tahliye süreçleri, infaz hesaplamaları ve koşullu salıverilmeye ilişkin bireysel başvuru kararları.",
-
-    "Yaşam hakkı / ölüm / intihar":
-      "Cezaevlerinde yaşam hakkı, ölüm olayları ve intihar iddialarına ilişkin Anayasa Mahkemesi kararları.",
-
-    "Arama, mahremiyet ve özel hayat":
-      "Üst aramaları, mahremiyet hakkı ve özel hayatın korunmasına ilişkin bireysel başvuru kararları.",
-
-    "Nakil, sevk, infaz koşulları":
-      "Cezaevi nakilleri, sevk işlemleri ve infaz koşullarına ilişkin hak ihlali kararları.",
-  };
-
-  for (const group of Object.values(grouped)) {
-    const text = group.konular.join(" ").toLowerCase();
-
-    if (customDescriptions[group.title]) {
-      group.description = customDescriptions[group.title];
-      continue;
-    }
-
-    if (text.includes("telefon")) {
-      group.description =
-        "Telefon görüşleri, iletişim kısıtlamaları ve haberleşme hakkına ilişkin bireysel başvuru kararları.";
-    } else if (text.includes("hastane") || text.includes("tedavi")) {
-      group.description =
-        "Sağlık hizmetine erişim, hastane sevkleri ve tedavi süreçlerine ilişkin Anayasa Mahkemesi kararları.";
-    } else if (text.includes("ziyaret") || text.includes("görüş")) {
-      group.description =
-        "Açık görüş, kapalı görüş ve aile ziyaretlerine ilişkin hak ihlali kararları.";
-    } else if (text.includes("kötü muamele")) {
-      group.description =
-        "Kötü muamele iddiaları, güç kullanımı ve insan onuruna aykırı uygulamalara ilişkin kararlar.";
-    } else {
-      group.description =
-        "Cezaevlerinde yaşanan hak ihlallerine ilişkin Anayasa Mahkemesi bireysel başvuru kararları.";
-    }
+    grouped[kategori].items.push({
+      title: row.baslik || row.alt_kategori,
+      alt_kategori: row.alt_kategori,
+      slug: row.slug,
+      description: row.aciklama,
+      karar_sayisi: Number(row.karar_sayisi || 0),
+      ihlal_sayisi: Number(row.ihlal_sayisi || 0),
+    });
   }
 
   const hakGruplari = Object.values(grouped)
