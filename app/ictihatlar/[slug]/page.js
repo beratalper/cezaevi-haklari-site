@@ -176,6 +176,24 @@ async function getIctihatRehberi(slug, searchParams = {}) {
     rehber.rehberKararSayfa = kararSayfa;
     rehber.rehberKararLimit = kararLimit;
 
+    const ilgiliRehberlerResult = await pool.query(
+        `
+    SELECT
+        slug,
+        baslik,
+        aciklama,
+        istatistik_incelenen
+    FROM ictihat_kategori_haritasi
+    WHERE kategori = $1
+      AND slug != $2
+    ORDER BY istatistik_incelenen DESC NULLS LAST
+    LIMIT 6
+    `,
+        [rehber.kategori, rehber.slug]
+    );
+
+    rehber.ilgiliRehberler = ilgiliRehberlerResult.rows;
+
     return rehber;
 }
 
@@ -551,6 +569,36 @@ export default async function IctihatDetayPage({
                             ))}
                         </div>
                     </section>
+
+                    {rehber.ilgiliRehberler?.length > 0 && (
+                        <section className="mt-14">
+                            <h2 className="text-2xl font-bold text-white">
+                                İlgili İçtihat Rehberleri
+                            </h2>
+
+                            <div className="mt-5 grid gap-4 md:grid-cols-2">
+                                {rehber.ilgiliRehberler.map((ilgili) => (
+                                    <a
+                                        key={ilgili.slug}
+                                        href={`/ictihatlar/${ilgili.slug}`}
+                                        className="rounded-xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-amber-300/40"
+                                    >
+                                        <div className="text-sm font-semibold text-amber-300">
+                                            {ilgili.istatistik_incelenen} karar incelendi
+                                        </div>
+
+                                        <h3 className="mt-2 text-lg font-semibold text-white">
+                                            {ilgili.baslik}
+                                        </h3>
+
+                                        <p className="mt-3 text-sm leading-6 text-white/60">
+                                            {ilgili.aciklama}
+                                        </p>
+                                    </a>
+                                ))}
+                            </div>
+                        </section>
+                    )}
 
                     <section className="mt-14">
                         <h2 className="text-2xl font-bold text-white">

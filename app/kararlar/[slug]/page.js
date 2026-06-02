@@ -228,6 +228,33 @@ Teşekkürler.
         )}
       </div>
 
+      {item.ictihat_slug && (
+        <div className="mx-auto mt-8 w-full max-w-4xl rounded-2xl border border-[#c9a96e]/30 bg-[#c9a96e]/8 p-6">
+          <h3 className="text-xs font-semibold uppercase tracking-widest text-[#c9a96e]">
+            ⚖️ İlgili İçtihat Rehberi
+          </h3>
+
+          <p className="mt-4 text-sm leading-7 text-slate-300">
+            Bu karar,{" "}
+            <span className="font-semibold text-[#f3d99b]">
+              {item.ictihat_baslik || "ilgili içtihat rehberi"}
+            </span>{" "}
+            içinde incelenmektedir. Rehberde, bu kararın hangi içtihat
+            kuralını desteklediği ve AYM'nin benzer olaylarda nasıl
+            değerlendirme yaptığı açıklanmaktadır.
+          </p>
+
+          <div className="mt-5 flex justify-end">
+            <a
+              href={`/ictihatlar/${item.ictihat_slug}`}
+              className="inline-flex items-center justify-center rounded-lg border border-[#c9a96e]/70 bg-[#c9a96e]/10 px-5 py-2.5 text-sm font-semibold text-[#f3d99b] transition hover:-translate-y-0.5 hover:bg-[#c9a96e]/20"
+            >
+              İlgili rehberi aç →
+            </a>
+          </div>
+        </div>
+      )}
+
       <div className="mt-12 flex justify-center">
         <div className="w-full max-w-4xl space-y-6">
 
