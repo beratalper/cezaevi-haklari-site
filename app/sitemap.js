@@ -53,7 +53,7 @@ export default async function sitemap() {
   }));
 
   const rehberUrls = (rehberlerRes.data || []).map((item) => ({
-    url: `${siteUrl}/ictihat-rehberi/${item.slug}`,
+    url: `${siteUrl}/ictihatlar/${item.slug}`,
   }));
 
   const yaziUrls = (yazilarRes.data || []).map((item) => ({
