@@ -1,0 +1,31 @@
+<svg width="1200" height="500" viewBox="0 0 1200 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+<rect width="1200" height="500" fill="#070B14"></rect>
+
+<rect x="80" y="140" width="180" height="120" rx="12" stroke="#F59E0B" stroke-width="4"></rect>
+<path d="M80 150L170 220L260 150" stroke="#F59E0B" stroke-width="4"></path>
+
+<line x1="300" y1="200" x2="450" y2="200" stroke="#64748B" stroke-width="4"></line>
+
+<circle cx="520" cy="200" r="55" stroke="#EF4444" stroke-width="6"></circle>
+<line x1="485" y1="165" x2="555" y2="235" stroke="#EF4444" stroke-width="6"></line>
+<line x1="555" y1="165" x2="485" y2="235" stroke="#EF4444" stroke-width="6"></line>
+
+<line x1="580" y1="200" x2="740" y2="200" stroke="#64748B" stroke-width="4"></line>
+
+<rect x="780" y="140" width="180" height="120" rx="12" stroke="#22C55E" stroke-width="4"></rect>
+<path d="M780 150L870 220L960 150" stroke="#22C55E" stroke-width="4"></path>
+
+<line x1="1000" y1="200" x2="1080" y2="200" stroke="#64748B" stroke-width="4"></line>
+
+<path d="M1080 130H1130L1150 150V260H1080V130Z" stroke="#38BDF8" stroke-width="4"></path>
+
+<text x="600" y="360" fill="white" font-size="34" text-anchor="middle" font-family="Arial">
+Sakıncalı Mektup İçtihat Rehberi
+</text>
+
+<text x="600" y="405" fill="#94A3B8" font-size="20" text-anchor="middle" font-family="Arial">
+Mektup → İnceleme → Müdahale → AYM Denetimi
+</text>
+
+</svg>

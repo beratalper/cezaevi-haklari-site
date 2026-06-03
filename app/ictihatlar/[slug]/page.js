@@ -216,6 +216,9 @@ export async function generateMetadata({ params }) {
     const url =
         `https://cezaevihaklari.com/ictihatlar/${rehber.slug}`;
 
+    const image =
+        `https://cezaevihaklari.com/rehber-gorselleri/og/${rehber.slug}.png`;
+
     return {
         title,
         description,
@@ -230,12 +233,21 @@ export async function generateMetadata({ params }) {
             url,
             type: "article",
             siteName: "Cezaevi Hakları",
+            locale: "tr_TR",
+            images: [
+                {
+                    url: image,
+                    width: 1200,
+                    height: 630,
+                },
+            ],
         },
 
         twitter: {
             card: "summary_large_image",
             title,
             description,
+            images: [image],
         },
     };
 }
@@ -325,6 +337,9 @@ export default async function IctihatDetayPage({
     if (!rehber) {
         notFound();
     }
+
+    const rehberKapak =
+        `/rehber-gorselleri/kapak/${rehber.slug}.jpg`;
 
     const ihlalKurallari = rehber.kurallar.filter(
         (kural) => kural.sonuc_tipi === "İhlal"
@@ -467,6 +482,14 @@ export default async function IctihatDetayPage({
                                 İhlal Yok
                             </div>
                         </div>
+                    </div>
+
+                    <div className="mt-10 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-3 shadow-2xl shadow-black/30">
+                        <img
+                            src={rehberKapak}
+                            alt={`${rehber.baslik} görsel anlatımı`}
+                            className="h-auto w-full rounded-2xl object-cover"
+                        />
                     </div>
 
                     <div className="mt-10 space-y-6">
