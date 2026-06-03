@@ -70,12 +70,13 @@ export default async function sitemap() {
 
   return [
     { url: siteUrl },
+    { url: `${siteUrl}/yazilar` },
+    { url: `${siteUrl}/kararlar` },
+    { url: `${siteUrl}/ictihatlar` },
     { url: `${siteUrl}/haklar` },
     { url: `${siteUrl}/konular` },
+    { url: `${siteUrl}/etiketler` },
     { url: `${siteUrl}/mevzuat` },
-    { url: `${siteUrl}/kararlar` },
-    { url: `${siteUrl}/dilekceler` },
-    { url: `${siteUrl}/istatistikler` },
 
     ...rehberUrls,
     ...yaziUrls,
