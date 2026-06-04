@@ -545,23 +545,6 @@ export default async function IctihatDetayPage({
                     </div>
 
                     <section className="mt-10">
-                        <h2 className="mb-4 text-2xl font-semibold">
-                            AYM Testi
-                        </h2>
-
-                        <div className="grid gap-3 md:grid-cols-2">
-                            {rehber.test_sorulari?.map((soru) => (
-                                <div
-                                    key={soru}
-                                    className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
-                                >
-                                    ☐ {soru}
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-
-                    <section className="mt-10">
                         <h2 className="text-2xl font-bold text-red-300">
                             AYM İhlal Bulabilir Eğer
                         </h2>
