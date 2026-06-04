@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Pool } from "pg";
 import InfoModal from "../components/InfoModal";
-export const dynamic = "force-dynamic";
+
+export const revalidate = 3600;
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
