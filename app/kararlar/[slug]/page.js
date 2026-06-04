@@ -2,8 +2,7 @@ import BenzerKararlarClient from "../../../components/BenzerKararlarClient";
 import ReportClassificationButton from "../../../components/ReportClassificationButton";
 import { headers } from "next/headers";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 86400;
 
 async function getKarar(slug) {
   try {
