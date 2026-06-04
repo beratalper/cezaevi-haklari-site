@@ -70,7 +70,6 @@ export default async function sitemap() {
 
   return [
     { url: siteUrl },
-    { url: `${siteUrl}/sitemap-test` },
     { url: `${siteUrl}/yazilar` },
     { url: `${siteUrl}/kararlar` },
     { url: `${siteUrl}/ictihatlar` },
