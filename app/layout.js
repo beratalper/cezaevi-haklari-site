@@ -76,12 +76,13 @@ export default function RootLayout({ children }) {
             __html: JSON.stringify(organizationSchema),
           }}
         />
-        
-        <script
+
+        <Script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7518046066826938"
+          strategy="lazyOnload"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-751..."
           crossOrigin="anonymous"
-        ></script>
+        />
 
         <link rel="icon" href="/favicon.png" />
       </head>
