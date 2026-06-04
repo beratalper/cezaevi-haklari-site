@@ -11,7 +11,7 @@ async function getKarar(slug) {
     const protocol = host?.includes("localhost") ? "http" : "https";
 
     const res = await fetch(`${protocol}://${host}/api/kararlar/${slug}`, {
-      cache: "no-store",
+      next: { revalidate: 86400 },
     });
 
     const json = await res.json();
@@ -39,7 +39,7 @@ async function getBenzerKararlar(slug) {
     const protocol = host?.includes("localhost") ? "http" : "https";
 
     const res = await fetch(`${protocol}://${host}/api/kararlar/${slug}/benzer`, {
-      cache: "no-store",
+      next: { revalidate: 86400 },
     });
 
     const json = await res.json();
