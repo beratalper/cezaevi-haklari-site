@@ -192,6 +192,25 @@ async function getIctihatRehberi(slug, searchParams = {}) {
         [rehber.kategori, rehber.slug]
     );
 
+    const ilgiliYazilarResult = await pool.query(
+        `
+  SELECT
+      id,
+      baslik,
+      slug,
+      ozet,
+      created_at
+  FROM yazilar
+  WHERE ictihat_slug = $1
+    AND durum = 'yayinda'
+  ORDER BY created_at DESC
+  LIMIT 6
+  `,
+        [rehber.slug]
+    );
+
+    rehber.ilgiliYazilar = ilgiliYazilarResult.rows;
+
     rehber.ilgiliRehberler = ilgiliRehberlerResult.rows;
 
     return rehber;
@@ -599,6 +618,32 @@ export default async function IctihatDetayPage({
 
                                         <p className="mt-3 text-sm leading-6 text-white/60">
                                             {ilgili.aciklama}
+                                        </p>
+                                    </a>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {rehber.ilgiliYazilar?.length > 0 && (
+                        <section className="mt-14">
+                            <h2 className="text-2xl font-bold text-white">
+                                Bu Konudaki Yazılar
+                            </h2>
+
+                            <div className="mt-5 grid gap-4 md:grid-cols-2">
+                                {rehber.ilgiliYazilar.map((yazi) => (
+                                    <a
+                                        key={yazi.id}
+                                        href={`/yazilar/${yazi.slug}`}
+                                        className="rounded-xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-amber-300/40"
+                                    >
+                                        <h3 className="text-lg font-semibold text-white">
+                                            {yazi.baslik}
+                                        </h3>
+
+                                        <p className="mt-3 text-sm leading-6 text-white/60">
+                                            {yazi.ozet}
                                         </p>
                                     </a>
                                 ))}
