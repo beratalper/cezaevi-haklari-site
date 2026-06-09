@@ -146,11 +146,40 @@ LIMIT 6
         </div>
       </section>
 
+      <section className="mx-auto max-w-7xl px-6 pt-20">
+        <Link
+          href="/bireysel-basvuru"
+          className="group block rounded-3xl border border-white/10 bg-white/[0.03] p-8 transition hover:-translate-y-1 hover:border-amber-300/40 hover:bg-white/[0.06]"
+        >
+          <div className="text-sm font-semibold text-amber-300">
+            Bireysel Başvuru Rehberi
+          </div>
+
+          <h2 className="mt-4 text-3xl font-bold leading-tight text-white md:text-4xl">
+            Anayasa Mahkemesi Bireysel Başvuru Rehberi
+          </h2>
+          <h4 className="mt-4 text-3xl font-bold leading-tight text-white md:text-2xl">
+            Sade, anlaşılır bir dil ve konuya ilişkin örnek mahkeme kararları
+          </h4>
+
+          <p className="mt-5 max-w-4xl text-lg leading-8 text-white/70">
+            Başvuru süresi, başvuru yollarının tüketilmesi, adli yardım,
+            eksiklik tamamlama, gerekli belgeler ve tedbir talebi gibi
+            daha onlarca konuyu; özellikle cezaevi başvurularına ilişkin
+            AYM kararlarından çıkarılan örneklerle birlikte inceleyin.
+          </p>
+
+          <div className="mt-7 text-sm font-semibold text-amber-300">
+            Rehberi İncele →
+          </div>
+        </Link>
+      </section>
+
       <section className="mx-auto max-w-7xl px-6 py-24">
         <div className="mb-12 flex items-center justify-between">
           <div>
             <h2 className="text-4xl font-semibold">
-              İçtihat Analizleri
+              İçtihat Analiz Yazıları
             </h2>
 
             <p className="mt-4 text-slate-400">
@@ -174,7 +203,7 @@ LIMIT 6
               className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 hover:border-amber-300/40 transition"
             >
               <div className="text-sm text-amber-300 font-semibold">
-                İçtihat Analizi
+                İçtihat Analiz Yazıları
               </div>
 
               <h3 className="mt-4 text-2xl font-bold leading-snug">

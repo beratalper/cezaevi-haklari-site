@@ -13,7 +13,7 @@ function formatMarkdown(text = "") {
         .map((line, index) => {
             if (line.startsWith("## ")) {
                 return (
-                    <h2 key={index} className="mt-10 text-2xl font-bold text-amber-300">
+                    <h2 key={index} className="mt-14 text-3xl font-bold text-amber-300">
                         {line.replace("## ", "")}
                     </h2>
                 );
@@ -21,18 +21,18 @@ function formatMarkdown(text = "") {
 
             if (line.startsWith("- ")) {
                 return (
-                    <li key={index} className="ml-6 list-disc text-white/75">
+                    <li key={index} className="ml-6 list-disc text-[18px] leading-8 text-white/75">
                         {line.replace("- ", "")}
                     </li>
                 );
             }
 
             if (!line.trim()) {
-                return <div key={index} className="h-4" />;
+                return null;
             }
 
             return (
-                <p key={index} className="text-[17px] leading-8 text-white/75">
+                <p key={index} className="text-[19px] leading-9 text-white/75">
                     {line}
                 </p>
             );
@@ -129,8 +129,8 @@ export default async function SSSDetayPage({ params }) {
                     <p className="mt-6 text-xl leading-9 text-white/70">{item.ozet}</p>
                 )}
 
-                <article className="mt-10 rounded-3xl border border-white/10 bg-white/[0.03] p-8">
-                    <div className="space-y-2">
+                <article className="mt-12 max-w-none">
+                    <div className="space-y-6">
                         {formatMarkdown(item.icerik || item.cevap)}
                     </div>
                 </article>

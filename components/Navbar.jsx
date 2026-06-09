@@ -12,7 +12,7 @@ export default function Navbar() {
     { label: "Kararlar", href: "/kararlar" },
     { label: "İçtihat Rehberleri", href: "/ictihatlar" },
     { label: "Haklar", href: "/haklar" },
-    { label: "AYM Kategorileri", href: "/konular" },
+    { label: "Bireysel Başvuru Rehberi", href: "/bireysel-basvuru" },
     { label: "Etiketler", href: "/etiketler" },
     { label: "Mevzuat", href: "/mevzuat" },
     // { label: "Dilekçeler", href: "/dilekceler" },
