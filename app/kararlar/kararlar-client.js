@@ -17,12 +17,18 @@ export default function KararlarClient() {
   );
 }
 
-async function getKararlar({ q = "", limit = 500, offset = 0 } = {}) {
+async function getKararlar({
+  q = "",
+  limit = 500,
+  offset = 0,
+  kapsam = "cezaevi",
+} = {}) {
   const params = new URLSearchParams();
 
   if (q.trim()) params.set("q", q.trim());
   params.set("limit", String(limit));
   params.set("offset", String(offset));
+  params.set("kapsam", kapsam);
 
   const res = await fetch(`/api/kararlar?${params.toString()}`, {
     cache: "no-store",
@@ -99,7 +105,7 @@ function KararlarContent() {
     async function loadCezaeviKararlar() {
       try {
         setCezaeviLoading(true);
-        const data = await getKararlar({ limit: 20000 });
+        const data = await getKararlar({ limit: 20000, kapsam: "cezaevi" });
         setCezaeviData(data);
       } catch (error) {
         console.error("Cezaevi kararları yüklenemedi:", error);
