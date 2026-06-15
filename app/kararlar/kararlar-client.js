@@ -200,10 +200,6 @@ function KararlarContent() {
 
   const [query, setQuery] = useState(searchParams.get("arama") || "");
 
-  const [tumData, setTumData] = useState([]);
-  const [tumLoaded, setTumLoaded] = useState(false);
-  const [tumLoading, setTumLoading] = useState(false);
-
   const [cezaeviData, setCezaeviData] = useState([]);
   const [cezaeviLoading, setCezaeviLoading] = useState(true);
   const [debouncedQ, setDebouncedQ] = useState("");
@@ -526,7 +522,7 @@ function KararlarContent() {
                     className={`cursor-pointer rounded-lg border px-5 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition hover:-translate-y-0.5"
                       }`}
                   >
-                    Ara
+                    Karar Ara
                   </button>
                 </div>
               </div>
