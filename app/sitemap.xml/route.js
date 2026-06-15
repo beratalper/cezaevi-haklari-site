@@ -25,6 +25,7 @@ export async function GET() {
     { loc: `${siteUrl}/sitemap-yazilar.xml` },
     { loc: `${siteUrl}/sitemap-mevzuat.xml` },
     { loc: `${siteUrl}/sitemap-kararlar.xml` },
+    { loc: `${siteUrl}/sitemap-bireysel-basvuru.xml` },
   ];
 
   return new Response(createSitemapIndex(sitemaps), {
