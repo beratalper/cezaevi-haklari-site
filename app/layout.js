@@ -2,7 +2,6 @@ import "./globals.css";
 import { Inter, Cormorant_Garamond } from "next/font/google";
 import Navbar from "../components/Navbar";
 import CookieBanner from "../components/CookieBanner";
-import Script from "next/script"; // 👈 EKLENDİ
 
 const inter = Inter({
   subsets: ["latin"],
@@ -77,9 +76,8 @@ export default function RootLayout({ children }) {
           }}
         />
 
-        <Script
+        <script
           async
-          strategy="lazyOnload"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-751..."
           crossOrigin="anonymous"
         />
