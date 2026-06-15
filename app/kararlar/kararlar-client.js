@@ -23,14 +23,12 @@ async function getKararlar({
   q = "",
   limit = 500,
   offset = 0,
-  kapsam = "tum",
 } = {}) {
   const params = new URLSearchParams();
 
   if (q.trim()) params.set("q", q.trim());
   params.set("limit", String(limit));
   params.set("offset", String(offset));
-  params.set("kapsam", kapsam);
 
   const res = await fetch(`/api/kararlar?${params.toString()}`, {
     cache: "no-store",
@@ -201,9 +199,6 @@ function KararlarContent() {
   const [aktifKategori, setAktifKategori] = useState(null);
 
   const [query, setQuery] = useState(searchParams.get("arama") || "");
-  const [aramaKapsami, setAramaKapsami] = useState(
-    searchParams.get("kapsam") || "cezaevi"
-  );
 
   const [tumData, setTumData] = useState([]);
   const [tumLoaded, setTumLoaded] = useState(false);
@@ -242,33 +237,12 @@ function KararlarContent() {
 
   useEffect(() => {
     const urlQuery = searchParams.get("arama") || "";
-    const urlKapsam = searchParams.get("kapsam") || "cezaevi";
 
     setQuery(urlQuery);
-    setAramaKapsami(urlKapsam);
     setPage(1);
   }, [searchParams]);
 
   const perPage = 6;
-
-  async function tumAymdeAra() {
-    try {
-      if (!tumLoaded) {
-        setTumLoading(true);
-
-        const data = await getKararlar({ limit: 20000 });
-
-        setTumData(data);
-        setTumLoaded(true);
-      }
-
-      setAramaKapsami("tum");
-      setAktifSorun(null);
-      setPage(1);
-    } finally {
-      setTumLoading(false);
-    }
-  }
 
   function temizle() {
     setQuery("");
@@ -279,7 +253,7 @@ function KararlarContent() {
     router.replace("/kararlar");
   }
 
-  const aktifData = aramaKapsami === "tum" ? tumData : cezaeviData;
+  const aktifData = cezaeviData;
 
   const filtered = aktifData.filter((item) => {
     const sonuc = item.sonuc || "";
@@ -462,10 +436,8 @@ function KararlarContent() {
 
                     if (value.trim()) {
                       params.set("arama", value);
-                      params.set("kapsam", aramaKapsami);
                     } else {
                       params.delete("arama");
-                      params.delete("kapsam");
                     }
 
                     const queryString = params.toString();
@@ -543,42 +515,18 @@ function KararlarContent() {
                 <div className="mt-5 flex flex-wrap justify-center gap-4">
                   <button
                     onClick={() => {
-                      setAramaKapsami("cezaevi");
                       setPage(1);
-                      router.replace(`/kararlar?arama=${query}&kapsam=cezaevi`);
-                    }}
-                    className={`cursor-pointer rounded-lg border px-5 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition hover:-translate-y-0.5 ${aramaKapsami === "cezaevi"
-                      ? "border-[#c9a96e]/80 bg-[#c9a96e]/20 text-[#f3d99b]"
-                      : "border-white/10 bg-white/5 text-slate-300 hover:border-[#c9a96e]/60 hover:text-[#d9bd83]"
-                      }`}
-                  >
-                    Cezaevi kararlarında ara
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      tumAymdeAra();
-
-                      const params = new URLSearchParams(window.location.search);
 
                       if (query.trim()) {
-                        params.set("arama", query);
+                        router.replace(`/kararlar?arama=${query}`);
+                      } else {
+                        router.replace("/kararlar");
                       }
-
-                      params.set("kapsam", "tum");
-
-                      router.replace(`/kararlar?${params.toString()}`);
                     }}
-                    disabled={tumLoading}
-                    className={`cursor-pointer rounded-lg border px-5 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-60 ${aramaKapsami === "tum"
-                      ? "border-[#c9a96e]/80 bg-[#c9a96e]/20 text-[#f3d99b]"
-                      : "border-[#c9a96e]/25 bg-[#c9a96e]/5 text-[#d9bd83] hover:border-[#c9a96e]/70 hover:bg-[#c9a96e]/10"
+                    className={`cursor-pointer rounded-lg border px-5 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition hover:-translate-y-0.5"
                       }`}
                   >
-                    {tumLoading
-                      ? "Tüm AYM kararları yükleniyor..."
-                      : `Tüm AYM kararlarında ara${tumLoaded ? ` (${tumData.length})` : ""
-                      }`}
+                    Ara
                   </button>
                 </div>
               </div>
