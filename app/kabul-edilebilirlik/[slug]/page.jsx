@@ -169,7 +169,7 @@ prose-strong:font-semibold
                                     )}
 
                                     <Link
-                                        href={`/karar/${karar.id}`}
+                                        href={`/kararlar/${karar.slug}`}
                                         className="mt-5 inline-block text-sm font-semibold text-amber-300 hover:text-amber-200"
                                     >
                                         Kararı incele →

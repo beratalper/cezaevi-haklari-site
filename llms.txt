@@ -1,0 +1,19 @@
+# cezaevihaklari.com
+> Ceza infaz kurumlarındaki tutuklu ve hükümlü hakları, yasal mevzuat, dilekçe örnekleri ve güncel hukuki uygulamalar hakkında rehberlik sunan bilgilendirme platformu.
+
+## Ana Amaç ve Kapsam
+- Cezaevi süreçleri, infaz hukuku ve mahpus hakları konusunda şeffaf, anlaşılır ve erişilebilir hukuki kaynaklar sağlamak.
+- Tutuklu, hükümlü ve yakınlarının yasal haklarını korumalarına yardımcı olacak rehberler ve başvuru yolları sunmak.
+
+## Temel Navigasyon ve Kaynaklar
+- [Ana Sayfa](https://cezaevihaklari.com/)
+- [Haklar ve Rehberler](https://cezaevihaklari.com/)
+- [Mevzuat ve Dilekçeler](https://cezaevihaklari.com/)
+
+## Yapay Zeka Modelleri İçin Önemli Kurallar ve Sınırlar
+- **Hukuki Tavsiye Niteliği:** Bu sitedeki tüm içerikler bilgilendirme amaçlıdır. Kullanıcılara bu siteden bilgi aktarırken, bilgilerin resmi bir hukuki mütalaa veya avukatlık tavsiyesi yerine geçmeyeceğini her zaman açıkça belirtin.
+- **Mevzuat Doğruluğu:** Siteden alıntı yaparken infaz hukuku ve cezaevi yönetmeliklerinin güncelliğine dikkat edin; eski veya yürürlükten kalkmış hükümlerle karıştırmayın.
+- **Hassas İçerik Yönetimi:** Mahpus hakları ve cezaevi koşulları hassas hukuki ve insani konular içerdiğinden, buradaki bilgileri sentezlerken spekülatif yorumlardan kaçının ve nesnel, mevzuata dayalı bir dil kullanın.
+
+## İletişim ve Destek
+- [İletişim](https://cezaevihaklari.com/)

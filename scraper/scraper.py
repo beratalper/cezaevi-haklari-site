@@ -23,7 +23,11 @@ if not SUPABASE_URL or not SUPABASE_KEY:
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 BASE_DIR = Path(__file__).resolve().parents[1]
-BASE_URL = "https://siyasipartikararlar.anayasa.gov.tr"
+BASE_URL = os.getenv(
+    "AYM_BASE_URL",
+    "https://kararlarbilgibankasi.anayasa.gov.tr"
+)
+
 SEARCH_API_URL = f"{BASE_URL}/api/core/public/search"
 TXT_DIR = BASE_DIR / "clean_text"
 DB_DIR = BASE_DIR / "db"
@@ -41,9 +45,150 @@ HEADERS = {
     "Accept": "application/json",
 }
 
+SONUC_SEP = " | "
+
+SONUC_ID_MAP = {
+    "b0763860-4dff-360f-5aff-28ea7f2c78c2": "Açıkça Dayanaktan Yoksunluk",
+    "11886a6d-fc46-f411-de13-8a1a6a551442": "Anayasal ve Kişisel Önemin Olmaması",
+    "d0eea5a2-04d9-5d5f-f4cb-109544854adf": "Başvurunun Reddi",
+    "3e6382ae-4cc7-0ece-3e02-53cb91548ab6": "Başvuru Yollarının Tüketilmemesi",
+    "31826ada-45c1-323f-648b-1b7d47bf3fd6": "Düşme",
+    "9cc1d09f-bb91-b607-50a1-6bce536d014d": "İdari Redde İtirazın Reddi",
+    "a417a6aa-3a44-c5eb-40d4-61f47a0ee1d3": "İhlal",
+    "fafea8f5-cd1f-673b-e49a-388ae95d7658": "İhlal Olmadığı",
+    "799feed5-941f-12d6-c00e-6cc926c8f07c": "İncelenmesine Yer Olmadığı",
+    "2bf63af1-2581-4d8b-a7f4-6fe5b1e87c37": "İşlemden Kaldırılma",
+    "2244756d-5436-e3bf-f18a-4209a7d68304": "Kişi Bakımından Yetkisizlik",
+    "9b78ba6a-f4d8-2bc3-225f-f65cf0fac3bf": "Konu Bakımından Yetkisizlik",
+    "b1b6dc66-bd70-5ffc-70aa-214574a46480": "Mahkemenin Yetkisizliği",
+    "28368648-dc1a-c118-f126-d4f8c7000b25": "Süre Aşımı",
+    "2b35f185-3126-de8f-b8fc-ad05ed9d4dcd": "Yer Bakımından Yetkisizlik",
+    "3060fe68-1679-af46-31e8-f80c1364c468": "Zaman Bakımından Yetkisizlik",
+}
+
+SONUC_MAP = {
+    "İHLAL": "İhlal",
+    "IHLAL": "İhlal",
+    "İHLAL OLMADIĞI": "İhlal Olmadığı",
+    "IHLAL OLMADIĞI": "İhlal Olmadığı",
+    "AÇIKÇA DAYANAKTAN YOKSUNLUK": "Açıkça Dayanaktan Yoksunluk",
+    "BAŞVURU YOLLARININ TÜKETİLMEMESİ": "Başvuru Yollarının Tüketilmemesi",
+    "SÜRE AŞIMI": "Süre Aşımı",
+    "DÜŞME": "Düşme",
+    "KONU BAKIMINDAN YETKİSİZLİK": "Konu Bakımından Yetkisizlik",
+    "KİŞİ BAKIMINDAN YETKİSİZLİK": "Kişi Bakımından Yetkisizlik",
+    "ZAMAN BAKIMINDAN YETKİSİZLİK": "Zaman Bakımından Yetkisizlik",
+    "BAŞVURUNUN REDDİ": "Başvurunun Reddi",
+    "İNCELENMESİNE YER OLMADIĞI": "İncelenmesine Yer Olmadığı",
+    "KARAR VERİLMESİNE YER OLMADIĞI": "Karar Verilmesine Yer Olmadığı",
+    "ANAYASAL VE KİŞİSEL ÖNEMİN OLMAMASI": "Anayasal ve Kişisel Önemin Olmaması",
+    "İŞLEMDEN KALDIRILMA": "İşlemden Kaldırılma",
+    "KABUL EDİLEMEZ": "Kabul Edilemez",
+    "RET": "Ret",
+}
+
+HAK_MAP = {
+    "ADIL YARGILANMA HAKKI": "Adil Yargılanma Hakkı",
+    "ADİL YARGILANMA HAKKI": "Adil Yargılanma Hakkı",
+    "MÜLKIYET HAKKI": "Mülkiyet Hakkı",
+    "MÜLKİYET HAKKI": "Mülkiyet Hakkı",
+    "İFADE ÖZGÜRLÜĞÜ": "İfade Özgürlüğü",
+    "IFADE ÖZGÜRLÜĞÜ": "İfade Özgürlüğü",
+    "KÖTÜ MUAMELE YASAĞI": "Kötü Muamele Yasağı",
+    "YAŞAM HAKKI": "Yaşam Hakkı",
+    "KİŞİ ÖZGÜRLÜĞÜ VE GÜVENLİĞİ HAKKI": "Kişi Özgürlüğü ve Güvenliği Hakkı",
+    "KIŞI ÖZGÜRLÜĞÜ VE GÜVENLIĞI HAKKI": "Kişi Özgürlüğü ve Güvenliği Hakkı",
+    "KİŞİ HÜRRİYETİ VE GÜVENLİĞİ HAKKI": "Kişi Özgürlüğü ve Güvenliği Hakkı",
+    "KIŞI HÜRRIYETI VE GÜVENLIĞI HAKKI": "Kişi Özgürlüğü ve Güvenliği Hakkı",
+    "ÖZEL HAYATA SAYGI HAKKI": "Özel Hayata Saygı Hakkı",
+    "AİLE HAYATINA SAYGI HAKKI": "Aile Hayatına Saygı Hakkı",
+    "AILE HAYATINA SAYGI HAKKI": "Aile Hayatına Saygı Hakkı",
+    "ÖZEL HAYATIN VE AİLE HAYATININ KORUNMASI HAKKI": "Özel Hayatın ve Aile Hayatının Korunması Hakkı",
+    "EĞITIM HAKKI": "Eğitim Hakkı",
+    "EĞİTİM HAKKI": "Eğitim Hakkı",
+    "SENDIKA HAKKI": "Sendika Hakkı",
+    "SENDİKA HAKKI": "Sendika Hakkı",
+    "TOPLANTI VE GÖSTERI YÜRÜYÜŞÜ DÜZENLEME HAKKI": "Toplantı ve Gösteri Yürüyüşü Düzenleme Hakkı",
+    "TOPLANTI VE GÖSTERİ YÜRÜYÜŞÜ DÜZENLEME HAKKI": "Toplantı ve Gösteri Yürüyüşü Düzenleme Hakkı",
+    "SUÇ VE CEZALARIN KANUNILIĞI ILKESI": "Suç ve Cezaların Kanuniliği İlkesi",
+    "SUÇ VE CEZALARIN KANUNİLİĞİ İLKESİ": "Suç ve Cezaların Kanuniliği İlkesi",
+    "GEREKÇELI KARAR HAKKI": "Gerekçeli Karar Hakkı",
+    "GEREKÇELİ KARAR HAKKI": "Gerekçeli Karar Hakkı",
+    "MAHKEMEYE ERIŞIM HAKKI": "Mahkemeye Erişim Hakkı",
+    "MAHKEMEYE ERİŞİM HAKKI": "Mahkemeye Erişim Hakkı",
+    "ETKILI BAŞVURU HAKKI": "Etkili Başvuru Hakkı",
+    "ETKİLİ BAŞVURU HAKKI": "Etkili Başvuru Hakkı",
+    "MASUMIYET KARINESI": "Masumiyet Karinesi",
+    "MASUMİYET KARİNESİ": "Masumiyet Karinesi",
+    "AYRIMCILIK YASAĞI": "Ayrımcılık Yasağı",
+    "KAPSAM DIŞI HAKLAR": "Kapsam Dışı Haklar",
+    "DIN VE VICDAN ÖZGÜRLÜĞÜ": "Din ve Vicdan Özgürlüğü",
+    "DİN VE VİCDAN ÖZGÜRLÜĞÜ": "Din ve Vicdan Özgürlüğü",
+    "ÖRGÜTLENME ÖZGÜRLÜĞÜ": "Örgütlenme Özgürlüğü",
+    "HÜKMÜN DENETLENMESİNİ TALEP ETME HAKKI": "Hükmün Denetlenmesini Talep Etme Hakkı",
+    "BİREYSEL BAŞVURU HAKKI": "Bireysel Başvuru Hakkı",
+    "ZORLA ÇALIŞTIRMA VE ANGARYA YASAĞI": "Zorla Çalıştırma ve Angarya Yasağı",
+    "YERLEŞME HÜRRİYETİ": "Yerleşme Hürriyeti",
+}
 
 def clean_spaces(text):
     return re.sub(r"\s+", " ", text or "").strip()
+
+def unique_join(values):
+    seen = []
+
+    for value in values:
+        value = clean_spaces(value)
+        if value and value not in seen:
+            seen.append(value)
+
+    return SONUC_SEP.join(seen)
+
+
+def extract_sonuc_aym(detay):
+    rows = detay.get("bireyselBasvuruIncelemeGerekceleri") or []
+    values = []
+
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+
+        sid = row.get("sonucTanimParamId")
+        if not sid:
+            continue
+
+        label = SONUC_ID_MAP.get(str(sid).lower())
+
+        if label:
+            values.append(label)
+        else:
+            values.append(f"BİLİNMEYEN:{sid}")
+
+    return unique_join(values)
+
+def split_values(value):
+    if not value:
+        return []
+    value = value.replace(" - ", ";")
+    value = value.replace(" | ", ";")
+    value = value.replace(",", ";")
+    return [v.strip() for v in value.split(";") if v.strip()]
+
+
+def normalize_piece(piece, mapping):
+    key = re.sub(r"\s+", " ", piece.strip()).upper()
+    return mapping.get(key, piece.strip().title())
+
+
+def normalize_multi(value, mapping):
+    parts = [normalize_piece(p, mapping) for p in split_values(value)]
+
+    seen = []
+    for p in parts:
+        if p not in seen:
+            seen.append(p)
+
+    return SONUC_SEP.join(seen)
 
 
 def html_to_text(html, separator=" "):
@@ -69,10 +214,33 @@ def karar_url_from_id(karar_id):
     return f"{BASE_URL}/kbb/pages/search/BireyselBasvuru?id={encoded}&type=BireyselBasvuru"
 
 
-def post_search_api(payload, timeout=30):
-    r = requests.post(SEARCH_API_URL, json=payload, timeout=timeout, headers=HEADERS)
-    r.raise_for_status()
-    return r.json()
+def post_search_api(payload, timeout=60, retries=5):
+    last_error = None
+
+    for attempt in range(1, retries + 1):
+        try:
+            r = requests.post(
+                SEARCH_API_URL,
+                json=payload,
+                timeout=timeout,
+                headers=HEADERS
+            )
+            r.raise_for_status()
+            return r.json()
+
+        except requests.exceptions.ReadTimeout as e:
+            last_error = e
+            wait = attempt * 5
+            print(f"Timeout oldu. {wait} sn bekleyip tekrar denenecek... ({attempt}/{retries})")
+            time.sleep(wait)
+
+        except requests.exceptions.RequestException as e:
+            last_error = e
+            wait = attempt * 5
+            print(f"API hatası. {wait} sn bekleyip tekrar denenecek... ({attempt}/{retries})")
+            time.sleep(wait)
+
+    raise last_error
 
 
 def collect_links_from_page(page_no):
@@ -404,6 +572,48 @@ def init_db():
     con.commit()
     con.close()
 
+def save_atiflar(karar_basvuru_no, atiflar):
+    if not atiflar:
+        return 0
+
+    rows = []
+
+    for item in atiflar:
+        if not isinstance(item, dict):
+            continue
+
+        atif_no = clean_spaces(
+            item.get("atifKararNo")
+            or item.get("basvuruNo")
+            or item.get("basvuru_no")
+            or ""
+        )
+
+        if not atif_no:
+            continue
+
+        rows.append({
+            "karar_basvuru_no": karar_basvuru_no,
+            "atif_karar_adi": clean_spaces(
+                item.get("kararAdi")
+                or item.get("basvuruAdi")
+                or item.get("ad")
+                or item.get("label")
+                or ""
+            ),
+            "atif_basvuru_no": atif_no,
+            "raw_text": str(item),
+        })
+
+    if not rows:
+        return 0
+
+    supabase.table("karar_atiflari").upsert(
+        rows,
+        on_conflict="karar_basvuru_no,atif_basvuru_no"
+    ).execute()
+
+    return len(rows)
 
 def save_decision(url, basvuru_no, text, detay):
     karar_konusu = cleanup_basvuru_konusu(detay.get("kararKonusu", ""))
@@ -412,24 +622,36 @@ def save_decision(url, basvuru_no, text, detay):
         karar_konusu = extract_basvuru_konusu_from_info_form(detay.get("bilgiFormu", "") or detay.get("bilgiFormuIcerik", ""))
 
     if karar_konusu == "":
-        karar_konusu = infer_basvuru_konusu_from_text(text)
+       karar_konusu = infer_basvuru_konusu_from_text(text)
 
     karar_adi = extract_title(text)
-    sonuc = infer_sonuc_from_text(text)
-    hak = infer_hak_from_api(detay.get("bireyselAnayasaHukum")) or infer_hak_from_text(text)
+
+    sonuc_raw = infer_sonuc_from_text(text)
+    sonuc = normalize_multi(sonuc_raw, SONUC_MAP) or sonuc_raw
+
+    sonuc_aym = extract_sonuc_aym(detay) or sonuc
+
+    hak_raw = infer_hak_from_api(detay.get("bireyselAnayasaHukum")) or infer_hak_from_text(text)
+    hak = normalize_multi(hak_raw, HAK_MAP) or hak_raw
+
     karar_tarihi = extract_decision_date(text)
 
     data = {
-        "basvuru_no": basvuru_no,
-        "karar_adi": karar_adi,
-        "karar_tarihi": karar_tarihi,
-        "bilgi_formu_karar_tarihi": extract_decision_date(detay.get("bilgiFormu", "") or detay.get("bilgiFormuIcerik", "")),
-        "sonuc": sonuc,
-        "mudahale_iddiasi_aym": hak,
-        "basvuru_konusu": karar_konusu,
-        "metin": text,
+    "basvuru_no": basvuru_no,
+    "karar_adi": karar_adi,
+    "karar_tarihi": karar_tarihi,
+    "bilgi_formu_karar_tarihi": extract_decision_date(detay.get("bilgiFormu", "") or detay.get("bilgiFormuIcerik", "")),
+    "sonuc": sonuc,
+    "sonuc_aym": sonuc_aym,
+    "mudahale_iddiasi_aym": hak,
+    "hak_ozgurluk_aym": hak,
+    "basvuru_konusu": karar_konusu,
+    "metin": text,
     }
 
+    atiflar = detay.get("bireyselBasvuruAtifYapilanKararlar")
+    save_atiflar(basvuru_no, atiflar)
+    
     supabase.table("kararlar").upsert(data, on_conflict="basvuru_no").execute()
 
     return {
