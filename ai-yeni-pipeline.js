@@ -11,7 +11,7 @@ const { Pool } = pkg;
 const MODEL = "gpt-4.1-mini";
 const PROMPT_VERSION = "genel-ai-v3-olay-arama-self-healing";
 const BATCH_SIZE = 15; // Yeni mantık ve RAG benzeri sorgularla işlem yükünü dengeli tutmak için ideal batç boyutu
-const MAX_HEAL_ATTEMPTS = 1;
+const MAX_HEAL_ATTEMPTS = 2; // Daha fazla şans tanıyarak başarı oranını zirveye çıkarıyoruz
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -187,7 +187,7 @@ async function healAnalysis(row, previousOutput, feedbackNote, emsalKurallar) {
 
   const res = await openai.chat.completions.create({
     model: MODEL,
-    temperature: 0,
+    temperature: 0.3, // Temperature değerini 0.3 yaparak modelin deterministik döngülerden sıyrılıp hatasını düzeltmesini kolaylaştırıyoruz
     response_format: { type: "json_object" },
     messages: [
       { role: "system", content: healSystemPrompt },
